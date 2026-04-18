@@ -169,7 +169,7 @@
     .bottom-note.blank{background:var(--placeholder)}
     .toast{top:50% !important;left:50% !important;transform:translate(-50%,-50%) translateY(18px) !important}
     .toast.show{transform:translate(-50%,-50%) translateY(0) !important}
-    .add-row-btn{background:linear-gradient(180deg,#2563eb 0%,#1e40af 100%) !important;color:#fff !important;border:1px solid #1d4ed8 !important;min-width:188px;padding:15px 24px !important;box-shadow:0 12px 22px rgba(29,78,216,.24);font-size:17px}
+    .add-row-btn{background:linear-gradient(180deg,#2563eb 0%,#1e40af 100%) !important;color:#fff !important;border:1px solid #1d4ed8 !important;min-width:188px;padding:15px 24px !important;box-shadow:0 12px 22px rgba(29,78,216,.24);font-size:15px}
 
     @media (max-width: 1100px){
       .grid.cols-4,.grid.cols-3,.cards,.summary,.subgrid,.panel-row{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -289,6 +289,8 @@
     .currency-select{min-width:96px !important;width:96px !important;}
     .ebs-field input{min-width:0;}
     .yard-item input:not(.blank){background:#fff !important;}
+    .input-error{background:#fee2e2 !important;border-color:#ef4444 !important;box-shadow:0 0 0 2px rgba(239,68,68,.15) !important;}
+    .input-error::placeholder{color:#b91c1c !important;opacity:.9;}
     @media (max-width:760px){
       .header-actions{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;}
       .header-actions .btn{min-width:0 !important;width:100%;padding:11px 8px;font-size:15px;}
@@ -343,15 +345,68 @@
       .header-actions .btn{font-size:13px !important;padding:10px 6px !important;line-height:1.15;white-space:nowrap;}
       .tabs{margin-top:14px !important;}
       .tabs .tab{font-size:16px !important;padding:14px 10px !important;min-height:56px;}
-      .wrap{padding:222px 12px 12px !important;}
+      .wrap{padding:176px 12px 12px !important;}
       .export-cost-section .export-cost-grid{display:grid !important;grid-template-columns:1fr !important;}
       .export-cost-section .export-cost-grid .field{grid-column:1 / -1 !important;}
       .export-cost-section .freight-inline{grid-template-columns:minmax(0,1fr) 104px !important;}
       .export-cost-section .currency-select{min-width:104px !important;width:104px !important;}
       .delete-btn.icon-only{font-size:22px !important;font-weight:900 !important;line-height:1 !important;}
+      .add-row-btn{font-size:14px !important;min-width:auto !important;padding:12px 14px !important;}
+      .issue-quote-btn{font-size:14px !important;min-width:auto !important;padding:12px 16px !important;}
+      .table-actions{display:flex;justify-content:flex-end;}
+      .yard-item{display:block;padding:10px 12px;}
+      .yard-toggle{display:inline-flex;align-items:center;justify-content:center;}
+      .yard-card-body{grid-template-columns:1fr;margin-top:10px;}
+      .yard-card-title{font-size:15px;}
     }
 
-  </style>
+    .quote-footer-actions{display:flex;justify-content:flex-end;margin-top:12px}
+    .issue-quote-btn{background:linear-gradient(180deg,#1e3a8a 0%,#1e40af 100%) !important;color:#fff !important;border:1px solid #1d4ed8 !important;min-width:172px;padding:13px 18px !important;box-shadow:0 10px 20px rgba(29,78,216,.18)}
+    .yard-item{position:relative}
+    .yard-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .yard-card-title{font-weight:800;color:#274a7a;font-size:16px;display:flex;align-items:center;gap:8px;min-width:0}
+    .yard-card-title-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .yard-card-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .yard-toggle{display:none;background:#e8f0ff !important;color:#1e40af !important;border:1px solid #bfdbfe !important;width:38px;min-width:38px;height:38px;padding:0;border-radius:10px;font-size:18px;font-weight:900;line-height:1}
+    .yard-card-body{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;align-items:end;width:100%}
+    .yard-item.is-collapsed .yard-card-body{display:none}
+
+    /* v17 fix: supplier master yard card layout */
+    #supplierMaster .yard-item{display:block !important;grid-template-columns:none !important;position:relative;padding:12px !important;}
+    #supplierMaster .yard-card-head{display:flex !important;align-items:flex-start !important;justify-content:space-between !important;gap:10px;margin-bottom:10px;}
+    #supplierMaster .yard-card-title{padding-right:8px;}
+    #supplierMaster .yard-card-actions{display:flex !important;align-items:center !important;justify-content:flex-end !important;gap:8px;flex-shrink:0;}
+    #supplierMaster .yard-card-body{display:grid !important;grid-template-columns:1.2fr 1fr !important;gap:10px !important;align-items:end !important;width:100% !important;}
+    @media (max-width:760px){
+      #supplierMaster .yard-item{padding:12px !important;}
+      #supplierMaster .yard-card-head{margin-bottom:8px;}
+      #supplierMaster .yard-card-actions{position:absolute;top:10px;right:10px;z-index:2;}
+      #supplierMaster .yard-card-title{padding-right:96px;min-height:38px;display:flex;align-items:center;}
+      #supplierMaster .yard-card-body{grid-template-columns:1fr !important;margin-top:6px !important;}
+      #supplierMaster .yard-toggle{display:inline-flex !important;align-items:center;justify-content:center;}
+      #supplierMaster .delete-btn.icon-only{width:38px !important;min-width:38px !important;height:38px !important;font-size:20px !important;}
+      #supplierMaster .yard-item.is-collapsed .yard-card-body{display:none !important;}
+    }
+
+  
+
+    /* v18 fixes */
+    .estimate-section .section-header{position:relative}
+    .estimate-section .table-actions{margin-left:auto}
+    .estimate-section .add-row-btn{font-size:16px !important;padding:9px 13px !important;min-width:auto !important}
+    .master-yard-add-btn{font-size:14px !important;padding:9px 13px !important;min-width:auto !important}
+    #supplierMaster .yard-card-title{gap:0 !important}
+    #supplierMaster .yard-card-title span:first-child{display:none !important}
+    @media (max-width:760px){
+      .estimate-section .section-header{padding-right:132px}
+      .estimate-section .table-actions{position:absolute;top:0;right:0;width:auto !important;margin:0}
+      .estimate-section .add-row-btn{font-size:16px !important;padding:8px 10px !important;border-radius:12px}
+      #supplierMaster .yard-card-head{align-items:flex-start !important}
+      #supplierMaster .yard-card-actions{position:absolute;top:12px;right:12px}
+      #supplierMaster .yard-card-title{padding-right:74px}
+    }
+
+</style>
 </head>
 <body>
   <div id="toast" class="toast"></div>
@@ -545,14 +600,14 @@
         </div>
       </div>
 
-      <div class="section">
+      <div class="section estimate-section">
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">見積条件</div>
             <div class="section-desc">見積書に記載する見積計算欄</div>
           </div>
           <div class="table-actions">
-            <button class="btn add-row-btn" onclick="addQuoteLine()">＋ 行追加</button>
+            <button class="btn add-row-btn" onclick="addQuoteLine()">見積ヤード追加</button>
           </div>
         </div>
         <div class="scroll-x">
@@ -577,6 +632,9 @@
             <label>下部備考</label>
             <textarea id="bottomNote" class="bottom-note" rows="4" placeholder="例）月末締翌月15日支払い、4月中出荷条件。出荷単位は100tから。"></textarea>
           </div>
+          <div class="quote-footer-actions">
+            <button class="btn issue-quote-btn" type="button" onclick="issueQuote()">見積書発行</button>
+          </div>
         </div>
       </div>
 
@@ -591,9 +649,8 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">仕入先マスタ</div>
-            <div class="section-desc">1仕入先に対して複数ヤードを登録できます。スマホでは横スクロールで編集できます。</div>
           </div>
-          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 22px;min-width:164px" onclick="addSupplier()">仕入先追加</button><button class="btn blue" onclick="saveMasters()">保存</button></div>
+          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 22px;min-width:164px" onclick="addSupplier()">仕入先追加</button><button class="btn blue" onclick="saveSupplierMasters()">保存</button></div>
         </div>
         <div id="supplierMaster"></div>
       </div>
@@ -602,9 +659,8 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">海上運賃マスタ</div>
-            <div class="section-desc">積港・揚港・海上運賃・通貨・EBS・船会社名・備考を登録します。</div>
           </div>
-          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 22px;min-width:208px" onclick="addOceanFreight()">海上運賃登録追加</button><button class="btn blue" onclick="saveMasters()">保存</button></div>
+          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 22px;min-width:208px" onclick="addOceanFreight()">海上運賃登録追加</button><button class="btn blue" onclick="saveOceanFreightMasters()">保存</button></div>
         </div>
         <div class="scroll-x">
           <table style="min-width:1280px">
@@ -649,7 +705,7 @@ const PRODUCTS = Object.keys(PRODUCT_DEFAULT_LOAD);
 const COM_OPTIONS = Array.from({length:15}, (_,i)=>(4 - i*0.25).toFixed(2));
 
 function createQuoteLine(condition='CY渡し'){
-  return {id:uid(), product:'OCC', yardName:'', quoteCondition:condition, price:'', quantity:22, note:''};
+  return {id:uid(), product:'', yardName:'', quoteCondition:'', price:'', quantity:'', note:''};
 }
 function createDefaultQuoteLines(condition='CY渡し'){
   return [createQuoteLine(condition), createQuoteLine(condition)];
@@ -668,6 +724,36 @@ function syncMatchedOceanFreight(){ const matched = state.oceanFreight.find(x =>
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function loadLocal(k,fallback){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>el.classList.remove('show'),1000); }
+function clearValidationErrors(){ document.querySelectorAll('.input-error').forEach(el=>el.classList.remove('input-error')); }
+function markInvalid(el){
+  if(!el) return;
+  el.classList.add('input-error');
+}
+function scrollToInvalid(el){
+  if(!el) return;
+  const header = document.querySelector('.app-header');
+  const offset = header ? header.offsetHeight + 16 : 16;
+  const rect = el.getBoundingClientRect();
+  const top = window.pageYOffset + rect.top - offset;
+  window.scrollTo({top: Math.max(0, top), behavior:'smooth'});
+  try{ el.focus({preventScroll:true}); }catch(e){}
+}
+function markAndScrollInvalid(el){
+  markInvalid(el);
+  scrollToInvalid(el);
+}
+document.addEventListener('input', e => {
+  const t = e.target;
+  if(!t || !t.classList) return;
+  if(t.classList.contains('input-error')) t.classList.remove('input-error');
+  if('value' in t) t.classList.toggle('blank', String(t.value ?? '').trim() === '');
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if(!t || !t.classList) return;
+  if(t.classList.contains('input-error')) t.classList.remove('input-error');
+  if('value' in t) t.classList.toggle('blank', String(t.value ?? '').trim() === '');
+});
 
 let state = {
   activeTab:'estimate',
@@ -856,7 +942,7 @@ function renderDrayageSummaryCards(){
     .map((line, idx) => ({line, idx, dray: drayagePerKg(line.yardName, line.quantity)}))
     .filter(item => item.line.quoteCondition === '店頭' && item.line.yardName);
   if(!storefrontLines.length) return '';
-  const details = storefrontLines.map(item => `${escapeHtml(item.line.product || `L${item.idx + 1}`)} ヤード：${escapeHtml(item.line.yardName)} ドレー kg単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
+  const details = storefrontLines.map(item => `商品/ヤード：${escapeHtml(item.line.product || `L${item.idx + 1}`)}/${escapeHtml(item.line.yardName || '')} ドレー単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
   return `<div class="summary-card" style="grid-column: span 2;"><div class="summary-label">ドレー費 kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
 }
 
@@ -884,17 +970,21 @@ function renderQuoteTable(){
   const yards = availableYards();
   body.innerHTML = state.quoteLines.map((line, idx) => {
     const price = fmt(linePrice(line), 2);
-    const productOptions = PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
+    const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const yardOptions = `<option value="">ヤード選択</option>` + yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
     const conditionOptions = state.calcMode === 'cy'
-      ? `<option value="店頭">店頭</option>`
-      : `<option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
-    return `<tr>
-      <td><select onchange="updateQuoteLine('${line.id}','product',this.value)">${productOptions}</select></td>
-      <td><select onchange="updateQuoteLine('${line.id}','yardName',this.value)">${yardOptions}</select></td>
-      <td><select ${state.calcMode==='cy'?'disabled':''} onchange="updateQuoteLine('${line.id}','quoteCondition',this.value)">${conditionOptions}</select></td>
+      ? `<option value="">見積条件選択</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`
+      : `<option value="">見積条件選択</option><option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
+    const productBlank = !String(line.product ?? '').trim();
+    const yardBlank = !String(line.yardName ?? '').trim();
+    const conditionBlank = !String(line.quoteCondition ?? '').trim();
+    const qtyBlank = !String(line.quantity ?? '').trim();
+    return `<tr data-line-id="${line.id}">
+      <td><select data-field="product" class="${productBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','product',this.value)">${productOptions}</select></td>
+      <td><select data-field="yardName" class="${yardBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','yardName',this.value)">${yardOptions}</select></td>
+      <td><select data-field="quoteCondition" class="${conditionBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','quoteCondition',this.value)">${conditionOptions}</select></td>
       <td><input value="${price}" readonly style="text-align:center;font-weight:700" /></td>
-      <td><input class="quote-qty" value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
+      <td><input data-field="quantity" class="quote-qty ${qtyBlank?'blank':''}" value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
       <td><input value="${escapeHtml(line.note)}" class="${!line.note?'blank':''}" placeholder="例）ベトナム向け" oninput="updateQuoteLine('${line.id}','note',this.value)" /></td>
       <td>${idx===0 ? '' : `<button class="btn small delete-btn icon-only" title="削除" onclick="removeQuoteLine('${line.id}')">&times;</button>`}</td>
     </tr>`;
@@ -940,20 +1030,40 @@ function renderSupplierMaster(){
       </div>
       <div class="master-head" style="margin-top:12px">
         <div class="master-head-title">ヤード登録</div>
-        <button class="btn yard-add-btn" onclick="addYard('${s.id}')">ヤード追加</button>
+        <button class="btn yard-add-btn master-yard-add-btn" onclick="addYard('${s.id}')">ヤード追加</button>
       </div>
       <div class="master-subblock">
         <div class="yard-grid">
-          ${s.yards.map(y => `<div class="yard-item">
-            <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
-            <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
-            <button class="btn small delete-btn icon-only" title="削除" onclick="removeYard('${s.id}','${y.id}')">&times;</button>
+          ${s.yards.map((y,yidx) => `<div class="yard-item ${yidx===0?'':'is-collapsed'}">
+            <div class="yard-card-head">
+              <div class="yard-card-title">
+                <span class="yard-card-title-text">ヤード${yidx+1}</span>
+              </div>
+              <div class="yard-card-actions">
+                <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYard('${s.id}','${y.id}')">&times;</button>
+                <button class="btn yard-toggle" type="button" onclick="toggleYardCard(this)">▾</button>
+              </div>
+            </div>
+            <div class="yard-card-body">
+              <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
+              <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
+            </div>
           </div>`).join('')}
         </div>
       </div>
     </div>
   `).join('');
 }
+
+function toggleYardCard(btn){
+  if(window.innerWidth > 760) return;
+  const item = btn.closest('.yard-item');
+  if(!item) return;
+  item.classList.toggle('is-collapsed');
+  btn.textContent = item.classList.contains('is-collapsed') ? '▸' : '▾';
+}
+
+function syncYardCardTitle(input){ return; }
 
 function renderOceanFreight(){
   const body = document.getElementById('oceanFreightBody');
@@ -1053,13 +1163,17 @@ function fetchFx(){
   const mockMid = 159.20;
   const adjusted = mockMid - 0.5;
   state.basic.fxRate = adjusted.toFixed(2);
+  clearValidationErrors();
   renderBasics();
   recalcAll();
+  const fxEl = document.getElementById('fxRate');
+  if(fxEl) fxEl.classList.remove('input-error');
   toast('為替を取得しました');
 }
 
 function addQuoteLine(){
-  state.quoteLines.push(createQuoteLine(state.calcMode==='cy' ? '店頭' : 'CY渡し'));
+  clearValidationErrors();
+  state.quoteLines.push(createQuoteLine(''));
   renderAll();
 }
 function removeQuoteLine(id){
@@ -1072,7 +1186,12 @@ function updateQuoteLine(id,key,val){
   state.quoteLines = state.quoteLines.map(line => {
     if(line.id !== id) return line;
     const next = {...line, [key]:val};
-    if(key==='product') next.quantity = PRODUCT_DEFAULT_LOAD[val] || next.quantity;
+    if(key === 'product'){
+      next.quantity = val ? fmt(n(PRODUCT_DEFAULT_LOAD[val]),1) : '';
+    }
+    if(key === 'quoteCondition' && val !== '店頭'){
+      next.yardName = '';
+    }
     return next;
   });
   renderAll();
@@ -1138,33 +1257,133 @@ function resetForm(){
   toast('入力内容をリセットしました');
 }
 
+function isBlank(value){ return String(value ?? '').trim() === ''; }
+function validateSupplierMasters(){
+  for(const s of state.suppliers){
+    if(isBlank(s.shortName) || isBlank(s.formalName) || isBlank(s.contact) || isBlank(s.phone)){
+      return '仕入先マスタは全項目入力必須です';
+    }
+    if(!Array.isArray(s.yards) || !s.yards.length) return '仕入先マスタはヤードを1件以上登録してください';
+    for(const y of s.yards){
+      if(isBlank(y.name) || isBlank(y.drayage)) return '仕入先マスタはヤード名・ドレー運賃を含め全項目入力必須です';
+    }
+  }
+  return '';
+}
+function validateOceanFreightMasters(){
+  for(const r of state.oceanFreight){
+    if(isBlank(r.loadingPort) || isBlank(r.dischargePort) || isBlank(r.ofValue) || isBlank(r.ofCurrency) || isBlank(r.carrier)){
+      return '海上運賃マスタは積港・揚港・海上運賃・通貨・船会社名が入力必須です';
+    }
+  }
+  return '';
+}
 function saveMasters(){
+  const supplierError = validateSupplierMasters();
+  if(supplierError) return toast(supplierError);
+  const oceanError = validateOceanFreightMasters();
+  if(oceanError) return toast(oceanError);
   renderAll();
   persistMasters();
   toast('マスタを保存しました');
 }
+function saveSupplierMasters(){
+  const error = validateSupplierMasters();
+  if(error) return toast(error);
+  renderAll();
+  persistMasters();
+  toast('仕入先マスタを保存しました');
+}
+function saveOceanFreightMasters(){
+  const error = validateOceanFreightMasters();
+  if(error) return toast(error);
+  renderAll();
+  persistMasters();
+  toast('海上運賃マスタを保存しました');
+}
+function validateIssueQuote(){
+  clearValidationErrors();
+  const basicRequired = [
+    ['見積先', state.basic.supplierShortName, 'supplierShortName'],
+    ['販売条件', state.basic.salesCondition, 'salesCondition'],
+    ['販売単価', state.basic.sellingPrice, 'sellingPrice'],
+    ['船積みロット', state.basic.shipmentLot, 'shipmentLot'],
+    ['決済条件', state.basic.paymentTerm, 'paymentTerm'],
+    ['積港', state.basic.loadingPort, 'loadingPort'],
+    ['揚港', state.basic.dischargePort, 'dischargePort'],
+    ['為替', state.basic.fxRate, 'fxRate']
+  ];
+  for(const [label,val,id] of basicRequired){
+    if(isBlank(val)){
+      const el = document.getElementById(id);
+      markAndScrollInvalid(el);
+      return `見積書発行前に${label}を入力してください`;
+    }
+  }
+  if(!state.quoteLines.length) return '見積条件を1行以上入力してください';
+  const body = document.getElementById('quoteTableBody');
+  for(let i=0;i<state.quoteLines.length;i++){
+    const line = state.quoteLines[i];
+    const row = body?.querySelector(`tr[data-line-id="${line.id}"]`);
+    const required = [
+      ['商品', line.product, 'product'],
+      ['見積条件', line.quoteCondition, 'quoteCondition'],
+      ['積載', line.quantity, 'quantity']
+    ];
+    if(line.quoteCondition === '店頭'){
+      required.splice(1, 0, ['ヤード名', line.yardName, 'yardName']);
+    }
+    for(const [label,val,field] of required){
+      if(isBlank(val)){
+        const el = row?.querySelector(`[data-field="${field}"]`);
+        markAndScrollInvalid(el);
+        return `見積条件${i+1}行目の${label}を入力してください`;
+      }
+    }
+  }
+  return '';
+}
+function issueQuote(){
+  state.bottomNote = document.getElementById('bottomNote').value;
+  const error = validateIssueQuote();
+  if(error) return toast(error);
+  toast('見積書発行は準備中です');
+}
 
 function addSupplier(){
-  state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', yards:[{id:uid(), name:'', drayage:0}]});
+  state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', yards:[{id:uid(), name:'', drayage:''}]});
   renderAll();
 }
 function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); renderAll(); }
 function updateSupplier(id,key,val){ state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:val} : s); }
-function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:[...s.yards,{id:uid(),name:'',drayage:0}]} : s); renderAll(); }
+function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:[...s.yards,{id:uid(),name:'',drayage:''}]} : s); renderAll(); }
 function updateYard(sid,yid,key,val){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
-function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:0, ofCurrency:'USD', ebs:0, carrier:'', note:''}); renderAll(); }
+function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); renderAll(); }
 function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeOceanFreight(id){ state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); renderAll(); }
+
+
+function syncHeaderOffset(){
+  const header = document.querySelector('.header');
+  const wrap = document.querySelector('.wrap');
+  if(!header || !wrap) return;
+  const offset = Math.ceil(header.getBoundingClientRect().height) + 12;
+  document.body.style.paddingTop = offset + 'px';
+  wrap.style.paddingTop = '12px';
+}
+window.addEventListener('resize', syncHeaderOffset);
 
 window.addEventListener('click', e => {
   if(e.target.id === 'savedModal') closeSavedModal();
 });
 document.getElementById('bottomNote').addEventListener('input', e => { state.bottomNote = e.target.value; e.target.classList.toggle('blank', !e.target.value.trim()); });
 
+syncHeaderOffset();
 renderAll();
 setCalcMode('overseas');
+syncHeaderOffset();
 </script>
 </body>
 </html>
