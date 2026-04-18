@@ -461,12 +461,34 @@
       .section-desc,.mini-title,.summary-label,th{font-size:13px !important}
       .mini-value{font-size:16px !important}
       .saved-body{padding:16px 14px 16px !important}
-      .master-ocean-section .table-actions .btn:first-child{min-width:112px !important;padding:8px 10px !important;font-size:15px !important}
-      .master-ocean-section .table-actions .btn:last-child{min-width:72px !important;padding:8px 10px !important;font-size:15px !important}
+      .master-ocean-section .section-header{padding-right:114px !important}
+      .master-ocean-section .section-title{font-size:17px !important;line-height:1.15 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}
+      .master-ocean-section .table-actions{top:2px !important;right:0 !important;gap:6px !important}
+      .master-ocean-section .table-actions .btn:first-child{min-width:82px !important;padding:6px 8px !important;font-size:12px !important;line-height:1.1 !important}
+      .master-ocean-section .table-actions .btn:last-child{min-width:54px !important;padding:6px 8px !important;font-size:12px !important;line-height:1.1 !important}
+      #masterTab > .section:first-child .table-actions .btn:first-child{min-width:78px !important;padding:6px 8px !important;font-size:12px !important;line-height:1.1 !important}
+      #masterTab > .section:first-child .table-actions .btn:last-child{min-width:54px !important;padding:6px 8px !important;font-size:12px !important;line-height:1.1 !important}
     }
 
 
-</style>
+
+    /* v29 fixes */
+    .section-title-wrap .section-desc:empty{display:none !important}
+    .estimate-section{background:linear-gradient(180deg,#f9fbff 0%,#f4f8ff 100%) !important;border:1px solid #d9e7fb !important;box-shadow:0 14px 34px rgba(30,64,175,.08) !important}
+    .estimate-section .section-header{margin-bottom:10px !important;padding-bottom:12px !important;border-bottom:1px solid #d8e5f8 !important}
+    .estimate-section .section-title{color:#1e3a8a !important;letter-spacing:.02em}
+    .estimate-section .scroll-x{margin-top:2px}
+    .estimate-section .note{margin-top:12px;padding:14px 16px;border-radius:16px;background:#ffffff;border:1px solid #dbe7f7}
+    .estimate-section .bottom-note{min-height:88px;background:#fbfdff}
+    .quote-footer-actions{margin-top:10px !important}
+    @media (max-width:760px){
+      .estimate-section{padding:14px !important;border-radius:18px !important}
+      .estimate-section .section-header{margin-bottom:8px !important;padding-bottom:10px !important}
+      .estimate-section .note{margin-top:10px;padding:12px !important;border-radius:14px !important}
+      .estimate-section .bottom-note{min-height:74px}
+    }
+
+  </style>
 </head>
 <body>
   <div id="toast" class="toast"></div>
@@ -521,7 +543,7 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title">基本条件</div>
-            <div class="section-desc">海外売価逆算とCY価格逆算を切り替えて見積価格を自動計算します。</div>
+            
           </div>
           <div class="mode-switch">
             <button id="modeOverseas" class="btn active" onclick="setCalcMode('overseas')">海外売価逆算</button>
@@ -640,7 +662,7 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">国内輸送コスト</div>
-            <div class="section-desc" id="domesticDesc">店頭条件計算時にドレー費を参照</div>
+            
           </div>
           <div id="cyBaseBadge" class="calc-badge right-top-badge overseas-only">見積条件　CY価格 0.00円/kg ベース</div>
         </div>
@@ -666,7 +688,7 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">見積条件</div>
-            <div class="section-desc">見積書に記載する見積計算欄</div>
+            
           </div>
           <div class="table-actions">
             <button class="btn add-row-btn" onclick="addQuoteLine()">見積ヤード追加</button>
@@ -722,7 +744,7 @@
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">海上運賃マスタ</div>
           </div>
-          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 18px;min-width:184px" onclick="addOceanFreight()">海上運賃追加</button><button class="btn blue" onclick="saveOceanFreightMasters()">保存</button></div>
+          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 18px;min-width:184px" onclick="addOceanFreight()">運賃追加</button><button class="btn blue" onclick="saveOceanFreightMasters()">保存</button></div>
         </div>
         <div class="scroll-x">
           <table style="min-width:1280px">
@@ -1180,7 +1202,7 @@ function renderAll(){
 
   const cy = currentCyBase();
   document.getElementById('cyBaseBadge').textContent = `見積条件　CY価格 ${cy ? fmt(cy.cyJpyKg,2) : '0.00'}円/kg ベース`;
-  document.getElementById('domesticDesc').textContent = state.calcMode==='cy' ? 'CY価格逆算の計算条件' : '店頭条件計算時にドレー費を参照';
+  const domesticDescEl = document.getElementById('domesticDesc'); if(domesticDescEl){ domesticDescEl.textContent = state.calcMode==='cy' ? 'CY価格逆算の計算条件' : '店頭条件計算時にドレー費を参照'; }
 }
 
 function recalcAll(){
