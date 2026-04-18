@@ -126,11 +126,25 @@
     .currency-master-select{min-width:110px;width:110px}
     .icon-only{width:42px;min-width:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:900}
 
-    .saved-modal{position:relative;max-width:640px}
-    .saved-header{border-bottom:none;padding-bottom:0;margin-bottom:6px}
+    .saved-modal{position:relative;max-width:640px;border:1px solid #cfe0fb;overflow:hidden;padding:0 !important;border-radius:22px !important}
+    .saved-header{border-bottom:none;padding:18px 20px 16px;margin-bottom:0;background:linear-gradient(180deg,#1f56b3 0%,#1d4ed8 100%);color:#fff}
+    .saved-header .section-title,.saved-header .section-desc{color:#fff !important}
+    .saved-body{padding:18px 20px 20px;background:#f8fbff}
     .saved-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
-    .modal-close-x{position:absolute;right:14px;top:12px;border:none;background:transparent;color:#475569;font-size:28px;line-height:1;cursor:pointer;padding:4px 10px}
-    .modal-close-x:hover{color:#0f172a}
+    .modal-close-x{position:absolute;right:12px;top:10px;border:none;background:transparent;color:#fff;font-size:28px;line-height:1;cursor:pointer;padding:4px 10px;z-index:2}
+    .modal-close-x:hover{color:#dbeafe}
+    .saved-header{padding-right:64px}
+    .saved-header > div{min-width:0;max-width:100%}
+    .saved-header .section-title{display:block;max-width:100%;padding-right:8px;font-size:clamp(20px,2.1vw,26px);line-height:1.2;word-break:break-word;overflow-wrap:anywhere;white-space:normal}
+    .saved-header .section-desc{display:block;max-width:100%;padding-right:8px;line-height:1.45;word-break:break-word;overflow-wrap:anywhere;white-space:normal}
+    @media (max-width:760px){
+      .saved-modal{max-width:calc(100vw - 16px) !important;border-radius:18px !important}
+      .saved-header{padding:14px 52px 12px 14px !important}
+      .saved-header .section-title{font-size:16px !important;line-height:1.25 !important;margin-right:0 !important}
+      .saved-header .section-desc{font-size:12px !important;line-height:1.4 !important;margin-top:4px !important}
+      .modal-close-x{top:8px !important;right:8px !important;font-size:24px !important;padding:4px 8px !important}
+    }
+
     .section-header{padding:0 0 10px;border-bottom:1px solid #e3ebf7}
     .section-title-wrap{background:transparent;padding:0;border-radius:0;border:none}
     .header-actions .btn{background:#1f56b3;color:#fff;min-width:128px;font-weight:500;border:1px solid #9fd9ff;box-shadow:none}
@@ -395,16 +409,62 @@
     .estimate-section .table-actions{margin-left:auto}
     .estimate-section .add-row-btn{font-size:16px !important;padding:9px 13px !important;min-width:auto !important}
     .master-yard-add-btn{font-size:14px !important;padding:9px 13px !important;min-width:auto !important}
-    #supplierMaster .yard-card-title{gap:0 !important}
-    #supplierMaster .yard-card-title span:first-child{display:none !important}
+    #supplierMaster .yard-card-title{gap:8px !important;align-items:center !important}
+    #supplierMaster .yard-card-title .yard-card-index{display:inline-flex !important;align-items:center;justify-content:center;min-width:72px;padding:4px 10px;border-radius:999px;background:#dbeafe;color:#1e3a8a;font-size:13px;font-weight:800;line-height:1.2}
+    #supplierMaster .yard-card-title .yard-card-title-text{display:inline-block !important;max-width:100%;font-weight:700;color:#3b567e}
+    #supplierMaster .yard-card-body input{ text-align:center; }
     @media (max-width:760px){
       .estimate-section .section-header{padding-right:132px}
       .estimate-section .table-actions{position:absolute;top:0;right:0;width:auto !important;margin:0}
       .estimate-section .add-row-btn{font-size:16px !important;padding:8px 10px !important;border-radius:12px}
       #supplierMaster .yard-card-head{align-items:flex-start !important}
       #supplierMaster .yard-card-actions{position:absolute;top:12px;right:12px}
-      #supplierMaster .yard-card-title{padding-right:74px}
+      #supplierMaster .yard-card-title{padding-right:74px;display:flex;align-items:center;flex-wrap:nowrap;min-width:0}
+      #supplierMaster .yard-card-title .yard-card-index{min-width:66px;font-size:12px;padding:4px 8px}
+      #supplierMaster .yard-card-title .yard-card-title-text{font-size:14px}
     }
+
+    /* v25 fixes */
+    .master-ocean-section .section-header{position:relative}
+    @media (max-width:760px){
+      #savedModal{align-items:flex-start !important;padding:12px 8px 8px !important;overflow-y:auto !important}
+      .saved-modal{margin-top:10px !important}
+      .saved-header{padding:16px 48px 12px 14px !important}
+      .saved-header .section-title{font-size:15px !important;line-height:1.3 !important;display:block !important;padding-top:0 !important}
+      .saved-header .section-desc{font-size:11px !important;line-height:1.35 !important;margin-top:4px !important}
+      .modal-close-x{top:10px !important;right:8px !important;font-size:22px !important}
+      .master-ocean-section .section-header{padding-right:128px !important}
+      .master-ocean-section .table-actions{position:absolute !important;top:0 !important;right:0 !important;margin:0 !important;width:auto !important}
+      .master-ocean-section .table-actions .btn:first-child{min-width:116px !important;padding:8px 12px !important;font-size:16px !important}
+    }
+
+
+    /* v27 final fixes */
+    .saved-modal{width:min(720px,92vw) !important;max-width:720px !important;margin:28px auto !important}
+    .saved-header{padding:18px 72px 16px 22px !important}
+    .saved-header .section-title{padding-right:18px !important;font-size:clamp(22px,2vw,28px) !important;line-height:1.22 !important}
+    .saved-header .section-desc{padding-right:18px !important;line-height:1.5 !important}
+    .saved-body{padding:20px 22px 22px !important}
+    .saved-body .field label{margin-bottom:10px}
+    .master-ocean-section .section-header{align-items:flex-start !important;gap:14px !important}
+    .master-ocean-section .section-title-wrap{min-width:0}
+    .master-ocean-section .table-actions{margin-left:auto;display:flex;justify-content:flex-end;align-items:flex-start;gap:10px;flex-wrap:nowrap}
+    .master-ocean-section .table-actions .btn:first-child{min-width:150px !important;padding:12px 16px !important;white-space:nowrap}
+    .master-ocean-section .table-actions .btn:last-child{min-width:90px;white-space:nowrap}
+
+    @media (max-width:760px){
+      body{font-size:16.5px !important}
+      input,select,textarea{font-size:16px !important;padding:12px 13px !important}
+      .btn,.tab{font-size:15px !important}
+      .field label{font-size:14px !important}
+      .section-title{font-size:21px !important}
+      .section-desc,.mini-title,.summary-label,th{font-size:13px !important}
+      .mini-value{font-size:16px !important}
+      .saved-body{padding:16px 14px 16px !important}
+      .master-ocean-section .table-actions .btn:first-child{min-width:112px !important;padding:8px 10px !important;font-size:15px !important}
+      .master-ocean-section .table-actions .btn:last-child{min-width:72px !important;padding:8px 10px !important;font-size:15px !important}
+    }
+
 
 </style>
 </head>
@@ -415,19 +475,21 @@
 <div class="modal-bg" id="savedModal">
     <div class="modal saved-modal">
       <button class="modal-close-x" type="button" onclick="closeSavedModal()">×</button>
-      <div class="section-header saved-header" style="margin-bottom:10px">
+      <div class="section-header saved-header">
         <div>
-          <div class="section-title" style="font-size:22px">保存データ呼出</div>
+          <div class="section-title">保存データ呼出</div>
           <div class="section-desc">保存済み見積データを選択して呼出または削除します。</div>
         </div>
       </div>
-      <div class="field">
-        <label>保存データ</label>
-        <select id="savedQuoteSelect"></select>
-      </div>
-      <div class="saved-actions">
-        <button class="btn blue" type="button" onclick="loadSelectedQuote()">呼出し</button>
-        <button class="btn delete-btn" type="button" onclick="deleteSelectedQuote()">削除</button>
+      <div class="saved-body">
+        <div class="field">
+          <label>保存データ</label>
+          <select id="savedQuoteSelect"></select>
+        </div>
+        <div class="saved-actions">
+          <button class="btn blue" type="button" onclick="loadSelectedQuote()">呼出し</button>
+          <button class="btn delete-btn" type="button" onclick="deleteSelectedQuote()">削除</button>
+        </div>
       </div>
     </div>
   </div>
@@ -655,12 +717,12 @@
         <div id="supplierMaster"></div>
       </div>
 
-      <div class="section">
+      <div class="section master-ocean-section">
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">海上運賃マスタ</div>
           </div>
-          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 22px;min-width:208px" onclick="addOceanFreight()">海上運賃登録追加</button><button class="btn blue" onclick="saveOceanFreightMasters()">保存</button></div>
+          <div class="table-actions"><button class="btn blue" style="font-size:17px;padding:14px 18px;min-width:184px" onclick="addOceanFreight()">海上運賃追加</button><button class="btn blue" onclick="saveOceanFreightMasters()">保存</button></div>
         </div>
         <div class="scroll-x">
           <table style="min-width:1280px">
@@ -1037,7 +1099,8 @@ function renderSupplierMaster(){
           ${s.yards.map((y,yidx) => `<div class="yard-item ${yidx===0?'':'is-collapsed'}">
             <div class="yard-card-head">
               <div class="yard-card-title">
-                <span class="yard-card-title-text">ヤード${yidx+1}</span>
+                <span class="yard-card-index">ヤード${yidx+1}</span>
+                <span class="yard-card-title-text">${escapeHtml(y.name || '（ヤード名未入力）')}</span>
               </div>
               <div class="yard-card-actions">
                 <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYard('${s.id}','${y.id}')">&times;</button>
