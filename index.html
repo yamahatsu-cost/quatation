@@ -267,7 +267,7 @@
     .quote-table th:nth-child(7), .quote-table td:nth-child(7){width:6%}
     .carrier-master-select{min-width:136px;width:136px}
     .currency-master-cell{min-width:86px}
-    .master-money{text-align:right;padding-right:1em}
+    .master-money{text-align:right !important;padding-right:1em !important;}
 
     @media (max-width:760px){
       .wrap{padding:72px 12px 12px}
@@ -314,17 +314,19 @@
     .freight-inline{grid-template-columns:minmax(0,1fr) 112px !important;}
     .currency-select{min-width:112px !important;width:112px !important;}
     .lot-cost-input{ text-align:right !important; padding-right:1em !important; }
-    .fx-action{padding-left:16px !important;padding-right:16px !important;}
+    .fx-action{padding-left:16px !important;padding-right:16px !important;font-size:17px !important;}
 
     .quote-table{table-layout:fixed; min-width:100%;}
     .quote-table th:nth-child(1), .quote-table td:nth-child(1){width:15%;}
     .quote-table th:nth-child(2), .quote-table td:nth-child(2){width:14%;}
     .quote-table th:nth-child(3), .quote-table td:nth-child(3){width:15%;}
-    .quote-table th:nth-child(4), .quote-table td:nth-child(4){width:11%;}
+    .quote-table th:nth-child(4), .quote-table td:nth-child(4){width:12%;}
     .quote-table th:nth-child(5), .quote-table td:nth-child(5){width:13%;}
-    .quote-table th:nth-child(6), .quote-table td:nth-child(6){width:28%;}
-    .quote-table th:nth-child(7), .quote-table td:nth-child(7){width:4%;}
+    .quote-table th:nth-child(6), .quote-table td:nth-child(6){width:26%;}
+    .quote-table th:nth-child(7), .quote-table td:nth-child(7){width:5%;}
     .quote-table select,.quote-table input{width:100%;min-width:0;}
+    .quote-table td:last-child{text-align:center;padding-left:6px;padding-right:6px;}
+    .quote-table .delete-btn.icon-only{margin:0 auto;display:inline-flex;align-items:center;justify-content:center;}
 
     @media (max-width:760px){
       .wrap{padding:126px 12px 12px !important;}
@@ -332,6 +334,21 @@
       .freight-inline{grid-template-columns:minmax(0,1fr) 104px !important;}
       .currency-select{min-width:104px !important;width:104px !important;}
       .quote-table{min-width:1180px;}
+    }
+
+    /* v13 mobile fixes */
+    .header-actions .btn{white-space:nowrap;}
+    .tabs .tab{display:flex;align-items:center;justify-content:center;}
+    @media (max-width:760px){
+      .header-actions .btn{font-size:13px !important;padding:10px 6px !important;line-height:1.15;white-space:nowrap;}
+      .tabs{margin-top:14px !important;}
+      .tabs .tab{font-size:16px !important;padding:14px 10px !important;min-height:56px;}
+      .wrap{padding:222px 12px 12px !important;}
+      .export-cost-section .export-cost-grid{display:grid !important;grid-template-columns:1fr !important;}
+      .export-cost-section .export-cost-grid .field{grid-column:1 / -1 !important;}
+      .export-cost-section .freight-inline{grid-template-columns:minmax(0,1fr) 104px !important;}
+      .export-cost-section .currency-select{min-width:104px !important;width:104px !important;}
+      .delete-btn.icon-only{font-size:22px !important;font-weight:900 !important;line-height:1 !important;}
     }
 
   </style>
@@ -532,7 +549,7 @@
         <div class="section-header">
           <div class="section-title-wrap">
             <div class="section-title" style="font-size:20px">見積条件</div>
-            <div class="section-desc">行ごとに商品・ヤード・見積条件・数量から価格を自動計算します。</div>
+            <div class="section-desc">見積書に記載する見積計算欄</div>
           </div>
           <div class="table-actions">
             <button class="btn add-row-btn" onclick="addQuoteLine()">＋ 行追加</button>
@@ -839,8 +856,8 @@ function renderDrayageSummaryCards(){
     .map((line, idx) => ({line, idx, dray: drayagePerKg(line.yardName, line.quantity)}))
     .filter(item => item.line.quoteCondition === '店頭' && item.line.yardName);
   if(!storefrontLines.length) return '';
-  const details = storefrontLines.map(item => `${escapeHtml(item.line.product || `L${item.idx + 1}`)}　ヤード：${escapeHtml(item.line.yardName)}　単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
-  return `<div class="summary-card" style="grid-column: span 2;"><div class="summary-label">ドレー費kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
+  const details = storefrontLines.map(item => `${escapeHtml(item.line.product || `L${item.idx + 1}`)} ヤード：${escapeHtml(item.line.yardName)} ドレー kg単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
+  return `<div class="summary-card" style="grid-column: span 2;"><div class="summary-label">ドレー費 kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
 }
 
 function linePrice(line){
@@ -879,7 +896,7 @@ function renderQuoteTable(){
       <td><input value="${price}" readonly style="text-align:center;font-weight:700" /></td>
       <td><input class="quote-qty" value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
       <td><input value="${escapeHtml(line.note)}" class="${!line.note?'blank':''}" placeholder="例）ベトナム向け" oninput="updateQuoteLine('${line.id}','note',this.value)" /></td>
-      <td>${idx===0 ? '' : `<button class="btn small delete-btn icon-only" title="削除" onclick="removeQuoteLine('${line.id}')">&#128465;</button>`}</td>
+      <td>${idx===0 ? '' : `<button class="btn small delete-btn icon-only" title="削除" onclick="removeQuoteLine('${line.id}')">&times;</button>`}</td>
     </tr>`;
   }).join('');
 }
@@ -900,7 +917,6 @@ function renderSummary(){
     box.innerHTML = `
       <div class="summary-card"><div class="summary-label">販売CY価格（円/kg）</div><div class="summary-value">${state.basic.sellingPrice || '-'}</div></div>
       <div class="summary-card"><div class="summary-label">当社口銭（円/kg）</div><div class="summary-value">${state.domesticCosts.marginJpyKg}</div></div>
-      <div class="summary-card" style="grid-column: span 2;"><div class="summary-label">店頭価格の考え方</div><div class="mini-value" style="font-size:14px;font-weight:600;line-height:1.8">販売単価CY価格から当社口銭を控除し、さらにヤードごとのドレー費を積載数量で割ってkg換算した単価を控除します。</div></div>
       ${renderDrayageSummaryCards()}
     `;
   }
@@ -912,7 +928,7 @@ function renderSupplierMaster(){
     <div class="master-block">
       <div class="master-head">
         <div class="master-head-title">仕入先設定</div>
-        <button class="btn small delete-btn icon-only" title="削除" onclick="removeSupplier('${s.id}')">&#128465;</button>
+        <button class="btn small delete-btn icon-only" title="削除" onclick="removeSupplier('${s.id}')">&times;</button>
       </div>
       <div class="master-subblock">
         <div class="subgrid">
@@ -931,7 +947,7 @@ function renderSupplierMaster(){
           ${s.yards.map(y => `<div class="yard-item">
             <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
             <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
-            <button class="btn small delete-btn icon-only" title="削除" onclick="removeYard('${s.id}','${y.id}')">&#128465;</button>
+            <button class="btn small delete-btn icon-only" title="削除" onclick="removeYard('${s.id}','${y.id}')">&times;</button>
           </div>`).join('')}
         </div>
       </div>
@@ -961,7 +977,7 @@ function renderOceanFreight(){
         </select>
       </td>
       <td><input value="${escapeHtml(r.note || '')}" placeholder="例）直行便優先" oninput="updateOceanFreight('${r.id}','note',this.value,this)" class="${!(r.note||'')?'blank':''}" /></td>
-      <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreight('${r.id}')">&#128465;</button></td>
+      <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreight('${r.id}')">&times;</button></td>
     </tr>
   `).join('');
 }
@@ -991,7 +1007,7 @@ function renderAll(){
 
   const cy = currentCyBase();
   document.getElementById('cyBaseBadge').textContent = `見積条件　CY価格 ${cy ? fmt(cy.cyJpyKg,2) : '0.00'}円/kg ベース`;
-  document.getElementById('domesticDesc').textContent = state.calcMode==='cy' ? 'CY価格逆算時の控除用コスト' : '店頭条件計算時にドレー費を参照';
+  document.getElementById('domesticDesc').textContent = state.calcMode==='cy' ? 'CY価格逆算の計算条件' : '店頭条件計算時にドレー費を参照';
 }
 
 function recalcAll(){
