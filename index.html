@@ -223,7 +223,8 @@
     select.blank{color:#9ca3af}
     select:not(.blank){background-color:#fff}
     .basic-section input,.basic-section select,.overseas-cost-section input{ text-align:center; }
-    .export-cost-section .money-input{ text-align:right; padding-right:1em; }
+    .export-cost-section input, .export-cost-section select{ text-align:center !important; }
+    .export-cost-section .money-input{ text-align:center !important; padding-right:14px; }
     .export-cost-section .currency-select{ text-align:center; padding-right:46px; }
     .fx-inline input{ text-align:center !important; }
     .freight-inline{display:grid;grid-template-columns:minmax(180px,1fr) 128px;gap:8px;align-items:center}
@@ -237,6 +238,100 @@
       .header{width:calc(100% - 24px)}
       .title{font-size:32px}
       input,select,textarea{font-size:17px}
+    }
+
+    /* v8 fixes */
+    .wrap{padding:62px 18px 18px}
+    .header{padding:10px 22px;border-radius:0 0 18px 18px}
+    .tabs{margin-top:6px}
+    .section{margin-top:12px}
+    .fx-inline{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;width:100%}
+    .fx-inline input{flex:1;min-width:0;text-align:center}
+    .fx-action{position:static;min-width:110px;height:50px;display:inline-flex;align-items:center;justify-content:center}
+    .export-cost-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .export-cost-grid .freight-field{grid-column:span 1}
+    .freight-inline{display:grid;grid-template-columns:minmax(220px,1fr) 110px;gap:8px;align-items:center}
+    .currency-select{min-width:110px;width:110px}
+    .ebs-field input{width:100%}
+    .delete-btn.icon-only{width:42px;min-width:42px;height:42px;font-size:18px}
+    .quote-qty{text-align:center !important}
+
+    .tabs .tab{font-size:19px;font-weight:700}
+    .quote-table{table-layout:fixed;width:100%}
+    .quote-table th:nth-child(1), .quote-table td:nth-child(1){width:12%}
+    .quote-table th:nth-child(2), .quote-table td:nth-child(2){width:14%}
+    .quote-table th:nth-child(3), .quote-table td:nth-child(3){width:9%}
+    .quote-table th:nth-child(4), .quote-table td:nth-child(4){width:12%}
+    .quote-table th:nth-child(5), .quote-table td:nth-child(5){width:13%}
+    .quote-table th:nth-child(6), .quote-table td:nth-child(6){width:34%}
+    .quote-table th:nth-child(7), .quote-table td:nth-child(7){width:6%}
+    .carrier-master-select{min-width:136px;width:136px}
+    .currency-master-cell{min-width:86px}
+    .master-money{text-align:right;padding-right:1em}
+
+    @media (max-width:760px){
+      .wrap{padding:72px 12px 12px}
+      .header{width:calc(100% - 24px)}
+      .export-cost-grid{grid-template-columns:1fr}
+      .freight-inline{grid-template-columns:minmax(0,1fr) 100px}
+      .fx-inline{display:grid;grid-template-columns:minmax(0,1fr) auto}
+    }
+
+
+    /* v9 fixes */
+    body{padding-top:0 !important;}
+    .summary-value{font-size:24px !important;}
+    .fx-action{background:linear-gradient(180deg,#2f6cf3 0%,#1d4ed8 100%) !important;color:#fff !important;border:1px solid #7fb3ff !important;}
+    .basic-section select,.overseas-cost-section select,.basic-section input,.overseas-cost-section input{ text-align:center; text-align-last:center; }
+    .export-cost-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important; align-items:end;}
+    .freight-field,.ebs-field{min-width:0;}
+    .freight-inline{grid-template-columns:minmax(0,1fr) 96px !important;}
+    .currency-select{min-width:96px !important;width:96px !important;}
+    .ebs-field input{min-width:0;}
+    .yard-item input:not(.blank){background:#fff !important;}
+    @media (max-width:760px){
+      .header-actions{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;}
+      .header-actions .btn{min-width:0 !important;width:100%;padding:11px 8px;font-size:15px;}
+      .mode-switch{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;}
+      .mode-switch .btn{min-width:0 !important;width:100%;padding:14px 10px !important;font-size:16px !important;}
+      .section-header{gap:10px;}
+      .summary-value{font-size:20px !important;}
+      .export-cost-grid{grid-template-columns:1fr !important;}
+      .freight-inline{grid-template-columns:minmax(0,1fr) 92px !important;}
+      .currency-select{min-width:92px !important;width:92px !important;}
+      .fx-inline{display:grid !important;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+      .fx-action{min-width:96px;height:52px;}
+    }
+
+    /* v10 fixes */
+    .wrap{padding:112px 18px 18px !important;}
+    .tabs{margin-top:14px !important;}
+    .header-top{align-items:flex-start;}
+    .header-actions{flex-shrink:0;}
+
+    .export-cost-grid{grid-template-columns:1fr 1.25fr 0.78fr !important;}
+    .insurance-field,.freight-field,.ebs-field{min-width:0;}
+    .freight-inline{grid-template-columns:minmax(0,1fr) 112px !important;}
+    .currency-select{min-width:112px !important;width:112px !important;}
+    .lot-cost-input{ text-align:right !important; padding-right:1em !important; }
+    .fx-action{padding-left:16px !important;padding-right:16px !important;}
+
+    .quote-table{table-layout:fixed; min-width:100%;}
+    .quote-table th:nth-child(1), .quote-table td:nth-child(1){width:15%;}
+    .quote-table th:nth-child(2), .quote-table td:nth-child(2){width:14%;}
+    .quote-table th:nth-child(3), .quote-table td:nth-child(3){width:15%;}
+    .quote-table th:nth-child(4), .quote-table td:nth-child(4){width:11%;}
+    .quote-table th:nth-child(5), .quote-table td:nth-child(5){width:13%;}
+    .quote-table th:nth-child(6), .quote-table td:nth-child(6){width:28%;}
+    .quote-table th:nth-child(7), .quote-table td:nth-child(7){width:4%;}
+    .quote-table select,.quote-table input{width:100%;min-width:0;}
+
+    @media (max-width:760px){
+      .wrap{padding:126px 12px 12px !important;}
+      .tabs{margin-top:12px !important;}
+      .freight-inline{grid-template-columns:minmax(0,1fr) 104px !important;}
+      .currency-select{min-width:104px !important;width:104px !important;}
+      .quote-table{min-width:1180px;}
     }
 
   </style>
@@ -333,7 +428,7 @@
             <label>為替</label>
             <div class="fx-inline">
               <input id="fxRate" placeholder="例）158.70" oninput="recalcAll()" />
-              <button class="btn outline small fx-action" type="button" onclick="fetchFx()"><span aria-hidden="true">🔄</span> 為替取得</button>
+              <button class="btn outline small fx-action" type="button" onclick="fetchFx()">為替取得</button>
             </div>
           </div>
         </div>
@@ -372,12 +467,12 @@
 
         <div class="section export-cost-section">
           <div class="section-header"><div><div class="section-title" style="font-size:20px">輸出コスト</div></div></div>
-          <div class="grid cols-3">
-            <div class="field cif-only">
+          <div class="grid cols-3 export-cost-grid">
+            <div class="field cif-only insurance-field">
               <label>海上保険（USD/ton）</label>
               <input id="insurance" class="money-input" readonly />
             </div>
-            <div class="field">
+            <div class="field freight-field">
               <label>海上運賃（/40F）</label>
               <div class="freight-inline">
                 <input id="ofValue" class="money-input" placeholder="例）400" oninput="recalcAll()" />
@@ -387,21 +482,21 @@
                 </select>
               </div>
             </div>
-            <div class="field">
+            <div class="field ebs-field">
               <label>EBS（㌦/40F）</label>
               <input id="ebs" class="money-input" oninput="recalcAll()" />
             </div>
             <div class="field">
               <label>DoFee（円/Lot）</label>
-              <input id="doFee" class="money-input" oninput="recalcAll()" />
+              <input id="doFee" class="money-input lot-cost-input" oninput="recalcAll()" />
             </div>
             <div class="field">
               <label>通関費（円/Lot）</label>
-              <input id="customsFee" class="money-input" oninput="recalcAll()" />
+              <input id="customsFee" class="money-input lot-cost-input" oninput="recalcAll()" />
             </div>
             <div class="field">
               <label>取扱費（円/Lot）</label>
-              <input id="handlingFee" class="money-input" oninput="recalcAll()" />
+              <input id="handlingFee" class="money-input lot-cost-input" oninput="recalcAll()" />
             </div>
           </div>
         </div>
@@ -444,14 +539,15 @@
           </div>
         </div>
         <div class="scroll-x">
-          <table>
+          <table class="quote-table">
+            <colgroup><col><col><col><col><col><col><col></colgroup>
             <thead>
               <tr>
                 <th>商品</th>
                 <th>ヤード名</th>
                 <th>見積条件</th>
                 <th>価格（円/kg）</th>
-                <th>数量・積載（ton/40F）</th>
+                <th>積載（ton/40F）</th>
                 <th>備考</th>
                 <th></th>
               </tr>
@@ -547,6 +643,10 @@ function n(v){ const cleaned = String(v ?? '').replace(/[^0-9.\-]/g,''); const x
 function fmt(v,d=2){ return Number.isFinite(v) ? v.toFixed(d) : ''; }
 function jp(v,d=0){ return Number.isFinite(Number(v)) ? new Intl.NumberFormat('ja-JP',{minimumFractionDigits:d, maximumFractionDigits:d}).format(Number(v)) : ''; }
 function formatMoneyDisplay(v,currency,d=0){ const num=n(v); if(!num && String(v ?? '').trim()==='') return ''; return currency==='USD' ? `$${jp(num,d)}` : `¥${jp(num,d)}`; }
+function parseNumericInput(v){ return String(v ?? '').replace(/[^0-9.\-]/g,''); }
+function formatYenDisplay(v){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `¥${jp(n(raw),0)}`; }
+function formatDollarDisplay(v){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `$${jp(n(raw),0)}`; }
+function formatOceanFreightDisplay(v,currency){ return currency==='JPY' ? formatYenDisplay(v) : formatDollarDisplay(v); }
 function syncMatchedOceanFreight(){ const matched = state.oceanFreight.find(x => x.loadingPort===state.basic.loadingPort && x.dischargePort===state.basic.dischargePort); if(matched){ state.exportCosts.ofValue = matched.ofValue; state.exportCosts.ofCurrency = matched.ofCurrency; state.exportCosts.ebs = matched.ebs; }}
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function loadLocal(k,fallback){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
@@ -739,8 +839,8 @@ function renderDrayageSummaryCards(){
     .map((line, idx) => ({line, idx, dray: drayagePerKg(line.yardName, line.quantity)}))
     .filter(item => item.line.quoteCondition === '店頭' && item.line.yardName);
   if(!storefrontLines.length) return '';
-  const details = storefrontLines.map(item => `L${item.idx + 1} ${escapeHtml(item.line.yardName)} ${fmt(item.dray,2)}円/kg`).join('<br>');
-  return `<div class="summary-card" style="grid-column: span 2;"><div class="summary-label">店頭ドレー費kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
+  const details = storefrontLines.map(item => `${escapeHtml(item.line.product || `L${item.idx + 1}`)}　ヤード：${escapeHtml(item.line.yardName)}　単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
+  return `<div class="summary-card" style="grid-column: span 2;"><div class="summary-label">ドレー費kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
 }
 
 function linePrice(line){
@@ -776,8 +876,8 @@ function renderQuoteTable(){
       <td><select onchange="updateQuoteLine('${line.id}','product',this.value)">${productOptions}</select></td>
       <td><select onchange="updateQuoteLine('${line.id}','yardName',this.value)">${yardOptions}</select></td>
       <td><select ${state.calcMode==='cy'?'disabled':''} onchange="updateQuoteLine('${line.id}','quoteCondition',this.value)">${conditionOptions}</select></td>
-      <td><input value="${price}" readonly style="text-align:right;font-weight:700" /></td>
-      <td><input value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
+      <td><input value="${price}" readonly style="text-align:center;font-weight:700" /></td>
+      <td><input class="quote-qty" value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
       <td><input value="${escapeHtml(line.note)}" class="${!line.note?'blank':''}" placeholder="例）ベトナム向け" oninput="updateQuoteLine('${line.id}','note',this.value)" /></td>
       <td>${idx===0 ? '' : `<button class="btn small delete-btn icon-only" title="削除" onclick="removeQuoteLine('${line.id}')">&#128465;</button>`}</td>
     </tr>`;
@@ -829,8 +929,8 @@ function renderSupplierMaster(){
       <div class="master-subblock">
         <div class="yard-grid">
           ${s.yards.map(y => `<div class="yard-item">
-            <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value)" class="${!y.name?'blank':''}" /></div>
-            <div class="field"><label>ドレー運賃（円/車）</label><input value="${escapeHtml(y.drayage)}" placeholder="例）45000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value)" class="${!(y.drayage||y.drayage===0)?'blank':''}" /></div>
+            <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
+            <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
             <button class="btn small delete-btn icon-only" title="削除" onclick="removeYard('${s.id}','${y.id}')">&#128465;</button>
           </div>`).join('')}
         </div>
@@ -846,16 +946,16 @@ function renderOceanFreight(){
     <tr>
       <td><input value="${escapeHtml(r.loadingPort)}" placeholder="例）TOKYO" oninput="updateOceanFreight('${r.id}','loadingPort',this.value)" class="${!r.loadingPort?'blank':''}" /></td>
       <td><input value="${escapeHtml(r.dischargePort)}" placeholder="例）TAICHUNG, TAIWAN" oninput="updateOceanFreight('${r.id}','dischargePort',this.value)" class="${!r.dischargePort?'blank':''}" /></td>
-      <td><input value="${escapeHtml(r.ofValue)}" placeholder="例）200" oninput="updateOceanFreight('${r.id}','ofValue',this.value)" class="${!r.ofValue?'blank':''} money-input" /></td>
-      <td>
-        <select onchange="updateOceanFreight('${r.id}','ofCurrency',this.value)" class="currency-master-select ${!r.ofCurrency?'blank':''}">
+      <td><input value="${formatOceanFreightDisplay(r.ofValue, r.ofCurrency)}" placeholder="例）$200 / ¥48,000" oninput="updateOceanFreight('${r.id}','ofValue',this.value)" class="${!r.ofValue?'blank':''} money-input master-money" /></td>
+      <td class="currency-master-cell">
+        <select onchange="updateOceanFreight('${r.id}','ofCurrency',this.value,this);renderOceanFreight()" class="currency-master-select ${!r.ofCurrency?'blank':''}">
           <option value="JPY" ${r.ofCurrency==='JPY'?'selected':''}>JPY</option>
           <option value="USD" ${r.ofCurrency==='USD'?'selected':''}>USD</option>
         </select>
       </td>
-      <td><input value="${escapeHtml(r.ebs)}" placeholder="例）100" oninput="updateOceanFreight('${r.id}','ebs',this.value)" class="${!r.ebs?'blank':''} money-input" /></td>
+      <td><input value="${formatDollarDisplay(r.ebs)}" placeholder="例）$100" oninput="updateOceanFreight('${r.id}','ebs',this.value)" class="${!r.ebs?'blank':''} money-input master-money" /></td>
       <td>
-        <select onchange="updateOceanFreight('${r.id}','carrier',this.value,this)" class="${!r.carrier?'blank':''}">
+        <select onchange="updateOceanFreight('${r.id}','carrier',this.value,this)" class="carrier-master-select ${!r.carrier?'blank':''}">
           <option value="">船会社選択</option>
           ${carriers.map(c=>`<option value="${c}" ${r.carrier===c?'selected':''}>${c}</option>`).join('')}
         </select>
@@ -974,7 +1074,7 @@ function saveQuote(){
   }));
   const idx = state.savedQuotes.findIndex(x => x.key === key);
   if(idx >= 0) state.savedQuotes[idx] = payload; else state.savedQuotes.unshift(payload);
-  persistMasters();
+  saveLocal(STORAGE_KEYS.quotes, state.savedQuotes);
   renderSavedList();
   toast('入力内容を保存しました');
 }
@@ -1035,11 +1135,11 @@ function addSupplier(){
 function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); renderAll(); }
 function updateSupplier(id,key,val){ state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:val} : s); }
 function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:[...s.yards,{id:uid(),name:'',drayage:0}]} : s); renderAll(); }
-function updateYard(sid,yid,key,val){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:val} : y)} : s); }
+function updateYard(sid,yid,key,val){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
 function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:0, ofCurrency:'USD', ebs:0, carrier:'', note:''}); renderAll(); }
-function updateOceanFreight(id,key,val,el){ state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:val} : r); if(el){ el.classList.toggle('blank', !String(val ?? '').trim()); } }
+function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeOceanFreight(id){ state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); renderAll(); }
 
 window.addEventListener('click', e => {
