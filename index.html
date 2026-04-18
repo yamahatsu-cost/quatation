@@ -26,7 +26,7 @@
     .header-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;max-width:1380px;margin:0 auto}
     .title-area{display:flex;gap:16px;align-items:center}
     .icon{width:46px;height:46px;border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}
-    .title{font-size:34px;font-weight:800;letter-spacing:.04em;line-height:1.15}
+    .title{font-size:30px;font-weight:800;letter-spacing:.04em;line-height:1.15}
     .subtitle{font-size:16px;color:#dbeafe;margin-top:6px}
     .header-actions{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
     .btn{border:none;background:#cfdcf6;color:#17326f;padding:12px 16px;border-radius:14px;font-weight:800;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.06);font-size:15px}
@@ -191,7 +191,7 @@
     }
     @media (max-width: 760px){
       .wrap{padding:12px}
-      .title{font-size:30px}
+      .title{font-size:27px}
       .grid.cols-4,.grid.cols-3,.grid.cols-2,.cards,.summary,.subgrid,.panel-row,.yard-grid{grid-template-columns:1fr}
       .header-actions,.tabs,.mode-switch,.table-actions{width:100%}
       .selling-price-inline{align-items:center}
@@ -205,7 +205,7 @@
     .wrap{max-width:1380px;margin:0 auto;padding:96px 18px 18px}
     .header{left:50%;right:auto;transform:translateX(-50%);width:min(calc(100% - 36px),1380px);padding:14px 22px}
     .header-top{max-width:none;width:100%}
-    .title{font-size:38px}
+    .title{font-size:34px}
     .subtitle{font-size:16px}
     .btn,.tab{font-size:17px}
     .btn{padding:12px 16px}
@@ -241,7 +241,7 @@
     .export-cost-section .money-input{ text-align:center !important; padding-right:14px; }
     .export-cost-section .currency-select{ text-align:center; padding-right:46px; }
     .fx-inline input{ text-align:center !important; }
-    .freight-inline{display:grid;grid-template-columns:minmax(180px,1fr) 128px;gap:8px;align-items:center}
+    .freight-inline{display:block}
     .currency-select{min-width:128px;width:128px}
     .currency-master-select{min-width:120px;width:120px}
     .bottom-note.blank{background:var(--placeholder)}
@@ -250,7 +250,7 @@
     @media (max-width:760px){
       .wrap{padding:108px 12px 12px}
       .header{width:calc(100% - 24px)}
-      .title{font-size:32px}
+      .title{font-size:29px}
       input,select,textarea{font-size:17px}
     }
 
@@ -264,9 +264,9 @@
     .fx-action{position:static;min-width:110px;height:50px;display:inline-flex;align-items:center;justify-content:center}
     .export-cost-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .export-cost-grid .freight-field{grid-column:span 1}
-    .freight-inline{display:grid;grid-template-columns:minmax(220px,1fr) 110px;gap:8px;align-items:center}
+    .freight-inline{display:block}
     .currency-select{min-width:110px;width:110px}
-    .ebs-field input{width:100%}
+    .ebs-field input{width:auto;max-width:100%;}
     .delete-btn.icon-only{width:42px;min-width:42px;height:42px;font-size:18px}
     .quote-qty{text-align:center !important}
 
@@ -287,7 +287,7 @@
       .wrap{padding:72px 12px 12px}
       .header{width:calc(100% - 24px)}
       .export-cost-grid{grid-template-columns:1fr}
-      .freight-inline{grid-template-columns:minmax(0,1fr) 100px}
+      .freight-inline{display:block !important;}
       .fx-inline{display:grid;grid-template-columns:minmax(0,1fr) auto}
     }
 
@@ -299,7 +299,7 @@
     .basic-section select,.overseas-cost-section select,.basic-section input,.overseas-cost-section input{ text-align:center; text-align-last:center; }
     .export-cost-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important; align-items:end;}
     .freight-field,.ebs-field{min-width:0;}
-    .freight-inline{grid-template-columns:minmax(0,1fr) 96px !important;}
+    .freight-inline{display:block !important;}
     .currency-select{min-width:96px !important;width:96px !important;}
     .ebs-field input{min-width:0;}
     .yard-item input:not(.blank){background:#fff !important;}
@@ -313,7 +313,7 @@
       .section-header{gap:10px;}
       .summary-value{font-size:20px !important;}
       .export-cost-grid{grid-template-columns:1fr !important;}
-      .freight-inline{grid-template-columns:minmax(0,1fr) 92px !important;}
+      .freight-inline{display:block !important;}
       .currency-select{min-width:92px !important;width:92px !important;}
       .fx-inline{display:grid !important;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
       .fx-action{min-width:96px;height:52px;}
@@ -327,7 +327,7 @@
 
     .export-cost-grid{grid-template-columns:1fr 1.25fr 0.78fr !important;}
     .insurance-field,.freight-field,.ebs-field{min-width:0;}
-    .freight-inline{grid-template-columns:minmax(0,1fr) 112px !important;}
+    .freight-inline{display:block !important;}
     .currency-select{min-width:112px !important;width:112px !important;}
     .lot-cost-input{ text-align:right !important; padding-right:1em !important; }
     .fx-action{padding-left:16px !important;padding-right:16px !important;font-size:17px !important;}
@@ -347,7 +347,7 @@
     @media (max-width:760px){
       .wrap{padding:126px 12px 12px !important;}
       .tabs{margin-top:12px !important;}
-      .freight-inline{grid-template-columns:minmax(0,1fr) 104px !important;}
+      .freight-inline{display:block !important;}
       .currency-select{min-width:104px !important;width:104px !important;}
       .quote-table{min-width:1180px;}
     }
@@ -362,7 +362,7 @@
       .wrap{padding:176px 12px 12px !important;}
       .export-cost-section .export-cost-grid{display:grid !important;grid-template-columns:1fr !important;}
       .export-cost-section .export-cost-grid .field{grid-column:1 / -1 !important;}
-      .export-cost-section .freight-inline{grid-template-columns:minmax(0,1fr) 104px !important;}
+      .export-cost-section .freight-inline{display:block !important;}
       .export-cost-section .currency-select{min-width:104px !important;width:104px !important;}
       .delete-btn.icon-only{font-size:22px !important;font-weight:900 !important;line-height:1 !important;}
       .add-row-btn{font-size:14px !important;min-width:auto !important;padding:12px 14px !important;}
@@ -498,7 +498,39 @@
       .estimate-section .bottom-note{min-height:74px}
     }
 
-  </style>
+  
+
+    /* v5 fixes */
+    .export-cost-grid > .field{min-width:0; width:100%;}
+    .export-cost-grid .freight-field,
+    .export-cost-grid .ebs-field{width:100%;}
+    .export-cost-grid .freight-inline,
+    .export-cost-grid .ebs-field input,
+    .export-cost-grid .lot-cost-input{display:block;width:100% !important;max-width:none !important;min-width:0;box-sizing:border-box;}
+    .bottom-note,
+    .bottom-note.blank,
+    .bottom-note:placeholder-shown{background:var(--placeholder) !important;}
+    .bottom-note:not(:placeholder-shown){background:#fff !important;}
+
+    /* v6 fixes */
+    .export-cost-section .export-cost-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+    .export-cost-section .export-cost-grid > .field{width:100% !important;min-width:0 !important;}
+    .export-cost-section .export-cost-grid > .field > input,
+    .export-cost-section .export-cost-grid > .field .freight-inline,
+    .export-cost-section .export-cost-grid > .field .freight-inline > input,
+    .export-cost-section .export-cost-grid > .field .lot-cost-input,
+    .export-cost-section .export-cost-grid > .field .money-input{
+      display:block;
+      width:100% !important;
+      max-width:none !important;
+      min-width:0 !important;
+      box-sizing:border-box !important;
+    }
+    @media (max-width:760px){
+      .export-cost-section .export-cost-grid{grid-template-columns:1fr !important;}
+    }
+
+</style>
 </head>
 <body>
   <div id="toast" class="toast"></div>
@@ -605,26 +637,32 @@
           <div class="section-header"><div><div class="section-title" style="font-size:20px">海外コスト</div></div></div>
           <div class="grid cols-1">
             <div class="field">
-              <label>LC(銀行)手数料（USD/ton）</label>
-              <input id="lcFee" oninput="recalcAll()" />
-            </div>
-            <div class="field">
-              <label>海外COM（USD/ton）</label>
+              <label>LC手数料</label>
               <div class="spinbox">
-                <input id="overseasCom" oninput="recalcAll()" />
+                <input id="lcFee" oninput="recalcAll()" />
                 <div class="spin-buttons">
-                  <button class="spin-btn" type="button" onclick="spinOverseasCom(0.25)">＋</button>
-                  <button class="spin-btn" type="button" onclick="spinOverseasCom(-0.25)">－</button>
+                  <button class="spin-btn" type="button" onclick="spinLcFee(0.25)">＋</button>
+                  <button class="spin-btn" type="button" onclick="spinLcFee(-0.25)">－</button>
                 </div>
               </div>
             </div>
             <div class="field">
-              <label>当社口銭（USD/ton）</label>
+              <label>海外COM</label>
+              <div class="spinbox">
+                <input id="overseasCom" oninput="recalcAll()" />
+                <div class="spin-buttons">
+                  <button class="spin-btn" type="button" onclick="spinOverseasCom(1.5)">＋</button>
+                  <button class="spin-btn" type="button" onclick="spinOverseasCom(-1.5)">－</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label>当社口銭</label>
               <div class="spinbox">
                 <input id="marginUsd" oninput="recalcAll()" />
                 <div class="spin-buttons">
-                  <button class="spin-btn" type="button" onclick="spinMargin(0.25)">＋</button>
-                  <button class="spin-btn" type="button" onclick="spinMargin(-0.25)">－</button>
+                  <button class="spin-btn" type="button" onclick="spinMargin(0.5)">＋</button>
+                  <button class="spin-btn" type="button" onclick="spinMargin(-0.5)">－</button>
                 </div>
               </div>
             </div>
@@ -642,10 +680,7 @@
               <label>海上運賃（/40F）</label>
               <div class="freight-inline">
                 <input id="ofValue" class="money-input" placeholder="例）400" oninput="recalcAll()" />
-                <select id="ofCurrency" class="currency-select" onchange="recalcAll()">
-                  <option value="USD">USD</option>
-                  <option value="JPY">円</option>
-                </select>
+                <input id="ofCurrency" type="hidden" value="USD" />
               </div>
             </div>
             <div class="field ebs-field">
@@ -674,7 +709,7 @@
             <div class="section-title" style="font-size:20px">国内輸送コスト</div>
             
           </div>
-          <div id="cyBaseBadge" class="calc-badge right-top-badge overseas-only">見積条件　CY価格 0.00円/kg ベース</div>
+          <div id="cyBaseBadge" class="calc-badge right-top-badge overseas-only">見積価格　CY価格 0.00円/kg ベース</div>
         </div>
         <div class="grid cols-2">
           <div class="field cy-only hidden">
@@ -724,7 +759,7 @@
         <div class="note">
           <div class="field">
             <label>下部備考</label>
-            <textarea id="bottomNote" class="bottom-note" rows="4" placeholder="例）月末締翌月15日支払い、4月中出荷条件。出荷単位は100tから。"></textarea>
+            <textarea id="bottomNote" class="bottom-note blank" rows="4" placeholder="例）月末締翌月15日支払い、4月中出荷条件。出荷単位は100tから。" oninput="state.bottomNote=this.value;this.classList.toggle('blank',!this.value.trim())"></textarea>
           </div>
           <div class="quote-footer-actions">
             <button class="btn issue-quote-btn" type="button" onclick="issueQuote()">見積書発行</button>
@@ -806,13 +841,67 @@ function createDefaultQuoteLines(condition='CY渡し'){
 }
 
 function uid(){ return Math.random().toString(36).slice(2) + Date.now().toString(36); }
-function n(v){ const cleaned = String(v ?? '').replace(/[^0-9.\-]/g,''); const x = Number(cleaned); return Number.isFinite(x) ? x : 0; }
+function toHalfWidthNumericText(v){
+  return String(v ?? '')
+    .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+    .replace(/．|。/g,'.')
+    .replace(/，|、/g,',')
+    .replace(/－|ー|―|‐/g,'-')
+    .replace(/／/g,'/');
+}
+function normalizeNumericLikeValue(v){ return toHalfWidthNumericText(v).replace(/,/g,''); }
+function n(v){ const cleaned = normalizeNumericLikeValue(v).replace(/[^0-9.\-]/g,''); const x = Number(cleaned); return Number.isFinite(x) ? x : 0; }
 function fmt(v,d=2){ return Number.isFinite(v) ? v.toFixed(d) : ''; }
+function formatQuotePriceDisplay(v){ const num=n(v); return Number.isFinite(num) ? (Math.round(num*10)/10).toFixed(2) : ''; }
 function jp(v,d=0){ return Number.isFinite(Number(v)) ? new Intl.NumberFormat('ja-JP',{minimumFractionDigits:d, maximumFractionDigits:d}).format(Number(v)) : ''; }
 function formatMoneyDisplay(v,currency,d=0){ const num=n(v); if(!num && String(v ?? '').trim()==='') return ''; return currency==='USD' ? `$${jp(num,d)}` : `¥${jp(num,d)}`; }
-function parseNumericInput(v){ return String(v ?? '').replace(/[^0-9.\-]/g,''); }
+function parseNumericInput(v){ return normalizeNumericLikeValue(v).replace(/[^0-9.\-]/g,''); }
+function shouldNormalizeCurrencyInput(el){
+  if(!el || el.tagName !== 'INPUT') return false;
+  const ids = ['sellingPrice','fxRate','lcFee','overseasCom','marginUsd','ofValue','ebs','doFee','customsFee','handlingFee','marginJpyKg'];
+  if(ids.includes(el.id)) return true;
+  if(el.classList.contains('money-input') || el.classList.contains('master-money') || el.classList.contains('quote-price')) return true;
+  return false;
+}
+function normalizeCurrencyInputElement(el){
+  if(!shouldNormalizeCurrencyInput(el)) return;
+  const before = String(el.value ?? '');
+  const after = toHalfWidthNumericText(before);
+  if(before !== after){
+    const pos = el.selectionStart ?? after.length;
+    const delta = before.length - after.length;
+    el.value = after;
+    try{ el.setSelectionRange(Math.max(0,pos-delta), Math.max(0,pos-delta)); }catch(e){}
+  }
+}
+
+function stripMasterMoneyForEdit(el){
+  if(!el || !el.classList || !el.classList.contains('master-money')) return;
+  el.value = parseNumericInput(el.value);
+}
+function formatMasterMoneyByDataset(el){
+  if(!el || !el.classList || !el.classList.contains('master-money')) return;
+  const raw = parseNumericInput(el.value);
+  if(raw === ''){ el.value = ''; return; }
+  const kind = el.dataset.moneyFormat || '';
+  if(kind === 'yen'){
+    el.value = formatYenDisplay(raw);
+    return;
+  }
+  if(kind === 'usd'){
+    el.value = formatDollarDisplay(raw);
+    return;
+  }
+  if(kind === 'ocean'){
+    const currency = el.dataset.currency || 'USD';
+    el.value = formatOceanFreightDisplay(raw, currency);
+    return;
+  }
+}
 function formatYenDisplay(v){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `¥${jp(n(raw),0)}`; }
 function formatDollarDisplay(v){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `$${jp(n(raw),0)}`; }
+function formatUsdTonDisplay(v,d=1){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `$${n(raw).toFixed(d)} /ton`; }
+function isMobileView(){ return window.innerWidth <= 760; }
 function formatOceanFreightDisplay(v,currency){ return currency==='JPY' ? formatYenDisplay(v) : formatDollarDisplay(v); }
 function syncMatchedOceanFreight(){ const matched = state.oceanFreight.find(x => x.loadingPort===state.basic.loadingPort && x.dischargePort===state.basic.dischargePort); if(matched){ state.exportCosts.ofValue = matched.ofValue; state.exportCosts.ofCurrency = matched.ofCurrency; state.exportCosts.ebs = matched.ebs; }}
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
@@ -839,8 +928,20 @@ function markAndScrollInvalid(el){
 document.addEventListener('input', e => {
   const t = e.target;
   if(!t || !t.classList) return;
+  normalizeCurrencyInputElement(t);
   if(t.classList.contains('input-error')) t.classList.remove('input-error');
   if('value' in t) t.classList.toggle('blank', String(t.value ?? '').trim() === '');
+});
+
+document.addEventListener('focusin', e => {
+  const t = e.target;
+  if(!t || !t.classList) return;
+  stripMasterMoneyForEdit(t);
+});
+document.addEventListener('focusout', e => {
+  const t = e.target;
+  if(!t || !t.classList) return;
+  formatMasterMoneyByDataset(t);
 });
 document.addEventListener('change', e => {
   const t = e.target;
@@ -947,12 +1048,13 @@ function renderBasics(){
   document.querySelectorAll('.cy-only').forEach(el => el.classList.toggle('hidden', state.calcMode !== 'cy'));
   document.querySelectorAll('.cif-only').forEach(el => el.classList.toggle('hidden', !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF')));
 
-  document.getElementById('lcFee').value = fmt(n(state.overseasCosts.lcFee),2);
-  document.getElementById('overseasCom').value = fmt(n(state.overseasCosts.overseasCom),2);
-  document.getElementById('marginUsd').value = fmt(n(state.overseasCosts.margin),2);
+  document.getElementById('lcFee').value = formatUsdTonDisplay(state.overseasCosts.lcFee, 2);
+  document.getElementById('overseasCom').value = formatUsdTonDisplay(state.overseasCosts.overseasCom, 1);
+  document.getElementById('marginUsd').value = formatUsdTonDisplay(state.overseasCosts.margin, 1);
   document.getElementById('insurance').value = formatMoneyDisplay(state.exportCosts.insurance, 'USD', 2);
   document.getElementById('ofValue').value = formatMoneyDisplay(state.exportCosts.ofValue, state.exportCosts.ofCurrency);
-  document.getElementById('ofCurrency').value = state.exportCosts.ofCurrency;
+  const ofCurrencyEl = document.getElementById('ofCurrency');
+  if(ofCurrencyEl) ofCurrencyEl.value = state.exportCosts.ofCurrency;
   document.getElementById('ebs').value = formatMoneyDisplay(state.exportCosts.ebs, 'USD');
   document.getElementById('doFee').value = formatMoneyDisplay(state.exportCosts.doFee, 'JPY');
   document.getElementById('customsFee').value = formatMoneyDisplay(state.exportCosts.customsFee, 'JPY');
@@ -1063,7 +1165,7 @@ function renderQuoteTable(){
   const body = document.getElementById('quoteTableBody');
   const yards = availableYards();
   body.innerHTML = state.quoteLines.map((line, idx) => {
-    const price = fmt(linePrice(line), 2);
+    const price = formatQuotePriceDisplay(linePrice(line));
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const yardOptions = `<option value="">ヤード選択</option>` + yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
     const conditionOptions = state.calcMode === 'cy'
@@ -1091,10 +1193,10 @@ function renderSummary(){
     const cy = currentCyBase();
     const ship = currentShippingCosts();
     box.innerHTML = `
+      <div class="summary-card"><div class="summary-label">海上運賃換算（USD/ton）</div><div class="summary-value">${fmt(ship.ofUsdPerTon,2)}</div></div>
       <div class="summary-card"><div class="summary-label">FOB価格（USD/ton）</div><div class="summary-value">${cy ? fmt(cy.fobUsdTon,2) : '-'}</div></div>
       <div class="summary-card"><div class="summary-label">FOB価格（円/ton）</div><div class="summary-value">${cy ? jp(cy.fobJpyTon,0) : '-'}</div></div>
       <div class="summary-card"><div class="summary-label">CY価格ベース（円/kg）</div><div class="summary-value" style="color:#1d4ed8">${cy ? fmt(cy.cyJpyKg,2) : '-'}</div></div>
-      <div class="summary-card"><div class="summary-label">海上運賃換算（USD/ton）</div><div class="summary-value">${fmt(ship.ofUsdPerTon,2)}</div></div>
       ${renderDrayageSummaryCards()}
     `;
   }else{
@@ -1128,7 +1230,7 @@ function renderSupplierMaster(){
       </div>
       <div class="master-subblock">
         <div class="yard-grid">
-          ${s.yards.map((y,yidx) => `<div class="yard-item ${yidx===0?'':'is-collapsed'}">
+          ${s.yards.map((y,yidx) => `<div class="yard-item ${(isMobileView() || yidx!==0)?'is-collapsed':''}">
             <div class="yard-card-head">
               <div class="yard-card-title">
                 <span class="yard-card-index">ヤード${yidx+1}</span>
@@ -1136,12 +1238,12 @@ function renderSupplierMaster(){
               </div>
               <div class="yard-card-actions">
                 <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYard('${s.id}','${y.id}')">&times;</button>
-                <button class="btn yard-toggle" type="button" onclick="toggleYardCard(this)">▾</button>
+                <button class="btn yard-toggle" type="button" onclick="toggleYardCard(this)">${(isMobileView() || yidx!==0)?'▸':'▾'}</button>
               </div>
             </div>
             <div class="yard-card-body">
               <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
-              <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
+              <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" data-money-format="yen" inputmode="decimal" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value,this);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
             </div>
           </div>`).join('')}
         </div>
@@ -1167,14 +1269,14 @@ function renderOceanFreight(){
     <tr>
       <td><input value="${escapeHtml(r.loadingPort)}" placeholder="例）TOKYO" oninput="updateOceanFreight('${r.id}','loadingPort',this.value)" class="${!r.loadingPort?'blank':''}" /></td>
       <td><input value="${escapeHtml(r.dischargePort)}" placeholder="例）TAICHUNG, TAIWAN" oninput="updateOceanFreight('${r.id}','dischargePort',this.value)" class="${!r.dischargePort?'blank':''}" /></td>
-      <td><input value="${formatOceanFreightDisplay(r.ofValue, r.ofCurrency)}" placeholder="例）$200 / ¥48,000" oninput="updateOceanFreight('${r.id}','ofValue',this.value)" class="${!r.ofValue?'blank':''} money-input master-money" /></td>
+      <td><input value="${formatOceanFreightDisplay(r.ofValue, r.ofCurrency)}" data-money-format="ocean" data-currency="${escapeHtml(r.ofCurrency || 'USD')}" inputmode="decimal" placeholder="例）$200 / ¥48,000" oninput="updateOceanFreight('${r.id}','ofValue',this.value,this)" class="${!r.ofValue?'blank':''} money-input master-money" /></td>
       <td class="currency-master-cell">
         <select onchange="updateOceanFreight('${r.id}','ofCurrency',this.value,this);renderOceanFreight()" class="currency-master-select ${!r.ofCurrency?'blank':''}">
           <option value="JPY" ${r.ofCurrency==='JPY'?'selected':''}>JPY</option>
           <option value="USD" ${r.ofCurrency==='USD'?'selected':''}>USD</option>
         </select>
       </td>
-      <td><input value="${formatDollarDisplay(r.ebs)}" placeholder="例）$100" oninput="updateOceanFreight('${r.id}','ebs',this.value)" class="${!r.ebs?'blank':''} money-input master-money" /></td>
+      <td><input value="${formatDollarDisplay(r.ebs)}" data-money-format="usd" inputmode="decimal" placeholder="例）$100" oninput="updateOceanFreight('${r.id}','ebs',this.value,this)" class="${!r.ebs?'blank':''} money-input master-money" /></td>
       <td>
         <select onchange="updateOceanFreight('${r.id}','carrier',this.value,this)" class="carrier-master-select ${!r.carrier?'blank':''}">
           <option value="">船会社選択</option>
@@ -1211,7 +1313,7 @@ function renderAll(){
   document.getElementById('bottomNote').classList.toggle('blank', !state.bottomNote);
 
   const cy = currentCyBase();
-  document.getElementById('cyBaseBadge').textContent = `見積条件　CY価格 ${cy ? fmt(cy.cyJpyKg,2) : '0.00'}円/kg ベース`;
+  document.getElementById('cyBaseBadge').textContent = `見積価格　CY価格 ${cy ? fmt(cy.cyJpyKg,2) : '0.00'}円/kg ベース`;
   const domesticDescEl = document.getElementById('domesticDesc'); if(domesticDescEl){ domesticDescEl.textContent = state.calcMode==='cy' ? 'CY価格逆算の計算条件' : '店頭条件計算時にドレー費を参照'; }
 }
 
@@ -1234,6 +1336,12 @@ function recalcAll(){
     state.exportCosts.insurance = 0;
   }
   renderAll();
+}
+
+function spinLcFee(delta){
+  state.overseasCosts.lcFee = fmt(Math.max(0, n(state.overseasCosts.lcFee)+delta),2);
+  renderBasics();
+  recalcAll();
 }
 
 function spinOverseasCom(delta){
@@ -1283,6 +1391,9 @@ function updateQuoteLine(id,key,val){
     const next = {...line, [key]:val};
     if(key === 'product'){
       next.quantity = val ? fmt(n(PRODUCT_DEFAULT_LOAD[val]),1) : '';
+    }
+    if(key === 'yardName'){
+      if(String(val || '').trim()) next.quoteCondition = '店頭';
     }
     if(key === 'quoteCondition' && val !== '店頭'){
       next.yardName = '';
@@ -1452,7 +1563,7 @@ function addSupplier(){
 function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); renderAll(); }
 function updateSupplier(id,key,val){ state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:val} : s); }
 function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:[...s.yards,{id:uid(),name:'',drayage:''}]} : s); renderAll(); }
-function updateYard(sid,yid,key,val){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); }
+function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
 function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); renderAll(); }
