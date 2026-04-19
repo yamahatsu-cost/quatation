@@ -1794,6 +1794,36 @@
   }
 }
 
+
+
+/* v-final iPhone/mobile width fix */
+@media (max-width: 760px){
+  html, body{
+    overflow-x:hidden !important;
+  }
+
+  .header{
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:min(calc(100vw - 32px), 560px) !important;
+    max-width:min(calc(100vw - 32px), 560px) !important;
+    padding:12px 18px 16px !important;
+    border-radius:0 0 18px 18px !important;
+  }
+
+  .wrap{
+    width:100% !important;
+    max-width:560px !important;
+    margin:0 auto !important;
+    padding:186px 16px 16px !important;
+  }
+
+  .section{
+    margin-top:14px !important;
+  }
+}
+
 </style>
 </head>
 <body>
