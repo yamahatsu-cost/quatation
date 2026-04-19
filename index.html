@@ -672,6 +672,66 @@
       }
     }
 
+
+    /* v24: mobile master header overlap fix */
+    @media (max-width: 768px){
+      .master-supplier-section .section-header,
+      .master-ocean-section .section-header{
+        position: static !important;
+        padding-right: 0 !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        row-gap: 10px !important;
+        column-gap: 10px !important;
+        margin-bottom: 14px !important;
+        padding-bottom: 12px !important;
+      }
+
+      .master-supplier-section .section-title-wrap,
+      .master-ocean-section .section-title-wrap{
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .master-supplier-section .table-actions,
+      .master-ocean-section .table-actions{
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        margin: 0 !important;
+        width: auto !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex: 0 0 auto !important;
+      }
+
+      .master-supplier-section .table-actions .btn,
+      .master-ocean-section .table-actions .btn{
+        height: 46px !important;
+        min-height: 46px !important;
+        padding: 0 14px !important;
+        font-size: 15px !important;
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+      }
+
+      .master-supplier-section .table-actions .btn:first-child,
+      .master-ocean-section .table-actions .btn:first-child{
+        min-width: 96px !important;
+      }
+
+      .master-supplier-section .table-actions .btn:last-child,
+      .master-ocean-section .table-actions .btn:last-child{
+        min-width: 72px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -703,7 +763,7 @@
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:2.29</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.29</span></div>
 </div>
 </div>
 <div class="header-actions">
