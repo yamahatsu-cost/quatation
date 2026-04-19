@@ -252,6 +252,24 @@
       .header{width:calc(100% - 24px)}
       .title{font-size:29px}
       input,select,textarea{font-size:17px}
+      .export-cost-grid .field{
+        display:grid;
+        grid-template-columns:max-content minmax(0,1fr);
+        align-items:center;
+        gap:10px;
+      }
+      .export-cost-grid .field > label{
+        margin:0;
+        white-space:nowrap;
+        font-size:15px;
+        line-height:1.25;
+      }
+      .export-cost-grid .field > input,
+      .export-cost-grid .field .freight-inline,
+      .export-cost-grid .field .spinbox{
+        width:100%;
+      }
+      .export-cost-grid .field .freight-inline{display:block}
     }
 
     /* v8 fixes */
@@ -530,6 +548,108 @@
       .export-cost-section .export-cost-grid{grid-template-columns:1fr !important;}
     }
 
+    /* v11 mobile export-cost width fixes */
+    @media (max-width:760px){
+      .export-cost-section .export-cost-grid .field{
+        display:grid !important;
+        grid-template-columns:9.4em minmax(0,1fr) !important;
+        align-items:center !important;
+        column-gap:8px !important;
+      }
+      .export-cost-section .export-cost-grid .field > label{
+        width:9.4em !important;
+        min-width:9.4em !important;
+        max-width:9.4em !important;
+        white-space:nowrap !important;
+        overflow:hidden !important;
+        text-overflow:ellipsis !important;
+        margin:0 !important;
+      }
+      .export-cost-section .export-cost-grid .field > input,
+      .export-cost-section .export-cost-grid .field .freight-inline,
+      .export-cost-section .export-cost-grid .field .freight-inline > input,
+      .export-cost-section .export-cost-grid .field .money-input,
+      .export-cost-section .export-cost-grid .field .lot-cost-input{
+        width:100% !important;
+        min-width:0 !important;
+        max-width:none !important;
+        box-sizing:border-box !important;
+      }
+    }
+
+
+    /* CFR時に海上保険を確実に非表示（スマホの強制displayより優先） */
+    .field.hidden,
+    .export-cost-grid .field.hidden,
+    .export-cost-section .export-cost-grid .field.hidden{display:none !important;}
+
+
+    /* v13 basic-section mobile layout fixes */
+    .basic-stack-field label .selling-unit-inline{margin-left:.35em;font-weight:600;color:var(--muted);font-size:.95em;}
+    .basic-stack-field .selling-price-inline{display:flex;width:100%;align-items:center;gap:10px;}
+    .basic-stack-field .selling-price-inline input{flex:1;min-width:0;width:auto;}
+    .basic-stack-field .selling-price-inline .selling-unit-inline{flex:0 0 auto;margin-left:0;font-weight:700;color:#38598d;font-size:15px;white-space:nowrap;}
+    @media (max-width:760px){
+      .basic-section .basic-grid{grid-template-columns:1fr !important;}
+      .basic-section .basic-grid > .field,
+      .basic-section .basic-inline-field,
+      .basic-section .basic-stack-field{
+        min-width:0 !important;
+        width:100% !important;
+        max-width:100% !important;
+        overflow:hidden !important;
+      }
+      .basic-section .basic-inline-field{
+        display:grid !important;
+        grid-template-columns:6.4em minmax(0,1fr) !important;
+        align-items:center !important;
+        column-gap:10px !important;
+      }
+      .basic-section .basic-inline-field > label{
+        width:auto !important;
+        min-width:0 !important;
+        max-width:100% !important;
+        margin:0 !important;
+        white-space:nowrap !important;
+        overflow:hidden !important;
+        text-overflow:ellipsis !important;
+      }
+      .basic-section .basic-inline-field > input,
+      .basic-section .basic-inline-field > select,
+      .basic-section .basic-stack-field > input,
+      .basic-section .basic-stack-field > select,
+      .basic-section .basic-stack-field .fx-inline,
+      .basic-section .basic-stack-field .fx-inline > input,
+      .basic-section .basic-stack-field .selling-price-inline,
+      .basic-section .basic-stack-field .selling-price-inline > input{
+        width:100% !important;
+        min-width:0 !important;
+        max-width:100% !important;
+        box-sizing:border-box !important;
+      }
+      .basic-section .basic-stack-field{
+        display:block !important;
+      }
+      .basic-section .basic-stack-field > label{
+        display:flex !important;
+        align-items:center !important;
+        gap:.25em !important;
+        margin-bottom:8px !important;
+      }
+      .basic-section .basic-stack-field .fx-inline,
+      .basic-section .basic-stack-field .selling-price-inline{
+        display:grid !important;
+        grid-template-columns:minmax(0,1fr) auto !important;
+        align-items:center !important;
+        gap:8px !important;
+      }
+      .basic-section .basic-stack-field .selling-price-inline .selling-unit-inline{
+        flex:none !important;
+        min-width:0 !important;
+        white-space:nowrap !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -592,37 +712,37 @@
             <button id="modeCy" class="btn" onclick="setCalcMode('cy')">CY価格逆算</button>
           </div>
         </div>
-        <div class="grid cols-4">
-          <div class="field">
+        <div class="grid cols-4 basic-grid">
+          <div class="field basic-inline-field">
             <label>見積先</label>
             <select id="supplierShortName" onchange="onBasicChange()"></select>
           </div>
-          <div class="field">
+          <div class="field basic-inline-field">
             <label>販売条件</label>
             <select id="salesCondition" onchange="onBasicChange()"></select>
           </div>
-          <div class="field">
-            <label>販売単価</label>
-            <div class="selling-price-inline"><input id="sellingPrice" placeholder="例）160" oninput="onBasicChange()" /><span class="selling-unit-inline" id="sellingUnit">㌦/ton</span></div>
-          </div>
-          <div class="field">
-            <label>船積みロット（ton）</label>
+          <div class="field basic-inline-field">
+            <label>船積ロット（ton）</label>
             <input id="shipmentLot" placeholder="例）200" oninput="onBasicChange()" />
           </div>
 
-          <div class="field overseas-only">
+          <div class="field overseas-only basic-inline-field">
             <label>決済条件</label>
             <select id="paymentTerm" onchange="onPaymentTermChange()"></select>
           </div>
-          <div class="field overseas-only">
+          <div class="field overseas-only basic-inline-field">
             <label>積港</label>
             <select id="loadingPort" onchange="onPortChange()"></select>
           </div>
-          <div class="field overseas-only">
+          <div class="field overseas-only basic-inline-field">
             <label>揚港</label>
             <select id="dischargePort" onchange="onPortChange()"></select>
           </div>
-          <div class="field overseas-only">
+          <div class="field basic-stack-field">
+            <label>販売単価</label>
+            <div class="selling-price-inline"><input id="sellingPrice" placeholder="例）160" oninput="onBasicChange()" /><span class="selling-unit-inline" id="sellingUnit">USD/ton</span></div>
+          </div>
+          <div class="field overseas-only basic-stack-field">
             <label>為替</label>
             <div class="fx-inline">
               <input id="fxRate" placeholder="例）158.70" oninput="recalcAll()" />
@@ -673,7 +793,7 @@
           <div class="section-header"><div><div class="section-title" style="font-size:20px">輸出コスト</div></div></div>
           <div class="grid cols-3 export-cost-grid">
             <div class="field cif-only insurance-field">
-              <label>海上保険（USD/ton）</label>
+              <label>海上保険（/ton）</label>
               <input id="insurance" class="money-input" readonly />
             </div>
             <div class="field freight-field">
@@ -684,7 +804,7 @@
               </div>
             </div>
             <div class="field ebs-field">
-              <label>EBS（㌦/40F）</label>
+              <label>EBS（/40F）</label>
               <input id="ebs" class="money-input" oninput="recalcAll()" />
             </div>
             <div class="field">
@@ -993,6 +1113,18 @@ function switchTab(tab){
   renderAll();
 }
 
+function applyCalcModeVisibility(){
+  const isOverseas = state.calcMode === 'overseas';
+  document.querySelectorAll('.overseas-only').forEach(el => {
+    el.classList.toggle('hidden', !isOverseas);
+    el.style.display = isOverseas ? '' : 'none';
+  });
+  document.querySelectorAll('.cy-only').forEach(el => {
+    el.classList.toggle('hidden', isOverseas);
+    el.style.display = isOverseas ? 'none' : '';
+  });
+}
+
 function setCalcMode(mode){
   state.calcMode = mode;
   document.getElementById('modeOverseas').classList.toggle('active', mode==='overseas');
@@ -1005,6 +1137,7 @@ function setCalcMode(mode){
     if(state.basic.salesCondition === 'CY渡し') state.basic.salesCondition = 'CIF';
     state.quoteLines = state.quoteLines.map(x => ({...x, quoteCondition:'CY渡し'}));
   }
+  applyCalcModeVisibility();
   renderAll();
   recalcAll();
 }
@@ -1044,8 +1177,7 @@ function renderBasics(){
   document.getElementById('fxRate').value = state.basic.fxRate;
   document.getElementById('fxRate').style.textAlign = 'center';
 
-  document.querySelectorAll('.overseas-only').forEach(el => el.classList.toggle('hidden', state.calcMode !== 'overseas'));
-  document.querySelectorAll('.cy-only').forEach(el => el.classList.toggle('hidden', state.calcMode !== 'cy'));
+  applyCalcModeVisibility();
   document.querySelectorAll('.cif-only').forEach(el => el.classList.toggle('hidden', !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF')));
 
   document.getElementById('lcFee').value = formatUsdTonDisplay(state.overseasCosts.lcFee, 2);
