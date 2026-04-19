@@ -3094,6 +3094,15 @@ function saveOceanFreightMasters(){
   persistMasters();
   toast('海上運賃マスタを保存しました');
 }
+function isVisibleForValidation(el){
+  if(!el) return false;
+  if(el.closest('.hidden')) return false;
+  const style = window.getComputedStyle(el);
+  if(style.display === 'none' || style.visibility === 'hidden') return false;
+  const rect = el.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0;
+}
+
 function validateIssueQuote(){
   clearValidationErrors();
   const basicRequired = [
@@ -3107,8 +3116,9 @@ function validateIssueQuote(){
     ['為替', state.basic.fxRate, 'fxRate']
   ];
   for(const [label,val,id] of basicRequired){
+    const el = document.getElementById(id);
+    if(!isVisibleForValidation(el)) continue;
     if(isBlank(val)){
-      const el = document.getElementById(id);
       markAndScrollInvalid(el);
       return `見積書発行前に${label}を入力してください`;
     }
@@ -3127,8 +3137,9 @@ function validateIssueQuote(){
       required.splice(1, 0, ['ヤード名', line.yardName, 'yardName']);
     }
     for(const [label,val,field] of required){
+      const el = row?.querySelector(`[data-field="${field}"]`);
+      if(!isVisibleForValidation(el)) continue;
       if(isBlank(val)){
-        const el = row?.querySelector(`[data-field="${field}"]`);
         markAndScrollInvalid(el);
         return `見積価格${i+1}行目の${label}を入力してください`;
       }
