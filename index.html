@@ -1629,6 +1629,44 @@
   }
 }
 
+
+/* v13: 海上運賃マスタだけボタン幅を文字に合わせる（スマホ） */
+@media (max-width:768px){
+
+  .master-ocean-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    width:auto !important;
+    min-width:auto !important;
+    max-width:none !important;
+    padding:0 10px !important;
+    flex:0 0 auto !important;
+  }
+
+}
+
+
+/* v14: 海上運賃マスタのボタン幅を再調整（スマホ） */
+@media (max-width:768px){
+
+  /* 保存ボタンは仕入先マスタと同じ幅 */
+  .master-ocean-section .table-actions .master-save-btn{
+    width:58px !important;
+    min-width:58px !important;
+    max-width:58px !important;
+    flex:0 0 58px !important;
+    padding:0 8px !important;
+  }
+
+  /* 運賃追加は少しだけ縮める */
+  .master-ocean-section .table-actions .master-add-btn{
+    width:74px !important;
+    min-width:74px !important;
+    max-width:74px !important;
+    flex:0 0 74px !important;
+    padding:0 8px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1660,7 +1698,7 @@
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.29</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:2.29</span></div>
 </div>
 </div>
 <div class="header-actions">
