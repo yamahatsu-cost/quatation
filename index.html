@@ -1818,6 +1818,46 @@
   }
 }
 
+
+
+/* v58: mobile header/body width fix for iPhone & Android */
+html, body{
+  max-width:100%;
+  overflow-x:hidden;
+}
+@supports (padding: max(0px)){
+  body{
+    padding-left:env(safe-area-inset-left, 0px);
+    padding-right:env(safe-area-inset-right, 0px);
+  }
+}
+@media (max-width: 768px){
+  .wrap{
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    padding:120px 6px 10px !important;
+  }
+  .header{
+    left:0 !important;
+    right:0 !important;
+    transform:none !important;
+    width:auto !important;
+    max-width:none !important;
+    margin:0 4px !important;
+    padding:10px 14px 12px !important;
+    border-radius:0 0 18px 18px !important;
+  }
+  .section{
+    width:100% !important;
+    max-width:100% !important;
+    margin-top:10px !important;
+    padding:16px 14px !important;
+    border-radius:18px !important;
+  }
+  .scroll-x{max-width:100% !important;}
+}
+
 </style>
 </head>
 <body>
