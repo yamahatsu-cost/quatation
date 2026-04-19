@@ -628,7 +628,24 @@
       }
     }
 
-</style>
+
+
+    /* v21: mobile CY hide fix + version label */
+    .app-version{display:inline-block;margin-left:10px;font-weight:700;font-size:.92em;color:#cfe0ff;}
+    @media (max-width:760px){
+      .basic-section .basic-inline-field.hidden,
+      .basic-section .basic-stack-field.hidden,
+      .basic-section .field.overseas-only.hidden,
+      .basic-section .field.cy-only.hidden,
+      .basic-section .field.cif-only.hidden{
+        display:none !important;
+      }
+      .basic-section .basic-inline-field.overseas-only.hidden,
+      .basic-section .basic-stack-field.overseas-only.hidden{
+        display:none !important;
+      }
+    }
+    </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -659,7 +676,7 @@
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ</div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:2.29</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -1125,9 +1142,21 @@ function renderBasics(){
   document.getElementById('fxRate').value = state.basic.fxRate;
   document.getElementById('fxRate').style.textAlign = 'center';
 
-  document.querySelectorAll('.overseas-only').forEach(el => el.classList.toggle('hidden', state.calcMode !== 'overseas'));
-  document.querySelectorAll('.cy-only').forEach(el => el.classList.toggle('hidden', state.calcMode !== 'cy'));
-  document.querySelectorAll('.cif-only').forEach(el => el.classList.toggle('hidden', !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF')));
+  document.querySelectorAll('.overseas-only').forEach(el => {
+    const shouldHide = state.calcMode !== 'overseas';
+    el.classList.toggle('hidden', shouldHide);
+    el.style.display = shouldHide ? 'none' : '';
+  });
+  document.querySelectorAll('.cy-only').forEach(el => {
+    const shouldHide = state.calcMode !== 'cy';
+    el.classList.toggle('hidden', shouldHide);
+    el.style.display = shouldHide ? 'none' : '';
+  });
+  document.querySelectorAll('.cif-only').forEach(el => {
+    const shouldHide = !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF');
+    el.classList.toggle('hidden', shouldHide);
+    el.style.display = shouldHide ? 'none' : '';
+  });
 
   document.getElementById('lcFee').value = formatUsdTonDisplay(state.overseasCosts.lcFee, 2);
   document.getElementById('overseasCom').value = formatUsdTonDisplay(state.overseasCosts.overseasCom, 1);
