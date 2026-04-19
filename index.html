@@ -503,7 +503,7 @@
 
     /* v29 fixes */
     .section-title-wrap .section-desc:empty{display:none !important}
-    .estimate-section{background:linear-gradient(180deg,#f9fbff 0%,#f4f8ff 100%) !important;border:1px solid #d9e7fb !important;box-shadow:0 14px 34px rgba(30,64,175,.08) !important}
+    .estimate-section{background:linear-gradient(180deg,#e3edff 0%,#d6e4ff 100%) !important;border:1px solid #bcd3f3 !important;box-shadow:0 16px 36px rgba(30,64,175,.16) !important}
     .estimate-section .section-header{margin-bottom:10px !important;padding-bottom:12px !important;border-bottom:1px solid #d8e5f8 !important}
     .estimate-section .section-title{color:#1e3a8a !important;letter-spacing:.02em}
     .estimate-section .scroll-x{margin-top:2px}
@@ -735,7 +735,7 @@
 
     /* v25: estimate header overlap fix + smaller mobile subheader text */
     @media (max-width: 768px){
-      /* 見積条件ヘッダー */
+      /* 見積価格ヘッダー */
       .estimate-section .section-header,
       .quote-section .section-header,
       .estimate-conditions-section .section-header,
@@ -1263,7 +1263,7 @@
 <div class="section estimate-section">
 <div class="section-header">
 <div class="section-title-wrap">
-<div class="section-title" style="font-size:20px">見積条件</div>
+<div class="section-title" style="font-size:20px">見積価格</div>
 </div>
 <div class="table-actions">
 <button class="btn add-row-btn" onclick="addQuoteLine()">見積ヤード追加</button>
@@ -1276,7 +1276,7 @@
 <tr>
 <th>商品</th>
 <th>ヤード名</th>
-<th>見積条件</th>
+<th>見積価格</th>
 <th>価格（円/kg）</th>
 <th>積載（ton/40F）</th>
 <th>備考</th>
@@ -1713,8 +1713,8 @@ function renderQuoteTable(){
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const yardOptions = `<option value="">ヤード選択</option>` + yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
     const conditionOptions = state.calcMode === 'cy'
-      ? `<option value="">見積条件選択</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`
-      : `<option value="">見積条件選択</option><option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
+      ? `<option value="">見積価格選択</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`
+      : `<option value="">見積価格選択</option><option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
     const productBlank = !String(line.product ?? '').trim();
     const yardBlank = !String(line.yardName ?? '').trim();
     const conditionBlank = !String(line.quoteCondition ?? '').trim();
@@ -2089,14 +2089,14 @@ function validateIssueQuote(){
       return `見積書発行前に${label}を入力してください`;
     }
   }
-  if(!state.quoteLines.length) return '見積条件を1行以上入力してください';
+  if(!state.quoteLines.length) return '見積価格を1行以上入力してください';
   const body = document.getElementById('quoteTableBody');
   for(let i=0;i<state.quoteLines.length;i++){
     const line = state.quoteLines[i];
     const row = body?.querySelector(`tr[data-line-id="${line.id}"]`);
     const required = [
       ['商品', line.product, 'product'],
-      ['見積条件', line.quoteCondition, 'quoteCondition'],
+      ['見積価格', line.quoteCondition, 'quoteCondition'],
       ['積載', line.quantity, 'quantity']
     ];
     if(line.quoteCondition === '店頭'){
@@ -2106,7 +2106,7 @@ function validateIssueQuote(){
       if(isBlank(val)){
         const el = row?.querySelector(`[data-field="${field}"]`);
         markAndScrollInvalid(el);
-        return `見積条件${i+1}行目の${label}を入力してください`;
+        return `見積価格${i+1}行目の${label}を入力してください`;
       }
     }
   }
