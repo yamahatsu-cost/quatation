@@ -733,15 +733,15 @@
             <input id="shipmentLot" placeholder="例）200" oninput="onBasicChange()" />
           </div>
 
-          <div class="field overseas-only basic-inline-field">
+          <div id="fieldPaymentTerm" class="field overseas-only basic-inline-field">
             <label>決済条件</label>
             <select id="paymentTerm" onchange="onPaymentTermChange()"></select>
           </div>
-          <div class="field overseas-only basic-inline-field">
+          <div id="fieldLoadingPort" class="field overseas-only basic-inline-field">
             <label>積港</label>
             <select id="loadingPort" onchange="onPortChange()"></select>
           </div>
-          <div class="field overseas-only basic-inline-field">
+          <div id="fieldDischargePort" class="field overseas-only basic-inline-field">
             <label>揚港</label>
             <select id="dischargePort" onchange="onPortChange()"></select>
           </div>
@@ -749,7 +749,7 @@
             <label>販売単価</label>
             <div class="selling-price-inline"><input id="sellingPrice" placeholder="例）160" oninput="onBasicChange()" /><span class="selling-unit-inline" id="sellingUnit">USD/ton</span></div>
           </div>
-          <div class="field overseas-only basic-stack-field">
+          <div id="fieldFxRate" class="field overseas-only basic-stack-field">
             <label>為替</label>
             <div class="fx-inline">
               <input id="fxRate" placeholder="例）158.70" oninput="recalcAll()" />
@@ -1174,18 +1174,69 @@ function renderBasics(){
   document.querySelectorAll('.overseas-only').forEach(el => {
     const hide = state.calcMode !== 'overseas';
     el.classList.toggle('hidden', hide);
-    if(hide) el.style.setProperty('display', 'none', 'important'); else el.style.removeProperty('display');
+    if(hide){
+      el.style.setProperty('display', 'none', 'important');
+      el.setAttribute('aria-hidden', 'true');
+    }else{
+      el.style.removeProperty('display');
+      el.removeAttribute('aria-hidden');
+    }
   });
   document.querySelectorAll('.cy-only').forEach(el => {
     const hide = state.calcMode !== 'cy';
     el.classList.toggle('hidden', hide);
-    if(hide) el.style.setProperty('display', 'none', 'important'); else el.style.removeProperty('display');
+    if(hide){
+      el.style.setProperty('display', 'none', 'important');
+      el.setAttribute('aria-hidden', 'true');
+    }else{
+      el.style.removeProperty('display');
+      el.removeAttribute('aria-hidden');
+    }
   });
   document.querySelectorAll('.cif-only').forEach(el => {
     const hide = !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF');
     el.classList.toggle('hidden', hide);
-    if(hide) el.style.setProperty('display', 'none', 'important'); else el.style.removeProperty('display');
+    if(hide){
+      el.style.setProperty('display', 'none', 'important');
+      el.setAttribute('aria-hidden', 'true');
+    }else{
+      el.style.removeProperty('display');
+      el.removeAttribute('aria-hidden');
+    }
   });
+
+  const forceBasicVisibility = () => {
+    const isOverseas = state.calcMode === 'overseas';
+    const map = [
+      ['fieldPaymentTerm', isOverseas],
+      ['fieldLoadingPort', isOverseas],
+      ['fieldDischargePort', isOverseas],
+      ['fieldFxRate', isOverseas],
+    ];
+    map.forEach(([id, show]) => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.toggle('hidden', !show);
+      if(show){
+        el.style.removeProperty('display');
+        el.style.visibility = '';
+        el.style.height = '';
+        el.style.margin = '';
+        el.style.padding = '';
+        el.style.pointerEvents = '';
+        el.removeAttribute('aria-hidden');
+      }else{
+        el.style.setProperty('display', 'none', 'important');
+        el.style.visibility = 'hidden';
+        el.style.height = '0';
+        el.style.margin = '0';
+        el.style.padding = '0';
+        el.style.pointerEvents = 'none';
+        el.setAttribute('aria-hidden', 'true');
+      }
+    });
+  };
+  forceBasicVisibility();
 
   document.getElementById('lcFee').value = formatUsdTonDisplay(state.overseasCosts.lcFee, 2);
   document.getElementById('overseasCom').value = formatUsdTonDisplay(state.overseasCosts.overseasCom, 1);
