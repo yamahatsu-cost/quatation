@@ -854,8 +854,8 @@
     /* v32: mobile supplier master collapse by short name */
     .supplier-master-card{position:relative}
     .supplier-master-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:#eef4ff;border:1px solid #d6e2f3;margin-bottom:12px}
-    .supplier-master-head-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
-    .supplier-master-toggle{display:none;background:#e8f0ff !important;color:#1e40af !important;border:1px solid #bfdbfe !important;width:38px;min-width:38px;height:38px;padding:0;border-radius:10px;font-size:18px;font-weight:900;line-height:1}
+    .supplier-master-head-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer}
+    .supplier-master-toggle{display:inline-flex;align-items:center;justify-content:center;background:#e8f0ff !important;color:#1e40af !important;border:1px solid #bfdbfe !important;width:38px;min-width:38px;height:38px;padding:0;border-radius:10px;font-size:18px;font-weight:900;line-height:1}
     .supplier-master-title{font-weight:800;font-size:16px;color:#274a7a;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .supplier-master-label{display:none;align-items:center;justify-content:center;min-width:66px;padding:4px 8px;border-radius:999px;background:#dbeafe;color:#1e3a8a;font-size:12px;font-weight:800;line-height:1.2}
     .supplier-master-shortname{font-weight:800;color:#1f3d6d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -988,6 +988,41 @@
     padding:0 10px !important;
     font-size:14px !important;
     border-radius:14px !important;
+  }
+}
+
+
+
+/* v37: PC supplier collapse + mobile supplier action buttons right fixed */
+#supplierMaster .supplier-master-card.is-collapsed .supplier-master-body{display:none !important;}
+
+@media (max-width: 768px){
+  .master-supplier-section .section-header{
+    position:relative !important;
+    display:block !important;
+    padding-right:178px !important;
+    min-height:52px !important;
+  }
+  .master-supplier-section .section-title-wrap{
+    display:block !important;
+    min-width:0 !important;
+    padding-right:0 !important;
+  }
+  .master-supplier-section .table-actions{
+    position:absolute !important;
+    top:0 !important;
+    right:0 !important;
+    margin:0 !important;
+    width:auto !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    align-items:center !important;
+    gap:8px !important;
+    flex-wrap:nowrap !important;
+  }
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-supplier-section .table-actions .master-save-btn{
+    flex:0 0 auto !important;
   }
 }
 
@@ -1418,6 +1453,7 @@ let state = {
   bottomNote:''
 };
 state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r.shippingLine || ''), note:(r.note || '')}));
+state.suppliers = state.suppliers.map(s => ({...s, collapsed:true}));
 
 function persistMasters(){
   saveLocal(STORAGE_KEYS.suppliers, state.suppliers);
@@ -1668,7 +1704,7 @@ function renderSummary(){
 function renderSupplierMaster(){
   const area = document.getElementById('supplierMaster');
   area.innerHTML = state.suppliers.map((s, idx) => {
-    if(typeof s.collapsed !== 'boolean') s.collapsed = isMobileView();
+    if(typeof s.collapsed !== 'boolean') s.collapsed = true;
     const shortName = s.shortName && String(s.shortName).trim() ? s.shortName : `仕入先${idx+1}`;
     return `
     <div class="master-block supplier-master-card ${s.collapsed ? 'is-collapsed' : ''}">
@@ -1729,7 +1765,6 @@ function toggleYardCard(btn){
 }
 
 function toggleSupplierMaster(id){
-  if(window.innerWidth > 760) return;
   const supplier = state.suppliers.find(s => s.id === id);
   if(!supplier) return;
   supplier.collapsed = !supplier.collapsed;
@@ -2034,7 +2069,7 @@ function issueQuote(){
 }
 
 function addSupplier(){
-  state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', collapsed:isMobileView(), yards:[{id:uid(), name:'', drayage:''}]});
+  state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', collapsed:true, yards:[{id:uid(), name:'', drayage:''}]});
   renderAll();
 }
 function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); renderAll(); }
