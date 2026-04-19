@@ -849,6 +849,26 @@
 
 
 /* v26: ocean master buttons right fixed (mobile) */
+
+
+    /* v32: mobile supplier master collapse by short name */
+    .supplier-master-card{position:relative}
+    .supplier-master-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:#eef4ff;border:1px solid #d6e2f3;margin-bottom:12px}
+    .supplier-master-head-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+    .supplier-master-toggle{display:none;background:#e8f0ff !important;color:#1e40af !important;border:1px solid #bfdbfe !important;width:38px;min-width:38px;height:38px;padding:0;border-radius:10px;font-size:18px;font-weight:900;line-height:1}
+    .supplier-master-title{font-weight:800;font-size:16px;color:#274a7a;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .supplier-master-label{display:none;align-items:center;justify-content:center;min-width:66px;padding:4px 8px;border-radius:999px;background:#dbeafe;color:#1e3a8a;font-size:12px;font-weight:800;line-height:1.2}
+    .supplier-master-shortname{font-weight:800;color:#1f3d6d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .supplier-master-body{display:block}
+    @media (max-width:760px){
+      #supplierMaster .supplier-master-head{margin-bottom:0 !important}
+      #supplierMaster .supplier-master-toggle{display:inline-flex !important;align-items:center;justify-content:center}
+      #supplierMaster .supplier-master-label{display:inline-flex !important}
+      #supplierMaster .supplier-master-title{font-size:15px !important;flex-wrap:nowrap}
+      #supplierMaster .supplier-master-card.is-collapsed .supplier-master-body{display:none !important}
+      #supplierMaster .supplier-master-card.is-collapsed .master-head:not(.supplier-master-head){display:none !important}
+    }
+
 @media (max-width: 768px){
   .master-ocean-section .section-header{
     display:flex !important;
@@ -872,6 +892,36 @@
 }
 
 
+
+
+    /* v33: mobile supplier yard overflow fix */
+    #supplierMaster .master-subblock,
+    #supplierMaster .yard-grid,
+    #supplierMaster .yard-item,
+    #supplierMaster .yard-card-head,
+    #supplierMaster .yard-card-body,
+    #supplierMaster .yard-card-title,
+    #supplierMaster .field{min-width:0 !important;max-width:100% !important;box-sizing:border-box !important;}
+    #supplierMaster .yard-card-body > .field,
+    #supplierMaster .yard-card-body input{width:100% !important;max-width:100% !important;box-sizing:border-box !important;}
+    @media (max-width:760px){
+      #supplierMaster .supplier-master-body{overflow:hidden !important;}
+      #supplierMaster .master-subblock{padding:10px !important;overflow:hidden !important;}
+      #supplierMaster .yard-grid{display:block !important;width:100% !important;}
+      #supplierMaster .yard-item{width:100% !important;max-width:100% !important;margin:0 0 10px 0 !important;overflow:hidden !important;}
+      #supplierMaster .yard-card-head{padding-right:86px !important;}
+      #supplierMaster .yard-card-body{display:grid !important;grid-template-columns:1fr !important;gap:10px !important;width:100% !important;max-width:100% !important;}
+      #supplierMaster .yard-card-title-text{min-width:0 !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+      #supplierMaster .supplier-master-head-left{display:grid !important;grid-template-columns:38px minmax(0,1fr) !important;align-items:center !important;gap:10px !important;}
+      #supplierMaster .supplier-master-title{display:block !important;min-width:0 !important;}
+      #supplierMaster .supplier-master-shortname{display:block !important;font-size:16px !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+      #supplierMaster .yard-card-head{display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;align-items:center !important;column-gap:10px !important;padding-right:0 !important;}
+      #supplierMaster .yard-card-title{min-width:0 !important;padding-right:0 !important;display:flex !important;align-items:center !important;gap:8px !important;flex-wrap:nowrap !important;}
+      #supplierMaster .yard-card-index{flex:0 0 auto !important;}
+      #supplierMaster .yard-card-title-text{display:block !important;flex:1 1 auto !important;min-width:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:15px !important;}
+      #supplierMaster .yard-card-actions{position:static !important;display:flex !important;align-items:center !important;gap:8px !important;}
+    }
+
     /* v31 selling price label/unit alignment */
     .basic-stack-field > label{justify-content:flex-start !important;gap:.45em !important;align-items:center !important;flex-wrap:wrap !important;}
     .basic-stack-field > label #sellingUnit,
@@ -883,6 +933,63 @@
       .basic-section .basic-stack-field > label #sellingUnit,
       .basic-section .basic-stack-field > label .selling-unit-inline{font-size:.95em !important;}
     }
+
+
+
+/* v35: master action buttons unified */
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+
+.master-supplier-section .table-actions .master-add-btn,
+.master-ocean-section .table-actions .master-add-btn{
+  min-width:118px !important;
+  width:118px !important;
+  height:52px !important;
+  padding:0 14px !important;
+  font-size:16px !important;
+  line-height:1.1 !important;
+  border-radius:16px !important;
+  white-space:nowrap !important;
+}
+
+.master-supplier-section .table-actions .master-save-btn,
+.master-ocean-section .table-actions .master-save-btn{
+  min-width:82px !important;
+  width:82px !important;
+  height:52px !important;
+  padding:0 14px !important;
+  font-size:16px !important;
+  line-height:1.1 !important;
+  border-radius:16px !important;
+  white-space:nowrap !important;
+}
+
+@media (max-width: 768px){
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-add-btn{
+    min-width:96px !important;
+    width:96px !important;
+    height:46px !important;
+    padding:0 10px !important;
+    font-size:14px !important;
+    border-radius:14px !important;
+  }
+
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    min-width:70px !important;
+    width:70px !important;
+    height:46px !important;
+    padding:0 10px !important;
+    font-size:14px !important;
+    border-radius:14px !important;
+  }
+}
 
 </style>
 </head>
@@ -1560,46 +1667,57 @@ function renderSummary(){
 
 function renderSupplierMaster(){
   const area = document.getElementById('supplierMaster');
-  area.innerHTML = state.suppliers.map((s, idx) => `
-    <div class="master-block">
-      <div class="master-head">
-        <div class="master-head-title">仕入先設定</div>
+  area.innerHTML = state.suppliers.map((s, idx) => {
+    if(typeof s.collapsed !== 'boolean') s.collapsed = isMobileView();
+    const shortName = s.shortName && String(s.shortName).trim() ? s.shortName : `仕入先${idx+1}`;
+    return `
+    <div class="master-block supplier-master-card ${s.collapsed ? 'is-collapsed' : ''}">
+      <div class="supplier-master-head">
+        <div class="supplier-master-head-left" onclick="toggleSupplierMaster('${s.id}')">
+          <button class="btn supplier-master-toggle" type="button" onclick="event.stopPropagation();toggleSupplierMaster('${s.id}')">${s.collapsed ? '▸' : '▾'}</button>
+          <div class="supplier-master-title"><span class="supplier-master-shortname">${escapeHtml(shortName)}</span></div>
+        </div>
         <button class="btn small delete-btn icon-only" title="削除" onclick="removeSupplier('${s.id}')">&times;</button>
       </div>
-      <div class="master-subblock">
-        <div class="subgrid">
-          <div class="field"><label>仕入先名（簡略）</label><input value="${escapeHtml(s.shortName)}" placeholder="例）〇〇商店" oninput="updateSupplier('${s.id}','shortName',this.value)" class="${!s.shortName?'blank':''}" /></div>
-          <div class="field"><label>仕入先名（正式名称）</label><input value="${escapeHtml(s.formalName)}" placeholder="例）〇〇商店株式会社" oninput="updateSupplier('${s.id}','formalName',this.value)" class="${!s.formalName?'blank':''}" /></div>
-          <div class="field"><label>担当者名・役職</label><input value="${escapeHtml(s.contact)}" placeholder="例）取締役　営業本部長　山田太郎" oninput="updateSupplier('${s.id}','contact',this.value)" class="${!s.contact?'blank':''}" /></div>
-          <div class="field"><label>連絡先</label><input value="${escapeHtml(s.phone)}" placeholder="例）FAX:03-000-0000 or Email:ooooo@ooo.co.jp" oninput="updateSupplier('${s.id}','phone',this.value)" class="${!s.phone?'blank':''}" /></div>
+      <div class="supplier-master-body">
+        <div class="master-head">
+          <div class="master-head-title">仕入先設定</div>
         </div>
-      </div>
-      <div class="master-head" style="margin-top:12px">
-        <div class="master-head-title">ヤード登録</div>
-        <button class="btn yard-add-btn master-yard-add-btn" onclick="addYard('${s.id}')">ヤード追加</button>
-      </div>
-      <div class="master-subblock">
-        <div class="yard-grid">
-          ${s.yards.map((y,yidx) => `<div class="yard-item ${(isMobileView() || yidx!==0)?'is-collapsed':''}">
-            <div class="yard-card-head">
-              <div class="yard-card-title">
-                <span class="yard-card-index">ヤード${yidx+1}</span>
-                <span class="yard-card-title-text">${escapeHtml(y.name || '（ヤード名未入力）')}</span>
+        <div class="master-subblock">
+          <div class="subgrid">
+            <div class="field"><label>仕入先名（簡略）</label><input value="${escapeHtml(s.shortName)}" placeholder="例）〇〇商店" oninput="updateSupplier('${s.id}','shortName',this.value)" class="${!s.shortName?'blank':''}" /></div>
+            <div class="field"><label>仕入先名（正式名称）</label><input value="${escapeHtml(s.formalName)}" placeholder="例）〇〇商店株式会社" oninput="updateSupplier('${s.id}','formalName',this.value)" class="${!s.formalName?'blank':''}" /></div>
+            <div class="field"><label>担当者名・役職</label><input value="${escapeHtml(s.contact)}" placeholder="例）取締役　営業本部長　山田太郎" oninput="updateSupplier('${s.id}','contact',this.value)" class="${!s.contact?'blank':''}" /></div>
+            <div class="field"><label>連絡先</label><input value="${escapeHtml(s.phone)}" placeholder="例）FAX:03-000-0000 or Email:ooooo@ooo.co.jp" oninput="updateSupplier('${s.id}','phone',this.value)" class="${!s.phone?'blank':''}" /></div>
+          </div>
+        </div>
+        <div class="master-head" style="margin-top:12px">
+          <div class="master-head-title">ヤード登録</div>
+          <button class="btn yard-add-btn master-yard-add-btn" onclick="addYard('${s.id}')">ヤード追加</button>
+        </div>
+        <div class="master-subblock">
+          <div class="yard-grid">
+            ${s.yards.map((y,yidx) => `<div class="yard-item ${(isMobileView() || yidx!==0)?'is-collapsed':''}">
+              <div class="yard-card-head">
+                <div class="yard-card-title">
+                  <span class="yard-card-index">ヤード${yidx+1}</span>
+                  <span class="yard-card-title-text">${escapeHtml(y.name || '（ヤード名未入力）')}</span>
+                </div>
+                <div class="yard-card-actions">
+                  <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYard('${s.id}','${y.id}')">&times;</button>
+                  <button class="btn yard-toggle" type="button" onclick="toggleYardCard(this)">${(isMobileView() || yidx!==0)?'▸':'▾'}</button>
+                </div>
               </div>
-              <div class="yard-card-actions">
-                <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYard('${s.id}','${y.id}')">&times;</button>
-                <button class="btn yard-toggle" type="button" onclick="toggleYardCard(this)">${(isMobileView() || yidx!==0)?'▸':'▾'}</button>
+              <div class="yard-card-body">
+                <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
+                <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" data-money-format="yen" inputmode="decimal" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value,this);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
               </div>
-            </div>
-            <div class="yard-card-body">
-              <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
-              <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" data-money-format="yen" inputmode="decimal" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value,this);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
-            </div>
-          </div>`).join('')}
+            </div>`).join('')}
+          </div>
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function toggleYardCard(btn){
@@ -1609,6 +1727,15 @@ function toggleYardCard(btn){
   item.classList.toggle('is-collapsed');
   btn.textContent = item.classList.contains('is-collapsed') ? '▸' : '▾';
 }
+
+function toggleSupplierMaster(id){
+  if(window.innerWidth > 760) return;
+  const supplier = state.suppliers.find(s => s.id === id);
+  if(!supplier) return;
+  supplier.collapsed = !supplier.collapsed;
+  renderSupplierMaster();
+}
+
 
 function syncYardCardTitle(input){ return; }
 
@@ -1907,7 +2034,7 @@ function issueQuote(){
 }
 
 function addSupplier(){
-  state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', yards:[{id:uid(), name:'', drayage:''}]});
+  state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', collapsed:isMobileView(), yards:[{id:uid(), name:'', drayage:''}]});
   renderAll();
 }
 function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); renderAll(); }
