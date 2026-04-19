@@ -1,7 +1,7 @@
 {
   "name": "古紙輸出見積作成",
   "short_name": "輸出見積",
-  "start_url": "./index_clean_pwa_v433.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1d4ed8",
   "theme_color": "#1d4ed8",
