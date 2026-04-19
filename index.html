@@ -648,6 +648,13 @@
         min-width:0 !important;
         white-space:nowrap !important;
       }
+      .basic-section .basic-grid > .field.hidden,
+      .basic-section .basic-inline-field.hidden,
+      .basic-section .basic-stack-field.hidden,
+      .basic-section .basic-inline-field.overseas-only.hidden,
+      .basic-section .basic-stack-field.overseas-only.hidden{
+        display:none !important;
+      }
     }
 
 </style>
@@ -1113,18 +1120,6 @@ function switchTab(tab){
   renderAll();
 }
 
-function applyCalcModeVisibility(){
-  const isOverseas = state.calcMode === 'overseas';
-  document.querySelectorAll('.overseas-only').forEach(el => {
-    el.classList.toggle('hidden', !isOverseas);
-    el.style.display = isOverseas ? '' : 'none';
-  });
-  document.querySelectorAll('.cy-only').forEach(el => {
-    el.classList.toggle('hidden', isOverseas);
-    el.style.display = isOverseas ? 'none' : '';
-  });
-}
-
 function setCalcMode(mode){
   state.calcMode = mode;
   document.getElementById('modeOverseas').classList.toggle('active', mode==='overseas');
@@ -1137,7 +1132,6 @@ function setCalcMode(mode){
     if(state.basic.salesCondition === 'CY渡し') state.basic.salesCondition = 'CIF';
     state.quoteLines = state.quoteLines.map(x => ({...x, quoteCondition:'CY渡し'}));
   }
-  applyCalcModeVisibility();
   renderAll();
   recalcAll();
 }
@@ -1177,8 +1171,21 @@ function renderBasics(){
   document.getElementById('fxRate').value = state.basic.fxRate;
   document.getElementById('fxRate').style.textAlign = 'center';
 
-  applyCalcModeVisibility();
-  document.querySelectorAll('.cif-only').forEach(el => el.classList.toggle('hidden', !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF')));
+  document.querySelectorAll('.overseas-only').forEach(el => {
+    const hide = state.calcMode !== 'overseas';
+    el.classList.toggle('hidden', hide);
+    if(hide) el.style.setProperty('display', 'none', 'important'); else el.style.removeProperty('display');
+  });
+  document.querySelectorAll('.cy-only').forEach(el => {
+    const hide = state.calcMode !== 'cy';
+    el.classList.toggle('hidden', hide);
+    if(hide) el.style.setProperty('display', 'none', 'important'); else el.style.removeProperty('display');
+  });
+  document.querySelectorAll('.cif-only').forEach(el => {
+    const hide = !(state.calcMode==='overseas' && state.basic.salesCondition==='CIF');
+    el.classList.toggle('hidden', hide);
+    if(hide) el.style.setProperty('display', 'none', 'important'); else el.style.removeProperty('display');
+  });
 
   document.getElementById('lcFee').value = formatUsdTonDisplay(state.overseasCosts.lcFee, 2);
   document.getElementById('overseasCom').value = formatUsdTonDisplay(state.overseasCosts.overseasCom, 1);
