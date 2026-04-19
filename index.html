@@ -1439,6 +1439,93 @@
   height:42px !important;
 }
 
+
+/* v11: スマホ版マスタ見出し・ボタン崩れ修正 */
+@media (max-width:768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:flex-start !important;
+    justify-content:space-between !important;
+    padding:12px 12px 10px 12px !important;
+    min-height:auto !important;
+    overflow:visible !important;
+    row-gap:8px !important;
+    column-gap:8px !important;
+  }
+
+  .master-supplier-section .section-title-wrap,
+  .master-ocean-section .section-title-wrap{
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+    padding-right:0 !important;
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    font-size:16px !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:10px !important;
+    right:10px !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    gap:6px !important;
+    margin:0 !important;
+    width:auto !important;
+    max-width:none !important;
+  }
+
+  .master-supplier-section .section-header{
+    padding-right:132px !important;
+  }
+  .master-ocean-section .section-header{
+    padding-right:148px !important;
+  }
+
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-add-btn{
+    width:78px !important;
+    min-width:78px !important;
+    height:34px !important;
+    padding:0 8px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+    border-radius:10px !important;
+  }
+
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    width:56px !important;
+    min-width:56px !important;
+    height:34px !important;
+    padding:0 8px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+    border-radius:10px !important;
+  }
+}
+
+/* PCは現状維持しつつタイトル省略だけ効かせる */
+@media (min-width:769px){
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+}
+
 </style>
 </head>
 <body>
