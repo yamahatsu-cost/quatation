@@ -1877,6 +1877,79 @@ html, body{
       .launch-splash-card{width:min(68vw,260px);}
     }
 
+
+
+/* v64: mobile estimate buttons fixed to top-right */
+@media (max-width: 768px){
+  .estimate-section .section-header{
+    position: relative !important;
+    display: block !important;
+    min-height: 60px !important;
+    padding: 10px 178px 10px 0 !important;
+    margin-bottom: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .estimate-section .section-title-wrap{
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .estimate-section .section-title{
+    display: block !important;
+    line-height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .estimate-section .table-actions{
+    position: absolute !important;
+    top: 6px !important;
+    right: 0 !important;
+    left: auto !important;
+    bottom: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 3 !important;
+  }
+
+  .estimate-section .table-actions .add-row-btn{
+    min-width: 98px !important;
+    height: 36px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    line-height: 1.1 !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  .estimate-section .table-actions .reset-btn{
+    min-width: 58px !important;
+    height: 36px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    line-height: 1.1 !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+    background: #eef1f4 !important;
+    color: #475569 !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: none !important;
+  }
+}
+
 </style>
 </head>
 <body>
