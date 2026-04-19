@@ -1757,14 +1757,8 @@
     }
 
 
-/* ★追加修正：スマホ版 基本条件のボタン位置とヘッダー/body間隔調整 */
+/* v56 fix: iPhoneでヘッダー下の余白が広くなりすぎるのを防止 */
 @media (max-width: 760px){
-  /* ヘッダーとbodyの間隔を少し広げる */
-  .wrap{
-    padding: 190px 12px 12px !important;
-  }
-
-  /* 基本条件は「切替ボタン → タイトル」の順にする */
   .basic-section .section-header{
     display: flex !important;
     flex-direction: column !important;
@@ -2926,11 +2920,20 @@ function syncHeaderOffset(){
   const header = document.querySelector('.header');
   const wrap = document.querySelector('.wrap');
   if(!header || !wrap) return;
-  const offset = Math.ceil(header.getBoundingClientRect().height) + 12;
-  document.body.style.paddingTop = offset + 'px';
-  wrap.style.paddingTop = '12px';
+
+  const isMobile = window.innerWidth <= 760;
+  const headerHeight = Math.ceil(header.offsetHeight || header.getBoundingClientRect().height || 0);
+  const safeTop = Math.max(0, Math.round((window.visualViewport ? window.visualViewport.offsetTop : 0) || 0));
+  const extraGap = isMobile ? 8 : 12;
+
+  document.body.style.paddingTop = (headerHeight + safeTop + extraGap) + 'px';
+  wrap.style.paddingTop = '0px';
 }
 window.addEventListener('resize', syncHeaderOffset);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', syncHeaderOffset);
+}
+window.addEventListener('load', () => requestAnimationFrame(syncHeaderOffset));
 
 window.addEventListener('click', e => {
   if(e.target.id === 'savedModal') closeSavedModal();
