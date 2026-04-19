@@ -993,6 +993,53 @@
 
 
 
+
+
+/* v39: mobile master title fit fix (supplier + ocean only) */
+@media (max-width: 768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    display:block !important;
+    padding-right:178px !important;
+    min-height:52px !important;
+  }
+  .master-supplier-section .section-title-wrap,
+  .master-ocean-section .section-title-wrap{
+    display:block !important;
+    min-width:0 !important;
+    padding-right:0 !important;
+  }
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    font-size:15px !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    padding-right:4px !important;
+  }
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:0 !important;
+    right:0 !important;
+    margin:0 !important;
+    width:auto !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    align-items:center !important;
+    gap:8px !important;
+    flex-wrap:nowrap !important;
+  }
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    flex:0 0 auto !important;
+  }
+}
+
 /* v37: PC supplier collapse + mobile supplier action buttons right fixed */
 #supplierMaster .supplier-master-card.is-collapsed .supplier-master-body{display:none !important;}
 
@@ -1518,9 +1565,13 @@ function renderBasics(){
   payment.innerHTML = Object.keys(LC_FEES).map(k=>`<option value="${k}" ${state.basic.paymentTerm===k?'selected':''}>${k}</option>`).join('');
 
   const lps = [...new Set(state.oceanFreight.map(x=>x.loadingPort).filter(Boolean))];
-  const dps = [...new Set(state.oceanFreight.map(x=>x.dischargePort).filter(Boolean))];
+  const linkedFreights = state.calcMode==='overseas' && state.basic.loadingPort
+    ? state.oceanFreight.filter(x => x.loadingPort === state.basic.loadingPort)
+    : state.oceanFreight;
+  const dps = [...new Set(linkedFreights.map(x=>x.dischargePort).filter(Boolean))];
+  if(state.basic.dischargePort && !dps.includes(state.basic.dischargePort)) state.basic.dischargePort = '';
   renderSelectOptions(document.getElementById('loadingPort'), lps, '積港を選択', state.basic.loadingPort);
-  renderSelectOptions(document.getElementById('dischargePort'), dps, '揚港を選択', state.basic.dischargePort);
+  renderSelectOptions(document.getElementById('dischargePort'), dps, state.basic.loadingPort ? '揚港を選択' : '先に積港を選択', state.basic.dischargePort);
   document.getElementById('fxRate').value = state.basic.fxRate;
   document.getElementById('fxRate').style.textAlign = 'center';
 
@@ -1630,8 +1681,8 @@ function renderDrayageSummaryCards(){
     .map((line, idx) => ({line, idx, dray: drayagePerKg(line.yardName, line.quantity)}))
     .filter(item => item.line.quoteCondition === '店頭' && item.line.yardName);
   if(!storefrontLines.length) return '';
-  const portLabel = state.basic.loadingPort ? `${escapeHtml(state.basic.loadingPort)}港` : '積港未設定';
-  const details = storefrontLines.map(item => `${escapeHtml(item.line.yardName || '')}ー${portLabel} ドレー単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
+  const portLabel = state.basic.loadingPort ? `${escapeHtml(state.basic.loadingPort)}港` : '指定港';
+  const details = storefrontLines.map(item => `${escapeHtml(item.line.yardName || '')} - ${portLabel}   ドレー費：${fmt(item.dray,2)} 円/kg`).join('<br>');
   return `<div class="summary-card summary-wide"><div class="summary-label">ドレー費 kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
 }
 
