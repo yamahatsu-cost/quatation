@@ -1667,6 +1667,72 @@
   }
 }
 
+
+/* v15: スマホ版 海上運賃マスタのタイトル被りを確実に解消 */
+@media (max-width:768px){
+
+  /* 海上運賃マスタは右側ボタン用の余白を広めに確保 */
+  .master-ocean-section .section-header{
+    padding-right: 152px !important;
+  }
+
+  /* タイトルは1行のまま、右余白内に収める */
+  .master-ocean-section .section-title{
+    display:block !important;
+    font-size:16px !important;
+    line-height:42px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  /* ボタン群を少し右上に寄せ、サイズを明示固定 */
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:11px !important;
+    right:12px !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    gap:6px !important;
+    width:auto !important;
+    margin:0 !important;
+    z-index:2 !important;
+  }
+
+  /* 運賃追加は少し細く */
+  .master-ocean-section .table-actions .ocean-add-btn,
+  .master-ocean-section .table-actions .master-add-btn.ocean-add-btn{
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 6px !important;
+    font-size: 12px !important;
+    line-height: 38px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    flex: 0 0 72px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 保存は仕入先マスタと同じ幅 */
+  .master-ocean-section .table-actions .master-save-btn{
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 6px !important;
+    font-size: 12px !important;
+    line-height: 38px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    flex: 0 0 58px !important;
+    white-space: nowrap !important;
+  }
+}
+
 </style>
 </head>
 <body>
