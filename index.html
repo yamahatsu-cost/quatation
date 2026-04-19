@@ -1169,6 +1169,276 @@
   background: var(--placeholder) !important;
 }
 
+
+/* master登録ボタンのレイアウトを元に戻す */
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:static !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  flex-wrap:wrap !important;
+  row-gap:10px !important;
+  column-gap:10px !important;
+  padding-right:0 !important;
+  min-height:auto !important;
+}
+
+.master-supplier-section .section-title-wrap,
+.master-ocean-section .section-title-wrap{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  padding-right:0 !important;
+}
+
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:static !important;
+  top:auto !important;
+  right:auto !important;
+  margin:0 !important;
+  width:auto !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:nowrap !important;
+  margin-left:auto !important;
+}
+
+@media (max-width:768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:static !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    flex-wrap:wrap !important;
+    row-gap:10px !important;
+    column-gap:10px !important;
+    padding-right:0 !important;
+    min-height:auto !important;
+  }
+
+  .master-supplier-section .section-title-wrap,
+  .master-ocean-section .section-title-wrap{
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    font-size:15px !important;
+    line-height:1.25 !important;
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:static !important;
+    margin-left:auto !important;
+    width:auto !important;
+    gap:8px !important;
+  }
+
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-add-btn{
+    min-width:96px !important;
+    width:96px !important;
+    height:46px !important;
+    padding:0 10px !important;
+    font-size:14px !important;
+    border-radius:14px !important;
+  }
+
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    min-width:70px !important;
+    width:70px !important;
+    height:46px !important;
+    padding:0 10px !important;
+    font-size:14px !important;
+    border-radius:14px !important;
+  }
+}
+
+
+/* ヘッダータイトルサイズ調整 */
+.title{
+  font-size:26px !important;
+}
+@media (max-width:760px){
+  .title{
+    font-size:22px !important;
+  }
+}
+
+
+/* ボタン右上固定 */
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  margin:0 !important;
+}
+
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:relative !important;
+  padding-right:180px !important;
+}
+
+/* スマホ調整 */
+@media (max-width:768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    padding-right:150px !important;
+  }
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    top:8px !important;
+    right:8px !important;
+  }
+}
+
+
+/* はみ出し修正：右上固定を枠内に収める */
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:relative !important;
+  padding-right:0 !important;
+}
+
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  max-width:calc(100% - 20px);
+}
+
+/* ボタンがはみ出ないように縮小 */
+.master-supplier-section .table-actions .btn,
+.master-ocean-section .table-actions .btn{
+  white-space:nowrap;
+  max-width:100%;
+}
+
+/* スマホははみ出し防止で通常配置に戻す */
+@media (max-width:768px){
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:static !important;
+    margin-left:auto !important;
+    margin-top:8px !important;
+  }
+}
+
+
+/* スマホでも右上固定＋横並び維持（コンパクト化） */
+@media (max-width:768px){
+
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    padding-right:120px !important; /* ボタン分のスペース確保 */
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:6px !important;
+    right:6px !important;
+    display:flex !important;
+    gap:6px !important;
+  }
+
+  .master-supplier-section .table-actions .btn,
+  .master-ocean-section .table-actions .btn{
+    min-width:auto !important;
+    width:auto !important;
+    padding:6px 8px !important;
+    font-size:12px !important;
+    height:36px !important;
+    border-radius:10px !important;
+  }
+}
+
+
+/* タイトルはみ出し最終修正（スマホ） */
+@media (max-width:768px){
+
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    padding-right:140px !important; /* 余裕を増やす */
+    overflow:hidden !important; /* はみ出し防止 */
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    font-size:14px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:8px !important;
+    right:8px !important;
+    display:flex !important;
+    gap:6px !important;
+  }
+
+  .master-supplier-section .table-actions .btn,
+  .master-ocean-section .table-actions .btn{
+    min-width:auto !important;
+    width:auto !important;
+    padding:5px 7px !important;
+    font-size:11px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+}
+
+
+/* PC版はみ出し修正 */
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:relative !important;
+  padding-right:220px !important; /* PCは広め確保 */
+}
+
+.master-supplier-section .section-title,
+.master-ocean-section .section-title{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  display:flex;
+  gap:8px;
+}
+
+/* PCボタン少しだけコンパクト化 */
+.master-supplier-section .table-actions .btn,
+.master-ocean-section .table-actions .btn{
+  padding:8px 12px !important;
+  font-size:14px !important;
+  height:42px !important;
+}
+
 </style>
 </head>
 <body>
