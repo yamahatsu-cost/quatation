@@ -645,7 +645,34 @@
         display:none !important;
       }
     }
-    </style>
+    
+    /* v23: mobile master action button height fix */
+    @media (max-width: 768px){
+      .table-actions .btn,
+      .master-toolbar .btn,
+      .master-head .btn,
+      .master-yard-add-btn,
+      .yard-add-btn{
+        height: 46px !important;
+        min-height: 46px !important;
+        padding: 0 16px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1.1 !important;
+        border-radius: 14px !important;
+        white-space: nowrap !important;
+      }
+      .table-actions .btn.blue{
+        font-size: 15px !important;
+      }
+      .table-actions{
+        gap: 10px !important;
+        align-items: center !important;
+      }
+    }
+
+</style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
