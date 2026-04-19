@@ -1073,6 +1073,562 @@
   }
 }
 
+
+/* 高級感アップ：仕入先マスタ */
+.master-supplier-section{
+  background:
+    linear-gradient(180deg, #dceafe 0%, #eef5ff 42%, #f8fbff 100%) !important;
+  border: 1px solid #b8cdf6 !important;
+  box-shadow:
+    0 14px 32px rgba(37, 99, 235, 0.12),
+    0 4px 10px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255,255,255,0.85) !important;
+  position: relative;
+}
+.master-supplier-section::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  pointer-events:none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+}
+.master-supplier-section .section-header{
+  background: linear-gradient(180deg, #c8dcff 0%, #deebff 100%) !important;
+  border: 1px solid #b4caf3 !important;
+  border-radius: 16px !important;
+  padding: 12px 14px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    0 6px 16px rgba(37,99,235,0.10) !important;
+}
+.master-supplier-section .section-title{
+  color:#183b78 !important;
+}
+
+/* 高級感アップ：海上運賃マスタ */
+.master-ocean-section{
+  background:
+    linear-gradient(180deg, #dcf5ea 0%, #edf9f3 42%, #f8fcfa 100%) !important;
+  border: 1px solid #b7dece !important;
+  box-shadow:
+    0 14px 32px rgba(16, 185, 129, 0.11),
+    0 4px 10px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255,255,255,0.85) !important;
+  position: relative;
+}
+.master-ocean-section::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  pointer-events:none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+}
+.master-ocean-section .section-header{
+  background: linear-gradient(180deg, #c9ecdc 0%, #def5ea 100%) !important;
+  border: 1px solid #b3dcc8 !important;
+  border-radius: 16px !important;
+  padding: 12px 14px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    0 6px 16px rgba(16,185,129,0.10) !important;
+}
+.master-ocean-section .section-title{
+  color:#1b5a46 !important;
+}
+
+
+/* 見積価格 下部備考欄の背景を統一 */
+.estimate-section .note{
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+.estimate-section .bottom-note{
+  background: transparent !important;
+  border: none !important;
+}
+
+
+/* 見積価格 下部備考欄の背景を統一（入力欄は維持） */
+.estimate-section .note{
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* textareaは白に戻す */
+.estimate-section .bottom-note{
+  background: #ffffff !important;
+  border: 1px solid #cdd9ea !important;
+}
+
+/* 未入力時は薄い茶色 */
+.estimate-section .bottom-note.blank{
+  background: var(--placeholder) !important;
+}
+
+
+/* master登録ボタンのレイアウトを元に戻す */
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:static !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  flex-wrap:wrap !important;
+  row-gap:10px !important;
+  column-gap:10px !important;
+  padding-right:0 !important;
+  min-height:auto !important;
+}
+
+.master-supplier-section .section-title-wrap,
+.master-ocean-section .section-title-wrap{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  padding-right:0 !important;
+}
+
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:static !important;
+  top:auto !important;
+  right:auto !important;
+  margin:0 !important;
+  width:auto !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:nowrap !important;
+  margin-left:auto !important;
+}
+
+@media (max-width:768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:static !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    flex-wrap:wrap !important;
+    row-gap:10px !important;
+    column-gap:10px !important;
+    padding-right:0 !important;
+    min-height:auto !important;
+  }
+
+  .master-supplier-section .section-title-wrap,
+  .master-ocean-section .section-title-wrap{
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    font-size:15px !important;
+    line-height:1.25 !important;
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:static !important;
+    margin-left:auto !important;
+    width:auto !important;
+    gap:8px !important;
+  }
+
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-add-btn{
+    min-width:96px !important;
+    width:96px !important;
+    height:46px !important;
+    padding:0 10px !important;
+    font-size:14px !important;
+    border-radius:14px !important;
+  }
+
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    min-width:70px !important;
+    width:70px !important;
+    height:46px !important;
+    padding:0 10px !important;
+    font-size:14px !important;
+    border-radius:14px !important;
+  }
+}
+
+
+/* ヘッダータイトルサイズ調整 */
+.title{
+  font-size:26px !important;
+}
+@media (max-width:760px){
+  .title{
+    font-size:22px !important;
+  }
+}
+
+
+/* ボタン右上固定 */
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  margin:0 !important;
+}
+
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:relative !important;
+  padding-right:180px !important;
+}
+
+/* スマホ調整 */
+@media (max-width:768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    padding-right:150px !important;
+  }
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    top:8px !important;
+    right:8px !important;
+  }
+}
+
+
+/* はみ出し修正：右上固定を枠内に収める */
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:relative !important;
+  padding-right:0 !important;
+}
+
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  max-width:calc(100% - 20px);
+}
+
+/* ボタンがはみ出ないように縮小 */
+.master-supplier-section .table-actions .btn,
+.master-ocean-section .table-actions .btn{
+  white-space:nowrap;
+  max-width:100%;
+}
+
+/* スマホははみ出し防止で通常配置に戻す */
+@media (max-width:768px){
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:static !important;
+    margin-left:auto !important;
+    margin-top:8px !important;
+  }
+}
+
+
+/* スマホでも右上固定＋横並び維持（コンパクト化） */
+@media (max-width:768px){
+
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    padding-right:120px !important; /* ボタン分のスペース確保 */
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:6px !important;
+    right:6px !important;
+    display:flex !important;
+    gap:6px !important;
+  }
+
+  .master-supplier-section .table-actions .btn,
+  .master-ocean-section .table-actions .btn{
+    min-width:auto !important;
+    width:auto !important;
+    padding:6px 8px !important;
+    font-size:12px !important;
+    height:36px !important;
+    border-radius:10px !important;
+  }
+}
+
+
+/* タイトルはみ出し最終修正（スマホ） */
+@media (max-width:768px){
+
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    padding-right:140px !important; /* 余裕を増やす */
+    overflow:hidden !important; /* はみ出し防止 */
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    font-size:14px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:8px !important;
+    right:8px !important;
+    display:flex !important;
+    gap:6px !important;
+  }
+
+  .master-supplier-section .table-actions .btn,
+  .master-ocean-section .table-actions .btn{
+    min-width:auto !important;
+    width:auto !important;
+    padding:5px 7px !important;
+    font-size:11px !important;
+    height:34px !important;
+    border-radius:10px !important;
+  }
+}
+
+
+/* PC版はみ出し修正 */
+.master-supplier-section .section-header,
+.master-ocean-section .section-header{
+  position:relative !important;
+  padding-right:220px !important; /* PCは広め確保 */
+}
+
+.master-supplier-section .section-title,
+.master-ocean-section .section-title{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.master-supplier-section .table-actions,
+.master-ocean-section .table-actions{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  display:flex;
+  gap:8px;
+}
+
+/* PCボタン少しだけコンパクト化 */
+.master-supplier-section .table-actions .btn,
+.master-ocean-section .table-actions .btn{
+  padding:8px 12px !important;
+  font-size:14px !important;
+  height:42px !important;
+}
+
+
+/* v11: スマホ版マスタ見出し・ボタン崩れ修正 */
+@media (max-width:768px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position:relative !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:flex-start !important;
+    justify-content:space-between !important;
+    padding:12px 12px 10px 12px !important;
+    min-height:auto !important;
+    overflow:visible !important;
+    row-gap:8px !important;
+    column-gap:8px !important;
+  }
+
+  .master-supplier-section .section-title-wrap,
+  .master-ocean-section .section-title-wrap{
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+    padding-right:0 !important;
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    font-size:16px !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+  }
+
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position:absolute !important;
+    top:10px !important;
+    right:10px !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    gap:6px !important;
+    margin:0 !important;
+    width:auto !important;
+    max-width:none !important;
+  }
+
+  .master-supplier-section .section-header{
+    padding-right:132px !important;
+  }
+  .master-ocean-section .section-header{
+    padding-right:148px !important;
+  }
+
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-add-btn{
+    width:78px !important;
+    min-width:78px !important;
+    height:34px !important;
+    padding:0 8px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+    border-radius:10px !important;
+  }
+
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    width:56px !important;
+    min-width:56px !important;
+    height:34px !important;
+    padding:0 8px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+    border-radius:10px !important;
+  }
+}
+
+/* PCは現状維持しつつタイトル省略だけ効かせる */
+@media (min-width:769px){
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+}
+
+
+/* v12: スマホ版マスタ登録ヘッダー最終修正 */
+@media (max-width: 768px){
+
+  /* ヘッダー枠 */
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    position: relative !important;
+    display: block !important;
+    min-height: 68px !important;
+    padding: 12px 128px 12px 14px !important;
+    margin-bottom: 14px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* タイトル領域 */
+  .master-supplier-section .section-title-wrap,
+  .master-ocean-section .section-title-wrap{
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .master-supplier-section .section-title,
+  .master-ocean-section .section-title{
+    display: block !important;
+    font-size: 16px !important;
+    line-height: 42px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .master-supplier-section .section-desc,
+  .master-ocean-section .section-desc{
+    display: none !important;
+  }
+
+  /* 右上ボタン群 */
+  .master-supplier-section .table-actions,
+  .master-ocean-section .table-actions{
+    position: absolute !important;
+    top: 11px !important;
+    right: 12px !important;
+    left: auto !important;
+    bottom: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 2 !important;
+  }
+
+  /* スマホ用サイズを明示 */
+  .master-supplier-section .table-actions .master-add-btn,
+  .master-ocean-section .table-actions .master-add-btn{
+    width: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 8px !important;
+    font-size: 12px !important;
+    line-height: 38px !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    flex: 0 0 82px !important;
+  }
+
+  .master-supplier-section .table-actions .master-save-btn,
+  .master-ocean-section .table-actions .master-save-btn{
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 8px !important;
+    font-size: 12px !important;
+    line-height: 38px !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    flex: 0 0 58px !important;
+  }
+
+  /* 汎用btn指定の影響を殺す */
+  .master-supplier-section .table-actions .btn,
+  .master-ocean-section .table-actions .btn{
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
 </style>
 </head>
 <body>
