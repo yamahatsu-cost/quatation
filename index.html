@@ -184,6 +184,7 @@
     .bottom-note.blank{background:var(--placeholder)}
     .toast{top:50% !important;left:50% !important;transform:translate(-50%,-50%) translateY(18px) !important}
     .toast.show{transform:translate(-50%,-50%) translateY(0) !important}
+    .toast.warn{background:#fff7ed !important;color:#9a3412 !important;border:1px solid #fdba74 !important;box-shadow:0 18px 40px rgba(154,52,18,.18) !important}
     .add-row-btn{background:linear-gradient(180deg,#2563eb 0%,#1e40af 100%) !important;color:#fff !important;border:1px solid #1d4ed8 !important;min-width:188px;padding:15px 24px !important;box-shadow:0 12px 22px rgba(29,78,216,.24);font-size:15px}
 
     @media (max-width: 1100px){
@@ -1793,73 +1794,6 @@
   }
 }
 
-
-
-/* v-final mobile width + estimate action buttons */
-.action-btn{
-  height:48px !important;
-  min-height:48px !important;
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  padding:0 16px !important;
-  border-radius:14px !important;
-  font-size:15px !important;
-  font-weight:700 !important;
-  line-height:1.1 !important;
-  white-space:nowrap !important;
-}
-.estimate-section .table-actions{display:flex !important;align-items:center !important;gap:10px !important;}
-.estimate-section .add-row-btn.action-btn{
-  min-width:150px !important;
-  background:linear-gradient(180deg,#2563eb 0%,#1e40af 100%) !important;
-  color:#fff !important;
-  border:1px solid #1d4ed8 !important;
-  box-shadow:0 10px 20px rgba(29,78,216,.18) !important;
-}
-.estimate-section .reset-btn.action-btn{
-  min-width:104px !important;
-  background:#e2e8f0 !important;
-  color:#334155 !important;
-  border:1px solid #cbd5e1 !important;
-  box-shadow:none !important;
-}
-.estimate-section .reset-btn.action-btn:hover{background:#cbd5e1 !important;filter:none !important;}
-
-@media (max-width:760px){
-  .wrap{
-    max-width:none !important;
-    width:100% !important;
-    padding:148px 14px 12px !important;
-  }
-  .header{
-    left:14px !important;
-    right:14px !important;
-    transform:none !important;
-    width:auto !important;
-    max-width:none !important;
-    padding:12px 18px !important;
-    border-radius:0 0 18px 18px !important;
-  }
-  .section{
-    margin-top:14px !important;
-  }
-  .estimate-section .table-actions{
-    width:100% !important;
-    justify-content:flex-end !important;
-    gap:8px !important;
-  }
-  .estimate-section .add-row-btn.action-btn,
-  .estimate-section .reset-btn.action-btn{
-    height:46px !important;
-    min-height:46px !important;
-    padding:0 12px !important;
-    font-size:14px !important;
-  }
-  .estimate-section .add-row-btn.action-btn{min-width:132px !important;}
-  .estimate-section .reset-btn.action-btn{min-width:92px !important;}
-}
-
 </style>
 </head>
 <body>
@@ -2050,8 +1984,8 @@
 <div class="section-title" style="font-size:20px">見積価格</div>
 </div>
 <div class="table-actions">
-<button class="btn add-row-btn action-btn" onclick="addQuoteLine()">見積ヤード追加</button>
-<button class="btn outline reset-btn action-btn" onclick="resetForm()">リセット</button>
+<button class="btn add-row-btn" onclick="addQuoteLine()">見積ヤード追加</button>
+<button class="btn outline reset-btn" onclick="resetForm()">リセット</button>
 </div>
 </div>
 <div class="scroll-x">
@@ -2217,7 +2151,12 @@ function formatOceanFreightDisplay(v,currency){ return currency==='JPY' ? format
 function syncMatchedOceanFreight(){ const matched = state.oceanFreight.find(x => x.loadingPort===state.basic.loadingPort && x.dischargePort===state.basic.dischargePort); if(matched){ state.exportCosts.ofValue = matched.ofValue; state.exportCosts.ofCurrency = matched.ofCurrency; state.exportCosts.ebs = matched.ebs; }}
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function loadLocal(k,fallback){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
-function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>el.classList.remove('show'),1000); }
+function toast(msg, type='default'){ const el=document.getElementById('toast'); if(!el) return; el.textContent=msg; el.classList.remove('warn'); if(type==='warn') el.classList.add('warn'); el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>{ el.classList.remove('show','warn'); },1400); }
+function warnMissingSupplier(){
+  const el = document.getElementById('supplierShortName');
+  markAndScrollInvalid(el);
+  toast('見積先を選択してください', 'warn');
+}
 function clearValidationErrors(){ document.querySelectorAll('.input-error').forEach(el=>el.classList.remove('input-error')); }
 function markInvalid(el){
   if(!el) return;
@@ -2652,13 +2591,33 @@ function renderOceanFreight(){
 function renderSavedList(){
   const select = document.getElementById('savedQuoteSelect');
   if(!select) return;
-  if(!state.savedQuotes.length){
+  const sortedQuotes = [...(state.savedQuotes || [])].sort((a,b) => {
+    const at = new Date(a.savedAt || 0).getTime();
+    const bt = new Date(b.savedAt || 0).getTime();
+    return bt - at;
+  });
+  if(!sortedQuotes.length){
     select.innerHTML = '<option value="">保存データはまだありません</option>';
     return;
   }
-  select.innerHTML = '<option value="">保存データを選択</option>' + state.savedQuotes.map(item =>
-    `<option value="${item.id}">${escapeHtml(item.key)} / ${item.calcMode==='overseas'?'海外売価逆算':'CY価格逆算'} / ${escapeHtml(item.basic.salesCondition || '')}</option>`
-  ).join('');
+  const grouped = sortedQuotes.reduce((acc, item) => {
+    const supplier = (item?.basic?.supplierShortName || '').trim() || '未設定';
+    (acc[supplier] ||= []).push(item);
+    return acc;
+  }, {});
+  const supplierOrder = Object.keys(grouped).sort((a,b) => {
+    const aTime = Math.max(...grouped[a].map(x => new Date(x.savedAt || 0).getTime()));
+    const bTime = Math.max(...grouped[b].map(x => new Date(x.savedAt || 0).getTime()));
+    return bTime - aTime;
+  });
+  const html = ['<option value="">保存データを選択</option>'];
+  for(const supplier of supplierOrder){
+    const options = grouped[supplier].map(item => {
+      return `<option value="${item.id}">${escapeHtml(item.key)}</option>`;
+    }).join('');
+    html.push(`<optgroup label="${escapeHtml(supplier)}">${options}</optgroup>`);
+  }
+  select.innerHTML = html.join('');
 }
 
 function renderAll(){
@@ -2764,10 +2723,10 @@ function updateQuoteLine(id,key,val){
 }
 
 function saveQuote(){
-  if(!state.basic.supplierShortName) return toast('見積先を選択してください');
+  if(!state.basic.supplierShortName) return warnMissingSupplier();
   state.bottomNote = document.getElementById('bottomNote').value;
   const d = new Date();
-  const key = `${state.basic.supplierShortName} ${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+  const key = `${state.basic.supplierShortName}_${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
   const payload = JSON.parse(JSON.stringify({
     id:uid(), key, savedAt:d.toISOString(), calcMode:state.calcMode, basic:state.basic,
     overseasCosts:state.overseasCosts, exportCosts:state.exportCosts, domesticCosts:state.domesticCosts,
@@ -2775,6 +2734,7 @@ function saveQuote(){
   }));
   const idx = state.savedQuotes.findIndex(x => x.key === key);
   if(idx >= 0) state.savedQuotes[idx] = payload; else state.savedQuotes.unshift(payload);
+  state.savedQuotes.sort((a,b) => new Date(b.savedAt || 0).getTime() - new Date(a.savedAt || 0).getTime());
   saveLocal(STORAGE_KEYS.quotes, state.savedQuotes);
   renderSavedList();
   toast('入力内容を保存しました');
