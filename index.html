@@ -49,7 +49,7 @@
     .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
     .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
     .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .field label{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:16px;font-weight:800;color:#334155;margin-bottom:8px}
+    .field label{display:flex;justify-content:flex-start;gap:6px;align-items:center;font-size:16px;font-weight:800;color:#334155;margin-bottom:8px;flex-wrap:wrap}
     input,select,textarea{width:100%;border:1px solid #cdd9ea;border-radius:14px;padding:13px 14px;font-size:16px;background:#fff;color:#0f172a;outline:none}
     select{height:50px;line-height:1.2;-webkit-appearance:none;appearance:none;padding-right:44px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24'%3E%3Cpath fill='%2328a8ff' d='M12 16.7 5.2 8.8h13.6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px 18px}
     input:focus,select:focus,textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 4px rgba(59,130,246,.12)}
@@ -101,7 +101,7 @@
     .mode-switch .btn:not(.active){background:#d0dcf4;color:#29456f}
     .selling-price-inline{display:flex;align-items:center;gap:1em}
     .selling-price-inline input{flex:1}
-    .selling-unit-inline{font-size:16px;font-weight:800;color:#38598d;white-space:nowrap}
+    .selling-unit-inline{display:inline-block;font-size:16px;font-weight:800;color:#38598d;white-space:nowrap;margin-left:0;flex:0 0 auto}
     .right-top-badge{margin-left:auto}
     .delete-btn{background:#fee2e2 !important;color:#b91c1c !important;border:1px solid #fecaca !important}
     .master-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;padding:8px 10px;border-radius:14px;background:#eef4ff;border:1px solid #d6e2f3}
@@ -155,7 +155,7 @@
     .mode-switch .btn:not(.active){background:#d0dcf4;color:#29456f}
     .selling-price-inline{display:flex;align-items:center;gap:1em}
     .selling-price-inline input{flex:1}
-    .selling-unit-inline{font-size:16px;font-weight:800;color:#38598d;white-space:nowrap}
+    .selling-unit-inline{display:inline-block;font-size:16px;font-weight:800;color:#38598d;white-space:nowrap;margin-left:0;flex:0 0 auto}
     .right-top-badge{margin-left:auto}
     .delete-btn{background:#fee2e2 !important;color:#b91c1c !important;border:1px solid #fecaca !important}
     .master-block{border:1px solid #cfdced;border-radius:22px;padding:16px;margin-bottom:16px;background:linear-gradient(180deg,#edf4ff 0%,#f9fbff 100%)}
@@ -871,6 +871,19 @@
   }
 }
 
+
+    /* v31 selling price label/unit alignment */
+    .basic-stack-field > label{justify-content:flex-start !important;gap:.45em !important;align-items:center !important;flex-wrap:wrap !important;}
+    .basic-stack-field > label #sellingUnit,
+    .basic-stack-field > label .selling-unit-inline{margin-left:0 !important;display:inline-block !important;white-space:nowrap !important;flex:0 0 auto !important;}
+    .basic-stack-field .selling-price-inline{display:block;width:100%;}
+    .basic-stack-field .selling-price-inline input{width:100%;}
+    @media (max-width:760px){
+      .basic-section .basic-stack-field > label{margin-bottom:8px !important;justify-content:flex-start !important;gap:.45em !important;}
+      .basic-section .basic-stack-field > label #sellingUnit,
+      .basic-section .basic-stack-field > label .selling-unit-inline{font-size:.95em !important;}
+    }
+
 </style>
 </head>
 <body>
@@ -953,7 +966,7 @@
 <select id="dischargePort" onchange="onPortChange()"></select>
 </div>
 <div class="field basic-stack-field">
-<label>販売単価 <span class="selling-unit-inline" id="sellingUnit">㌦/ton</span></label>
+<label>販売単価　<span class="selling-unit-inline" id="sellingUnit">㌦/ton</span></label>
 <div class="selling-price-inline"><input id="sellingPrice" oninput="onBasicChange()" placeholder="例）160"/></div>
 </div>
 <div class="field overseas-only basic-stack-field">
@@ -1474,7 +1487,8 @@ function renderDrayageSummaryCards(){
     .map((line, idx) => ({line, idx, dray: drayagePerKg(line.yardName, line.quantity)}))
     .filter(item => item.line.quoteCondition === '店頭' && item.line.yardName);
   if(!storefrontLines.length) return '';
-  const details = storefrontLines.map(item => `商品/ヤード：${escapeHtml(item.line.product || `L${item.idx + 1}`)}/${escapeHtml(item.line.yardName || '')} ドレー単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
+  const portLabel = state.basic.loadingPort ? `${escapeHtml(state.basic.loadingPort)}港` : '積港未設定';
+  const details = storefrontLines.map(item => `${escapeHtml(item.line.yardName || '')}ー${portLabel} ドレー単価：${fmt(item.dray,2)} 円/kg`).join('<br>');
   return `<div class="summary-card summary-wide"><div class="summary-label">ドレー費 kg単価</div><div class="mini-value" style="font-size:16px;font-weight:700;line-height:1.8">${details}</div></div>`;
 }
 
