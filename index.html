@@ -1756,87 +1756,108 @@
     }
 
 
-/* ★最終UI完成版：スマホ版のみ微調整 */
+/* ★追加修正：スマホ版 基本条件のボタン位置とヘッダー/body間隔調整 */
 @media (max-width: 760px){
-
-  /* ヘッダーとBODYの間隔を広げすぎず、少しだけ確保 */
+  /* ヘッダーとbodyの間隔を少し広げる */
   .wrap{
-    padding: 156px 12px 12px !important;
+    padding: 190px 12px 12px !important;
   }
 
-  /* 基本条件は ボタン → タイトル の順 */
+  /* 基本条件は「切替ボタン → タイトル」の順にする */
   .basic-section .section-header{
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:stretch !important;
-    gap:10px !important;
-    margin-bottom:14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
   }
+
   .basic-section .mode-switch{
-    order:-1 !important;
-    width:100% !important;
-    margin:0 !important;
+    order: -1 !important;
+    width: 100% !important;
+    margin: 0 0 2px 0 !important;
   }
+
   .basic-section .section-title-wrap{
-    order:0 !important;
-    width:100% !important;
+    order: 0 !important;
+    width: 100% !important;
   }
+
   .basic-section .section-title{
-    margin:0 !important;
+    margin: 0 !important;
   }
 
-  /* マスタ画面上部の余白も広すぎない程度に */
+  /* マスタ画面側も少しだけヘッダー下に余白を確保 */
   #masterTab{
-    margin-top: 2px !important;
+    margin-top: 6px !important;
   }
+}
 
-  /* 海上運賃マスタの保存ボタンを仕入先マスタと同じ幅に固定 */
-  .master-ocean-section .table-actions .btn.master-save-btn,
-  .master-ocean-section .table-actions .master-save-btn{
-    width:70px !important;
-    min-width:70px !important;
-    max-width:70px !important;
-    flex:0 0 70px !important;
-    padding:0 10px !important;
-    font-size:14px !important;
+
+
+/* v-final mobile width + estimate action buttons */
+.action-btn{
+  height:48px !important;
+  min-height:48px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 16px !important;
+  border-radius:14px !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+}
+.estimate-section .table-actions{display:flex !important;align-items:center !important;gap:10px !important;}
+.estimate-section .add-row-btn.action-btn{
+  min-width:150px !important;
+  background:linear-gradient(180deg,#2563eb 0%,#1e40af 100%) !important;
+  color:#fff !important;
+  border:1px solid #1d4ed8 !important;
+  box-shadow:0 10px 20px rgba(29,78,216,.18) !important;
+}
+.estimate-section .reset-btn.action-btn{
+  min-width:104px !important;
+  background:#e2e8f0 !important;
+  color:#334155 !important;
+  border:1px solid #cbd5e1 !important;
+  box-shadow:none !important;
+}
+.estimate-section .reset-btn.action-btn:hover{background:#cbd5e1 !important;filter:none !important;}
+
+@media (max-width:760px){
+  .wrap{
+    max-width:none !important;
+    width:100% !important;
+    padding:148px 14px 12px !important;
   }
-
-  /* 運賃追加は保存より少し広めで固定 */
-  .master-ocean-section .table-actions .btn.master-add-btn,
-  .master-ocean-section .table-actions .master-add-btn{
-    width:96px !important;
-    min-width:96px !important;
-    max-width:96px !important;
-    flex:0 0 96px !important;
-    padding:0 10px !important;
-    font-size:14px !important;
+  .header{
+    left:14px !important;
+    right:14px !important;
+    transform:none !important;
+    width:auto !important;
+    max-width:none !important;
+    padding:12px 18px !important;
+    border-radius:0 0 18px 18px !important;
   }
-
-  /* 仕入先マスタ側も保存幅を完全統一 */
-  .master-supplier-section .table-actions .btn.master-save-btn,
-  .master-supplier-section .table-actions .master-save-btn{
-    width:70px !important;
-    min-width:70px !important;
-    max-width:70px !important;
-    flex:0 0 70px !important;
-    padding:0 10px !important;
-    font-size:14px !important;
+  .section{
+    margin-top:14px !important;
   }
-
-  .master-supplier-section .table-actions .btn.master-add-btn,
-  .master-supplier-section .table-actions .master-add-btn{
-    width:96px !important;
-    min-width:96px !important;
-    max-width:96px !important;
-    flex:0 0 96px !important;
-    padding:0 10px !important;
-    font-size:14px !important;
-  }
-
-  .master-supplier-section .table-actions,
-  .master-ocean-section .table-actions{
+  .estimate-section .table-actions{
+    width:100% !important;
+    justify-content:flex-end !important;
     gap:8px !important;
   }
+  .estimate-section .add-row-btn.action-btn,
+  .estimate-section .reset-btn.action-btn{
+    height:46px !important;
+    min-height:46px !important;
+    padding:0 12px !important;
+    font-size:14px !important;
+  }
+  .estimate-section .add-row-btn.action-btn{min-width:132px !important;}
+  .estimate-section .reset-btn.action-btn{min-width:92px !important;}
 }
 
 </style>
@@ -2029,8 +2050,8 @@
 <div class="section-title" style="font-size:20px">見積価格</div>
 </div>
 <div class="table-actions">
-<button class="btn add-row-btn" onclick="addQuoteLine()">見積ヤード追加</button>
-<button class="btn outline reset-btn" onclick="resetForm()">リセット</button>
+<button class="btn add-row-btn action-btn" onclick="addQuoteLine()">見積ヤード追加</button>
+<button class="btn outline reset-btn action-btn" onclick="resetForm()">リセット</button>
 </div>
 </div>
 <div class="scroll-x">
