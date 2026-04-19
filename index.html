@@ -732,6 +732,118 @@
       }
     }
 
+
+    /* v25: estimate header overlap fix + smaller mobile subheader text */
+    @media (max-width: 768px){
+      /* 見積条件ヘッダー */
+      .estimate-section .section-header,
+      .quote-section .section-header,
+      .estimate-conditions-section .section-header,
+      .conditions-section .section-header{
+        position: static !important;
+        padding-right: 0 !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        row-gap: 10px !important;
+        column-gap: 10px !important;
+        margin-bottom: 14px !important;
+        padding-bottom: 12px !important;
+      }
+
+      .estimate-section .section-title-wrap,
+      .quote-section .section-title-wrap,
+      .estimate-conditions-section .section-title-wrap,
+      .conditions-section .section-title-wrap,
+      .estimate-section .section-title,
+      .quote-section .section-title,
+      .estimate-conditions-section .section-title,
+      .conditions-section .section-title{
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .estimate-section .table-actions,
+      .quote-section .table-actions,
+      .estimate-conditions-section .table-actions,
+      .conditions-section .table-actions{
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        margin: 0 !important;
+        width: auto !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex: 0 0 auto !important;
+      }
+
+      .estimate-section .table-actions .btn,
+      .quote-section .table-actions .btn,
+      .estimate-conditions-section .table-actions .btn,
+      .conditions-section .table-actions .btn,
+      .estimate-section .yard-add-btn,
+      .quote-section .yard-add-btn,
+      .estimate-conditions-section .yard-add-btn,
+      .conditions-section .yard-add-btn{
+        height: 46px !important;
+        min-height: 46px !important;
+        padding: 0 14px !important;
+        font-size: 15px !important;
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+        position: static !important;
+        margin: 0 !important;
+      }
+
+      /* ヘッダー下の会社名・社内アプリ・Ver */
+      .app-subtitle,
+      .app-subtitle-row,
+      .hero-subtitle,
+      .header-subtitle,
+      .brand-subline,
+      .brand-subtitle{
+        font-size: 0.86rem !important;
+        line-height: 1.25 !important;
+      }
+
+      .app-version,
+      .version-label,
+      .hero-version,
+      .header-version{
+        font-size: 0.82rem !important;
+        line-height: 1.2 !important;
+      }
+    }
+
+
+/* v26: ocean master buttons right fixed (mobile) */
+@media (max-width: 768px){
+  .master-ocean-section .section-header{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    flex-wrap:nowrap !important;
+  }
+
+  .master-ocean-section .section-title,
+  .master-ocean-section .section-title-wrap{
+    flex:1;
+    min-width:0;
+  }
+
+  .master-ocean-section .table-actions{
+    margin-left:auto !important;
+    display:flex !important;
+    gap:8px;
+    flex-shrink:0;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -763,7 +875,7 @@
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.29</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:2.29</span></div>
 </div>
 </div>
 <div class="header-actions">
