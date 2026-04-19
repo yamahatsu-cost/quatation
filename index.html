@@ -1733,6 +1733,28 @@
   }
 }
 
+
+
+    /* UX cleanup: hide estimate tab button, move master to header, keep reset in estimate section */
+    .header-actions #headerMasterBtn.header-master-active{
+      background:linear-gradient(180deg,#2f6cf3 0%,#1d4ed8 100%) !important;
+      color:#fff !important;
+      border-color:#7fb3ff !important;
+      box-shadow:0 10px 20px rgba(29,78,216,.18) !important;
+    }
+    .estimate-section .reset-btn{
+      background:#f8fafc !important;
+      color:#334155 !important;
+      border:1px solid #cbd5e1 !important;
+      box-shadow:none !important;
+    }
+    .estimate-section .reset-btn:hover{filter:brightness(0.98);}
+    .wrap{padding:74px 18px 18px !important;}
+    @media (max-width:760px){
+      .wrap{padding:92px 12px 12px !important;}
+      .header-actions{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+    }
+
 </style>
 </head>
 <body>
@@ -1764,20 +1786,17 @@
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:2.29</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:2.30</span></div>
 </div>
 </div>
 <div class="header-actions">
 <button class="btn" onclick="saveQuote()">入力内容保存</button>
 <button class="btn" onclick="openSavedModal()">データ呼出</button>
-<button class="btn" onclick="resetForm()">リセット</button>
+<button class="btn" id="headerMasterBtn" onclick="toggleMasterView()">マスタ登録</button>
 </div>
 </div>
 </div>
-<div class="tabs">
-<button class="tab active" id="tabEstimate" onclick="switchTab('estimate')">見積作成</button>
-<button class="tab" id="tabMaster" onclick="switchTab('master')">マスタ登録</button>
-</div>
+
 <div id="estimateTab">
 <div class="section basic-section">
 <div class="section-header">
@@ -1927,6 +1946,7 @@
 </div>
 <div class="table-actions">
 <button class="btn add-row-btn" onclick="addQuoteLine()">見積ヤード追加</button>
+<button class="btn outline reset-btn" onclick="resetForm()">リセット</button>
 </div>
 </div>
 <div class="scroll-x">
@@ -2173,11 +2193,23 @@ function availableYards(){ return selectedSupplier()?.yards || []; }
 
 function switchTab(tab){
   state.activeTab = tab;
-  document.getElementById('tabEstimate').classList.toggle('active', tab==='estimate');
-  document.getElementById('tabMaster').classList.toggle('active', tab==='master');
+  const estTabBtn = document.getElementById('tabEstimate');
+  const masterTabBtn = document.getElementById('tabMaster');
+  if(estTabBtn) estTabBtn.classList.toggle('active', tab==='estimate');
+  if(masterTabBtn) masterTabBtn.classList.toggle('active', tab==='master');
   document.getElementById('estimateTab').classList.toggle('hidden', tab!=='estimate');
   document.getElementById('masterTab').classList.toggle('hidden', tab!=='master');
+  const headerMasterBtn = document.getElementById('headerMasterBtn');
+  if(headerMasterBtn){
+    const isMaster = tab==='master';
+    headerMasterBtn.textContent = isMaster ? '見積へ戻る' : 'マスタ登録';
+    headerMasterBtn.classList.toggle('header-master-active', isMaster);
+  }
   renderAll();
+}
+
+function toggleMasterView(){
+  switchTab(state.activeTab === 'master' ? 'estimate' : 'master');
 }
 
 function setCalcMode(mode){
@@ -2683,6 +2715,7 @@ function resetForm(){
   state.quoteLines = createDefaultQuoteLines(state.calcMode==='cy'?'店頭':'CY渡し');
   state.bottomNote = '';
   renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   toast('入力内容をリセットしました');
 }
 
