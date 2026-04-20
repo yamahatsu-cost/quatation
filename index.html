@@ -2167,8 +2167,8 @@ html, body{
 <div class="spinbox">
 <input id="overseasCom" oninput="recalcAll()"/>
 <div class="spin-buttons">
-<button class="spin-btn" onclick="spinOverseasCom(1.5)" type="button">＋</button>
-<button class="spin-btn" onclick="spinOverseasCom(-1.5)" type="button">－</button>
+<button class="spin-btn" onclick="spinOverseasCom(0.25)" type="button">＋</button>
+<button class="spin-btn" onclick="spinOverseasCom(-0.25)" type="button">－</button>
 </div>
 </div>
 </div>
@@ -2594,7 +2594,7 @@ function renderBasics(){
   });
 
   document.getElementById('lcFee').value = formatUsdTonDisplay(state.overseasCosts.lcFee, 2);
-  document.getElementById('overseasCom').value = formatUsdTonDisplay(state.overseasCosts.overseasCom, 1);
+  document.getElementById('overseasCom').value = formatUsdTonDisplay(state.overseasCosts.overseasCom, 2);
   document.getElementById('marginUsd').value = formatUsdTonDisplay(state.overseasCosts.margin, 1);
   document.getElementById('insurance').value = formatMoneyDisplay(state.exportCosts.insurance, 'USD', 2);
   document.getElementById('ofValue').value = formatMoneyDisplay(state.exportCosts.ofValue, state.exportCosts.ofCurrency);
@@ -2916,7 +2916,7 @@ function recalcAll(){
   state.domesticCosts.marginJpyKg = document.getElementById('marginJpyKg')?.value ?? state.domesticCosts.marginJpyKg;
 
   if(state.calcMode === 'overseas' && state.basic.salesCondition === 'CIF'){
-    state.exportCosts.insurance = n(state.basic.sellingPrice) * 0.0011;
+    state.exportCosts.insurance = n(state.basic.sellingPrice) * 0.0015;
   } else {
     state.exportCosts.insurance = 0;
   }
@@ -2985,6 +2985,24 @@ function updateQuoteLine(id,key,val){
     }
     return next;
   });
+
+  if(key === 'note'){
+    const body = document.getElementById('quoteTableBody');
+    const row = body?.querySelector(`tr[data-line-id="${id}"]`);
+    const input = row?.querySelector('td:nth-child(6) input');
+    if(input) input.classList.toggle('blank', !String(val || '').trim());
+    return;
+  }
+
+  if(key === 'quantity'){
+    const body = document.getElementById('quoteTableBody');
+    const row = body?.querySelector(`tr[data-line-id="${id}"]`);
+    const input = row?.querySelector('[data-field="quantity"]');
+    if(input) input.classList.toggle('blank', !String(val || '').trim());
+    renderSummary();
+    return;
+  }
+
   renderAll();
 }
 
