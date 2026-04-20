@@ -196,7 +196,11 @@
     .toast.warn{background:#fff7ed !important;color:#9a3412 !important;border:1px solid #fdba74 !important;box-shadow:0 18px 40px rgba(154,52,18,.18) !important}
     .add-row-btn{background:linear-gradient(180deg,#2563eb 0%,#1e40af 100%) !important;color:#fff !important;border:1px solid #1d4ed8 !important;min-width:188px;padding:15px 24px !important;box-shadow:0 12px 22px rgba(29,78,216,.24);font-size:15px}
 
-    @media (max-width: 1100px){
+    
+.sort-th-btn{display:inline-flex;align-items:center;gap:4px;border:none;background:transparent;padding:0;font:inherit;color:inherit;font-weight:800;cursor:pointer}
+.sort-th-btn .sort-mark{font-size:12px;line-height:1;color:#1d4ed8}
+.sort-th-btn:hover .sort-mark{filter:brightness(.9)}
+@media (max-width: 1100px){
       .grid.cols-4,.grid.cols-3,.cards,.summary,.subgrid,.panel-row{grid-template-columns:repeat(2,minmax(0,1fr))}
       .yard-grid{grid-template-columns:1fr}
     }
@@ -2305,7 +2309,7 @@ html, body{
 <table style="min-width:1280px">
 <thead>
 <tr>
-<th>積港</th><th>揚港</th><th>海上運賃</th><th>通貨</th><th>EBS（USD）</th><th>船会社名</th><th>備考</th><th></th>
+<th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('loadingPort')">積港 <span class="sort-mark" id="oceanSortLoading">▼</span></button></th><th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('dischargePort')">揚港 <span class="sort-mark" id="oceanSortDischarge">▼</span></button></th><th>海上運賃</th><th>通貨</th><th>EBS（USD）</th><th>船会社名</th><th>備考</th><th></th>
 </tr>
 </thead>
 <tbody id="oceanFreightBody"></tbody>
@@ -2315,7 +2319,7 @@ html, body{
 </div>
 </div>
 <script>
-const APP_VERSION = '4.34';
+const APP_VERSION = '4.35';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
@@ -2479,6 +2483,7 @@ let state = {
     {id:uid(), loadingPort:'YOKOHAMA', dischargePort:'KAOHSIUNG', ofValue:48000, ofCurrency:'JPY', ebs:90, carrier:'', note:''}
   ]),
   savedQuotes: loadLocal(STORAGE_KEYS.quotes, []),
+  oceanFreightSortKey:'loadingPort',
   basic: {
     supplierShortName:'', salesCondition:'CIF', sellingPrice:'', shipmentLot:200,
     paymentTerm:'T/T', loadingPort:'', dischargePort:'', fxRate:''
@@ -2493,6 +2498,7 @@ state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r
 state.suppliers = state.suppliers.map(s => ({...s, collapsed:true}));
 
 function persistMasters(){
+  state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort');
   saveLocal(STORAGE_KEYS.suppliers, state.suppliers);
   saveLocal(STORAGE_KEYS.oceanFreight, state.oceanFreight);
   saveLocal(STORAGE_KEYS.quotes, state.savedQuotes);
@@ -2830,25 +2836,29 @@ function syncYardCardTitle(input){ return; }
 function renderOceanFreight(){
   const body = document.getElementById('oceanFreightBody');
   const carriers = ['YML','EVER','WHL','TSL','IAL','ONE','OOCL','NYK','COSCO','MSK','SITC'];
+  const loadingMark = document.getElementById('oceanSortLoading');
+  const dischargeMark = document.getElementById('oceanSortDischarge');
+  if(loadingMark) loadingMark.textContent = state.oceanFreightSortKey === 'loadingPort' ? '▼' : '▽';
+  if(dischargeMark) dischargeMark.textContent = state.oceanFreightSortKey === 'dischargePort' ? '▼' : '▽';
   body.innerHTML = state.oceanFreight.map(r => `
     <tr>
-      <td><input value="${escapeHtml(r.loadingPort)}" placeholder="例）TOKYO" oninput="updateOceanFreight('${r.id}','loadingPort',this.value)" class="${!r.loadingPort?'blank':''}" /></td>
-      <td><input value="${escapeHtml(r.dischargePort)}" placeholder="例）TAICHUNG, TAIWAN" oninput="updateOceanFreight('${r.id}','dischargePort',this.value)" class="${!r.dischargePort?'blank':''}" /></td>
-      <td><input value="${formatOceanFreightDisplay(r.ofValue, r.ofCurrency)}" data-money-format="ocean" data-currency="${escapeHtml(r.ofCurrency || 'USD')}" inputmode="decimal" placeholder="例）$200 / ¥48,000" oninput="updateOceanFreight('${r.id}','ofValue',this.value,this)" class="${!r.ofValue?'blank':''} money-input master-money" /></td>
+      <td><input data-row-id="${r.id}" data-field-key="loadingPort" value="${escapeHtml(r.loadingPort)}" placeholder="例）TOKYO" oninput="updateOceanFreight('${r.id}','loadingPort',this.value,this)" class="${!r.loadingPort?'blank':''}" /></td>
+      <td><input data-row-id="${r.id}" data-field-key="dischargePort" value="${escapeHtml(r.dischargePort)}" placeholder="例）TAICHUNG, TAIWAN" oninput="updateOceanFreight('${r.id}','dischargePort',this.value,this)" class="${!r.dischargePort?'blank':''}" /></td>
+      <td><input data-row-id="${r.id}" data-field-key="ofValue" value="${formatOceanFreightDisplay(r.ofValue, r.ofCurrency)}" data-money-format="ocean" data-currency="${escapeHtml(r.ofCurrency || 'USD')}" inputmode="decimal" placeholder="例）$200 / ¥48,000" oninput="updateOceanFreight('${r.id}','ofValue',this.value,this)" class="${!r.ofValue?'blank':''} money-input master-money" /></td>
       <td class="currency-master-cell">
-        <select onchange="updateOceanFreight('${r.id}','ofCurrency',this.value,this);renderOceanFreight()" class="currency-master-select ${!r.ofCurrency?'blank':''}">
+        <select data-row-id="${r.id}" data-field-key="ofCurrency" onchange="updateOceanFreight('${r.id}','ofCurrency',this.value,this);renderOceanFreight()" class="currency-master-select ${!r.ofCurrency?'blank':''}">
           <option value="JPY" ${r.ofCurrency==='JPY'?'selected':''}>JPY</option>
           <option value="USD" ${r.ofCurrency==='USD'?'selected':''}>USD</option>
         </select>
       </td>
-      <td><input value="${formatDollarDisplay(r.ebs)}" data-money-format="usd" inputmode="decimal" placeholder="例）$100" oninput="updateOceanFreight('${r.id}','ebs',this.value,this)" class="${!r.ebs?'blank':''} money-input master-money" /></td>
+      <td><input data-row-id="${r.id}" data-field-key="ebs" value="${formatDollarDisplay(r.ebs)}" data-money-format="usd" inputmode="decimal" placeholder="例）$100" oninput="updateOceanFreight('${r.id}','ebs',this.value,this)" class="${!r.ebs?'blank':''} money-input master-money" /></td>
       <td>
-        <select onchange="updateOceanFreight('${r.id}','carrier',this.value,this)" class="carrier-master-select ${!r.carrier?'blank':''}">
+        <select data-row-id="${r.id}" data-field-key="carrier" onchange="updateOceanFreight('${r.id}','carrier',this.value,this)" class="carrier-master-select ${!r.carrier?'blank':''}">
           <option value="">船会社選択</option>
           ${carriers.map(c=>`<option value="${c}" ${r.carrier===c?'selected':''}>${c}</option>`).join('')}
         </select>
       </td>
-      <td><input value="${escapeHtml(r.note || '')}" placeholder="例）直行便優先" oninput="updateOceanFreight('${r.id}','note',this.value,this)" class="${!(r.note||'')?'blank':''}" /></td>
+      <td><input data-row-id="${r.id}" data-field-key="note" value="${escapeHtml(r.note || '')}" placeholder="例）直行便優先" oninput="updateOceanFreight('${r.id}','note',this.value,this)" class="${!(r.note||'')?'blank':''}" /></td>
       <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreight('${r.id}')">&times;</button></td>
     </tr>
   `).join('');
@@ -3168,10 +3178,12 @@ function saveSupplierMasters(){
 function saveOceanFreightMasters(){
   const error = validateOceanFreightMasters();
   if(error) return toast(error);
+  state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort');
   renderAll();
   persistMasters();
   toast('海上運賃マスタを保存しました');
 }
+
 function isVisibleForValidation(el){
   if(!el) return false;
   if(el.closest('.hidden')) return false;
@@ -3448,6 +3460,39 @@ async function issueQuoteExcel(){
 }
 
 
+function normalizeSortText(value){ return String(value ?? '').trim().toUpperCase(); }
+function sortOceanFreightList(list, key='loadingPort'){
+  const secondaryKey = key === 'loadingPort' ? 'dischargePort' : 'loadingPort';
+  return [...(list || [])].sort((a,b) => {
+    const av = normalizeSortText(a?.[key]);
+    const bv = normalizeSortText(b?.[key]);
+    if(av !== bv) return av.localeCompare(bv, 'ja');
+    const as = normalizeSortText(a?.[secondaryKey]);
+    const bs = normalizeSortText(b?.[secondaryKey]);
+    if(as !== bs) return as.localeCompare(bs, 'ja');
+    return 0;
+  });
+}
+function sortOceanFreightBy(key, options={}){
+  state.oceanFreightSortKey = key;
+  state.oceanFreight = sortOceanFreightList(state.oceanFreight, key);
+  renderOceanFreight();
+  if(!options.silent){
+    toast(key === 'loadingPort' ? '海上運賃マスタを積港順に並べ替えました' : '海上運賃マスタを揚港順に並べ替えました');
+  }
+}
+function restoreOceanInputFocus(id, key, cursorPos){
+  requestAnimationFrame(() => {
+    const target = document.querySelector(`[data-row-id="${id}"][data-field-key="${key}"]`);
+    if(!target) return;
+    target.focus();
+    if(typeof cursorPos === 'number' && typeof target.setSelectionRange === 'function'){
+      const safePos = Math.min(cursorPos, String(target.value || '').length);
+      target.setSelectionRange(safePos, safePos);
+    }
+  });
+}
+
 function addSupplier(){
   state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', collapsed:true, yards:[{id:uid(), name:'', drayage:''}]});
   renderAll();
@@ -3458,9 +3503,9 @@ function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {
 function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
-function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); renderAll(); }
-function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
-function removeOceanFreight(id){ state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); renderAll(); }
+function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
+function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; const cursorPos = el && typeof el.selectionStart === 'number' ? el.selectionStart : null; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } if(key === 'loadingPort' || key === 'dischargePort'){ state.oceanFreightSortKey = 'loadingPort'; state.oceanFreight = sortOceanFreightList(state.oceanFreight, 'loadingPort'); renderOceanFreight(); restoreOceanInputFocus(id, key, cursorPos); return; } }
+function removeOceanFreight(id){ state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
 
 
 function syncHeaderOffset(){
