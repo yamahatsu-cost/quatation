@@ -2292,7 +2292,7 @@ html, body{
 <div class="section master-supplier-section">
 <div class="section-header">
 <div class="section-title-wrap">
-<div class="section-title" style="font-size:20px">仕入先マスタ</div>
+<div class="section-title" style="font-size:20px"><button class="sort-th-btn" type="button" onclick="sortSuppliersBy('shortName')">仕入先マスタ <span class="sort-mark" id="supplierSortMark">▼</span></button></div>
 </div>
 <div class="table-actions"><button class="btn blue master-add-btn supplier-add-btn" onclick="addSupplier()" type="button">仕入先追加</button><button class="btn blue master-save-btn" onclick="saveSupplierMasters()" type="button">保存</button></div>
 </div>
@@ -2319,7 +2319,7 @@ html, body{
 </div>
 </div>
 <script>
-const APP_VERSION = '4.35';
+const APP_VERSION = '4.36';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
@@ -2484,6 +2484,8 @@ let state = {
   ]),
   savedQuotes: loadLocal(STORAGE_KEYS.quotes, []),
   oceanFreightSortKey:'loadingPort',
+  supplierSortKey:'shortName',
+  supplierSortDirection:'desc',
   basic: {
     supplierShortName:'', salesCondition:'CIF', sellingPrice:'', shipmentLot:200,
     paymentTerm:'T/T', loadingPort:'', dischargePort:'', fxRate:''
@@ -2496,9 +2498,11 @@ let state = {
 };
 state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r.shippingLine || ''), note:(r.note || '')}));
 state.suppliers = state.suppliers.map(s => ({...s, collapsed:true}));
+state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
 
 function persistMasters(){
   state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort');
+  state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
   saveLocal(STORAGE_KEYS.suppliers, state.suppliers);
   saveLocal(STORAGE_KEYS.oceanFreight, state.oceanFreight);
   saveLocal(STORAGE_KEYS.quotes, state.savedQuotes);
@@ -2761,6 +2765,8 @@ function renderSummary(){
 }
 
 function renderSupplierMaster(){
+  const supplierSortMark = document.getElementById('supplierSortMark');
+  if(supplierSortMark) supplierSortMark.textContent = (state.supplierSortDirection || 'desc') === 'asc' ? '▲' : '▼';
   const area = document.getElementById('supplierMaster');
   area.innerHTML = state.suppliers.map((s, idx) => {
     if(typeof s.collapsed !== 'boolean') s.collapsed = true;
@@ -2780,8 +2786,8 @@ function renderSupplierMaster(){
         </div>
         <div class="master-subblock">
           <div class="subgrid">
-            <div class="field"><label>仕入先名（簡略）</label><input value="${escapeHtml(s.shortName)}" placeholder="例）〇〇商店" oninput="updateSupplier('${s.id}','shortName',this.value)" class="${!s.shortName?'blank':''}" /></div>
-            <div class="field"><label>仕入先名（正式名称）</label><input value="${escapeHtml(s.formalName)}" placeholder="例）〇〇商店株式会社" oninput="updateSupplier('${s.id}','formalName',this.value)" class="${!s.formalName?'blank':''}" /></div>
+            <div class="field"><label>仕入先名（簡略）</label><input value="${escapeHtml(s.shortName)}" placeholder="例）〇〇商店" oninput="updateSupplier('${s.id}','shortName',this.value)" onblur="commitSupplierSort()" class="${!s.shortName?'blank':''}" /></div>
+            <div class="field"><label>仕入先名（正式名称）</label><input value="${escapeHtml(s.formalName)}" placeholder="例）〇〇商店株式会社" oninput="updateSupplier('${s.id}','formalName',this.value)" onblur="commitSupplierSort()" class="${!s.formalName?'blank':''}" /></div>
             <div class="field"><label>担当者名・役職</label><input value="${escapeHtml(s.contact)}" placeholder="例）取締役　営業本部長　山田太郎" oninput="updateSupplier('${s.id}','contact',this.value)" class="${!s.contact?'blank':''}" /></div>
             <div class="field"><label>連絡先</label><input value="${escapeHtml(s.phone)}" placeholder="例）FAX:03-000-0000 or Email:ooooo@ooo.co.jp" oninput="updateSupplier('${s.id}','phone',this.value)" class="${!s.phone?'blank':''}" /></div>
           </div>
@@ -3171,6 +3177,7 @@ function saveMasters(){
 function saveSupplierMasters(){
   const error = validateSupplierMasters();
   if(error) return toast(error);
+  state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
   renderAll();
   persistMasters();
   toast('仕入先マスタを保存しました');
@@ -3461,6 +3468,31 @@ async function issueQuoteExcel(){
 
 
 function normalizeSortText(value){ return String(value ?? '').trim().toUpperCase(); }
+function sortSupplierList(list, key='shortName', direction='asc'){
+  const sorted = [...(list || [])].sort((a,b) => {
+    const av = normalizeSortText(a?.[key]);
+    const bv = normalizeSortText(b?.[key]);
+    if(av !== bv) return av.localeCompare(bv, 'ja');
+    const af = normalizeSortText(a?.formalName);
+    const bf = normalizeSortText(b?.formalName);
+    if(af !== bf) return af.localeCompare(bf, 'ja');
+    return 0;
+  });
+  return direction === 'desc' ? sorted.reverse() : sorted;
+}
+function sortSuppliersBy(key='shortName', options={}){
+  const sameKey = state.supplierSortKey === key;
+  state.supplierSortKey = key;
+  state.supplierSortDirection = sameKey
+    ? ((state.supplierSortDirection || 'desc') === 'asc' ? 'desc' : 'asc')
+    : 'asc';
+  state.suppliers = sortSupplierList(state.suppliers, key, state.supplierSortDirection);
+  renderSupplierMaster();
+  renderBasics();
+  if(!options.silent){
+    toast(`仕入先マスタを仕入先名順に${state.supplierSortDirection === 'asc' ? '昇順' : '降順'}で並べ替えました`);
+  }
+}
 function sortOceanFreightList(list, key='loadingPort'){
   const secondaryKey = key === 'loadingPort' ? 'dischargePort' : 'loadingPort';
   return [...(list || [])].sort((a,b) => {
@@ -3495,10 +3527,26 @@ function restoreOceanInputFocus(id, key, cursorPos){
 
 function addSupplier(){
   state.suppliers.push({id:uid(), shortName:'', formalName:'', contact:'', phone:'', collapsed:true, yards:[{id:uid(), name:'', drayage:''}]});
+  state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
   renderAll();
 }
-function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); renderAll(); }
-function updateSupplier(id,key,val){ state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:val} : s); }
+function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc'); renderAll(); }
+function updateSupplier(id,key,val){
+  state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:val} : s);
+  if(key === 'shortName'){
+    const sel = document.getElementById('supplierShortName');
+    const active = document.activeElement;
+    if(sel && active !== sel){
+      const current = state.basic.supplierShortName;
+      renderSelectOptions(sel, state.suppliers.map(s=>s.shortName).filter(Boolean), '仕入先を選択', current);
+    }
+  }
+}
+function commitSupplierSort(){
+  state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
+  renderSupplierMaster();
+  renderBasics();
+}
 function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:[...s.yards,{id:uid(),name:'',drayage:''}]} : s); renderAll(); }
 function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
