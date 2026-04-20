@@ -2417,7 +2417,7 @@ function formatOceanFreightDisplay(v,currency){ return currency==='JPY' ? format
 function syncMatchedOceanFreight(){ const matched = state.oceanFreight.find(x => x.loadingPort===state.basic.loadingPort && x.dischargePort===state.basic.dischargePort); if(matched){ state.exportCosts.ofValue = matched.ofValue; state.exportCosts.ofCurrency = matched.ofCurrency; state.exportCosts.ebs = matched.ebs; }}
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function loadLocal(k,fallback){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
-function toast(msg, type='default'){ const el=document.getElementById('toast'); if(!el) return; el.textContent=msg; el.classList.remove('warn'); if(type==='warn') el.classList.add('warn'); el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>{ el.classList.remove('show','warn'); },1400); }
+function toast(msg, type='default'){ const el=document.getElementById('toast'); if(!el) return; el.textContent=msg; el.classList.remove('warn'); if(type==='warn') el.classList.add('warn'); el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>{ el.classList.remove('show','warn'); },1500); }
 function warnMissingSupplier(){
   const el = document.getElementById('supplierShortName');
   markAndScrollInvalid(el);
@@ -2948,15 +2948,75 @@ function spinMarginJpyKg(delta){
 }
 
 function fetchFx(){
-  const mockMid = 159.20;
-  const adjusted = mockMid - 0.5;
-  state.basic.fxRate = adjusted.toFixed(2);
-  clearValidationErrors();
-  renderBasics();
-  recalcAll();
-  const fxEl = document.getElementById('fxRate');
-  if(fxEl) fxEl.classList.remove('input-error');
-  toast('為替を取得しました');
+  const fxBtn = document.querySelector('.fx-action');
+  const prevText = fxBtn ? fxBtn.textContent : '';
+  if(fxBtn){
+    fxBtn.disabled = true;
+    fxBtn.textContent = '取得中...';
+  }
+
+  const endpoints = [
+    {
+      name:'ExchangeRate-API',
+      url:`https://open.er-api.com/v6/latest/USD?_=${Date.now()}`,
+      parse:(data)=>{
+        const rate = Number(data && data.rates && data.rates.JPY);
+        return Number.isFinite(rate) ? rate : null;
+      }
+    },
+    {
+      name:'Frankfurter',
+      url:`https://api.frankfurter.app/latest?from=USD&to=JPY&_=${Date.now()}`,
+      parse:(data)=>{
+        const rate = Number(data && data.rates && data.rates.JPY);
+        return Number.isFinite(rate) ? rate : null;
+      }
+    }
+  ];
+
+  const applyRate = (rawRate, sourceName) => {
+    const adjusted = rawRate - 0.5;
+    state.basic.fxRate = adjusted.toFixed(2);
+    clearValidationErrors();
+    renderBasics();
+    recalcAll();
+    const fxEl = document.getElementById('fxRate');
+    if(fxEl) fxEl.classList.remove('input-error');
+    const now = new Date();
+    const timeStr = now.toLocaleString('ja-JP');
+    toast(`リアルタイムUSD/JPY仲値：${rawRate.toFixed(2)} → -0.5調整後：${adjusted.toFixed(2)}（取得日時：${timeStr}）`);
+  };
+
+  (async () => {
+    let lastError = null;
+
+    for(const ep of endpoints){
+      try{
+        const res = await fetch(ep.url, {
+          method:'GET',
+          cache:'no-store',
+          headers:{'Accept':'application/json'}
+        });
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const rawRate = ep.parse(data);
+        if(!Number.isFinite(rawRate) || rawRate <= 0) throw new Error('rate not found');
+        applyRate(rawRate, ep.name);
+        return;
+      }catch(err){
+        lastError = err;
+        console.warn('FX fetch failed:', ep.name, err);
+      }
+    }
+
+    console.error('FX fetch failed on all endpoints', lastError);
+    toast('為替を取得できませんでした');
+  })().finally(() => {
+    if(fxBtn){
+      fxBtn.disabled = false;
+      fxBtn.textContent = prevText || '為替取得';
+    }
+  });
 }
 
 function addQuoteLine(){
