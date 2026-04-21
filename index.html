@@ -376,6 +376,44 @@
     .quote-table select,.quote-table input{width:100%;min-width:0;}
     .quote-table td:last-child{text-align:center;padding-left:6px;padding-right:6px;}
     .quote-table .delete-btn.icon-only{margin:0 auto;display:inline-flex;align-items:center;justify-content:center;}
+    .quote-table .col-product{width:15%;}
+    .quote-table .col-yard{width:14%;}
+    .quote-table .col-condition{width:15%;}
+    .quote-table .col-ocean{width:12%;}
+    .quote-table .col-price{width:12%;}
+    .quote-table .col-qty{width:13%;}
+    .quote-table .col-note{width:14%;}
+    .quote-table .col-delete{width:5%;}
+    .quote-table.has-ocean .col-product{width:15%;}
+    .quote-table.has-ocean .col-yard{width:14%;}
+    .quote-table.has-ocean .col-condition{width:14%;}
+    .quote-table.has-ocean .col-ocean{width:12%;}
+    .quote-table.has-ocean .col-price{width:12%;}
+    .quote-table.has-ocean .col-qty{width:11%;}
+    .quote-table.has-ocean .col-note{width:17%;}
+    .quote-table.has-ocean .col-delete{width:5%;}
+    .quote-table.no-ocean .col-product{width:15%;}
+    .quote-table.no-ocean .col-yard{width:14%;}
+    .quote-table.no-ocean .col-condition{width:15%;}
+    .quote-table.no-ocean .col-price{width:12%;}
+    .quote-table.no-ocean .col-qty{width:13%;}
+    .quote-table.no-ocean .col-note{width:26%;}
+    .quote-table.no-ocean .col-delete{width:5%;}
+    .quote-table.has-ocean th:nth-child(1), .quote-table.has-ocean td:nth-child(1){width:15% !important;}
+    .quote-table.has-ocean th:nth-child(2), .quote-table.has-ocean td:nth-child(2){width:14% !important;}
+    .quote-table.has-ocean th:nth-child(3), .quote-table.has-ocean td:nth-child(3){width:14% !important;}
+    .quote-table.has-ocean th:nth-child(4), .quote-table.has-ocean td:nth-child(4){width:12% !important;}
+    .quote-table.has-ocean th:nth-child(5), .quote-table.has-ocean td:nth-child(5){width:12% !important;}
+    .quote-table.has-ocean th:nth-child(6), .quote-table.has-ocean td:nth-child(6){width:11% !important;}
+    .quote-table.has-ocean th:nth-child(7), .quote-table.has-ocean td:nth-child(7){width:17% !important;}
+    .quote-table.has-ocean th:nth-child(8), .quote-table.has-ocean td:nth-child(8){width:5% !important;}
+    .quote-table.no-ocean th:nth-child(1), .quote-table.no-ocean td:nth-child(1){width:15% !important;}
+    .quote-table.no-ocean th:nth-child(2), .quote-table.no-ocean td:nth-child(2){width:14% !important;}
+    .quote-table.no-ocean th:nth-child(3), .quote-table.no-ocean td:nth-child(3){width:15% !important;}
+    .quote-table.no-ocean th:nth-child(4), .quote-table.no-ocean td:nth-child(4){width:12% !important;}
+    .quote-table.no-ocean th:nth-child(5), .quote-table.no-ocean td:nth-child(5){width:13% !important;}
+    .quote-table.no-ocean th:nth-child(6), .quote-table.no-ocean td:nth-child(6){width:26% !important;}
+    .quote-table.no-ocean th:nth-child(7), .quote-table.no-ocean td:nth-child(7){width:5% !important;}
 
     @media (max-width:760px){
       .wrap{padding:126px 12px 12px !important;}
@@ -2358,13 +2396,23 @@ html, body{
 </div>
 </div>
 <div class="scroll-x">
-<table class="quote-table">
-<colgroup><col/><col/><col/><col/><col/><col/><col/></colgroup>
+<table class="quote-table no-ocean" id="quoteTable">
+<colgroup>
+<col class="col-product"/>
+<col class="col-yard"/>
+<col class="col-condition"/>
+<col class="col-ocean" id="quoteOceanCol" style="display:none"/>
+<col class="col-price"/>
+<col class="col-qty"/>
+<col class="col-note"/>
+<col class="col-delete"/>
+</colgroup>
 <thead>
 <tr>
 <th>商品</th>
 <th>ヤード名</th>
 <th>見積条件</th>
+<th id="quoteOceanHeader" style="display:none">海上運賃</th>
 <th>価格（円/kg）</th>
 <th>積載（ton/40F）</th>
 <th>備考</th>
@@ -2451,7 +2499,7 @@ const PRODUCTS = Object.keys(PRODUCT_DEFAULT_LOAD);
 const COM_OPTIONS = Array.from({length:15}, (_,i)=>(4 - i*0.25).toFixed(2));
 
 function createQuoteLine(condition='CY渡し'){
-  return {id:uid(), product:'', yardName:'', quoteCondition:'', price:'', quantity:'', note:''};
+  return {id:uid(), product:'', yardName:'', quoteCondition:'', rowOceanFreight:'', rowOceanFreightCurrency:'USD', rowOceanFreightManual:false, rowEbs:'', rowEbsManual:false, price:'', quantity:'', note:''};
 }
 function createDefaultQuoteLines(condition='CY渡し'){
   return [createQuoteLine(condition), createQuoteLine(condition)];
@@ -2599,6 +2647,12 @@ let state = {
   bottomNote:''
 };
 state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r.shippingLine || ''), note:(r.note || '')}));
+state.quoteLines = state.quoteLines.map(line => ({
+  ...line,
+  rowOceanFreightCurrency: String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD',
+  rowEbs: line.rowEbs ?? '',
+  rowEbsManual: !!line.rowEbsManual
+}));
 state.suppliers = state.suppliers.map(s => ({...s, collapsed:true}));
 state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
 
@@ -2612,6 +2666,16 @@ function persistMasters(){
 
 function selectedSupplier(){ return state.suppliers.find(s => s.shortName === state.basic.supplierShortName) || null; }
 const DEFAULT_PORTS = ['東京港','大阪港','博多港','名古屋港','神戸港','横浜港','門司港','那覇港'];
+const PORT_CODE_MAP = {
+  '東京港':'TOKYO',
+  '大阪港':'OSAKA',
+  '博多港':'HAKATA',
+  '名古屋港':'NAGOYA',
+  '神戸港':'KOBE',
+  '横浜港':'YOKOHAMA',
+  '門司港':'MOJI',
+  '那覇港':'NAHA'
+};
 function portOptionLabel(name){ return `【港】${name}`; }
 function isDefaultPortLabel(value){ return DEFAULT_PORTS.includes(String(value || '').trim()); }
 function showPortLabels(selectEl){
@@ -2627,6 +2691,56 @@ function hideSelectedPortLabel(selectEl){
   });
 }
 function availableYards(){ return selectedSupplier()?.yards || []; }
+function yardToLoadingPortCode(yardName){
+  return PORT_CODE_MAP[String(yardName || '').trim()] || '';
+}
+function findOceanFreightByPorts(loadingPort, dischargePort){
+  return state.oceanFreight.find(r =>
+    String(r.loadingPort || '').trim().toUpperCase() === String(loadingPort || '').trim().toUpperCase() &&
+    String(r.dischargePort || '').trim().toUpperCase() === String(dischargePort || '').trim().toUpperCase()
+  ) || null;
+}
+function applyRowOceanFreightFromMaster(line, showToast = true){
+  if(!line) return line;
+  const next = {...line};
+  if(!isDefaultPortLabel(next.yardName)){
+    next.rowOceanFreight = '';
+    next.rowOceanFreightCurrency = 'USD';
+    next.rowOceanFreightManual = false;
+    next.rowEbs = '';
+    next.rowEbsManual = false;
+    return next;
+  }
+  const loadingPort = yardToLoadingPortCode(next.yardName);
+  const dischargePort = String(state.basic.dischargePort || '').trim();
+  const matched = findOceanFreightByPorts(loadingPort, dischargePort);
+  if(matched){
+    next.rowOceanFreight = matched.ofValue === 0 ? '0' : String(matched.ofValue ?? '');
+    next.rowOceanFreightCurrency = String(matched.ofCurrency || 'USD').trim().toUpperCase() || 'USD';
+    next.rowOceanFreightManual = false;
+    next.rowEbs = matched.ebs === 0 ? '0' : String(matched.ebs ?? '');
+    next.rowEbsManual = false;
+  }else{
+    next.rowOceanFreight = '';
+    next.rowOceanFreightCurrency = 'USD';
+    next.rowOceanFreightManual = false;
+    next.rowEbs = '';
+    next.rowEbsManual = false;
+    if(showToast){
+      const fromLabel = loadingPort || String(next.yardName || '').trim() || '未設定';
+      const toLabel = dischargePort || '未設定';
+      setTimeout(() => toast(`海上運賃マスタ未登録：${fromLabel} → ${toLabel}`, 'warn'), 0);
+    }
+  }
+  return next;
+}
+function syncQuoteLineOceanFreightsOnPortChange(){
+  state.quoteLines = state.quoteLines.map(line => {
+    if(!isDefaultPortLabel(line.yardName)) return line;
+    if((line.rowOceanFreightManual && String(line.rowOceanFreight || '').trim() !== '') || (line.rowEbsManual && String(line.rowEbs || '').trim() !== '')) return line;
+    return applyRowOceanFreightFromMaster(line, false);
+  });
+}
 
 function switchTab(tab){
   state.activeTab = tab;
@@ -2765,6 +2879,7 @@ function onPortChange(){
   state.basic.loadingPort = document.getElementById('loadingPort').value;
   state.basic.dischargePort = document.getElementById('dischargePort').value;
   syncMatchedOceanFreight();
+  syncQuoteLineOceanFreightsOnPortChange();
   renderBasics();
   recalcAll();
 }
@@ -2781,7 +2896,7 @@ function currentShippingCosts(){
   return {quantity, ofUsdPerTon, ebsUsdPerTon, doAndHandlingJpyPerTon};
 }
 
-function currentCyBase(){
+function currentCyBase(line=null){
   if(state.calcMode !== 'overseas') return null;
   const sell = n(state.basic.sellingPrice);
   const fx = n(state.basic.fxRate);
@@ -2790,12 +2905,20 @@ function currentCyBase(){
   const com = n(state.overseasCosts.overseasCom);
   const margin = n(state.overseasCosts.margin);
   const insurance = n(state.exportCosts.insurance);
-  const ship = currentShippingCosts();
+  const shipmentLot = n(state.basic.shipmentLot) || 1;
+  const quantity = n(line?.quantity || state.quoteLines[0]?.quantity || 22) || 22;
+  const useRowFreight = !!(line && isDefaultPortLabel(line.yardName));
+  const ofValue = useRowFreight ? n(line.rowOceanFreight) : n(state.exportCosts.ofValue);
+  const ofCurrency = useRowFreight ? String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD' : String(state.exportCosts.ofCurrency || 'USD').trim().toUpperCase() || 'USD';
+  const ebs = useRowFreight ? n(line.rowEbs) : n(state.exportCosts.ebs);
+  const ofUsdPerTon = ofCurrency === 'JPY' ? (fx ? ofValue / fx / quantity : 0) : ofValue / quantity;
+  const ebsUsdPerTon = ebs / quantity;
+  const doAndHandlingJpyPerTon = (n(state.exportCosts.customsFee) + n(state.exportCosts.handlingFee)) / shipmentLot;
   const fobUsdTon = state.basic.salesCondition === 'CIF'
-    ? sell - lc - com - margin - insurance - ship.ofUsdPerTon - ship.ebsUsdPerTon
-    : sell - com - margin - ship.ofUsdPerTon - ship.ebsUsdPerTon;
+    ? sell - lc - com - margin - insurance - ofUsdPerTon - ebsUsdPerTon
+    : sell - com - margin - ofUsdPerTon - ebsUsdPerTon;
   const fobJpyTon = fobUsdTon * fx;
-  const cyJpyTon = fobJpyTon - ship.doAndHandlingJpyPerTon;
+  const cyJpyTon = fobJpyTon - doAndHandlingJpyPerTon;
   return {fobUsdTon, fobJpyTon, cyJpyKg: cyJpyTon / 1000};
 }
 
@@ -2822,7 +2945,7 @@ function linePrice(line){
     const base = n(state.basic.sellingPrice) - n(state.domesticCosts.marginJpyKg);
     return line.quoteCondition === '店頭' ? base - dray : base;
   }
-  const cy = currentCyBase();
+  const cy = currentCyBase(line);
   const base = n(cy?.cyJpyKg);
   return line.quoteCondition === '店頭' ? base - dray : base;
 }
@@ -2834,9 +2957,28 @@ function renderYardCards(){
   box.innerHTML = yards.map(y => `<div class="mini-card"><div class="mini-title">${escapeHtml(state.basic.supplierShortName || '仕入先未選択')}　${escapeHtml(y.name)}</div><div class="mini-value">${jp(y.drayage,0)}円/車</div></div>`).join('');
 }
 
+function hasAnyPortQuoteLine(){
+  return state.quoteLines.some(line => isDefaultPortLabel(line.yardName));
+}
+
+function syncQuoteTableOceanColumnVisibility(){
+  const showOcean = hasAnyPortQuoteLine();
+  const oceanHeader = document.getElementById('quoteOceanHeader');
+  const oceanCol = document.getElementById('quoteOceanCol');
+  const quoteTable = document.getElementById('quoteTable');
+  if(oceanHeader) oceanHeader.style.display = showOcean ? '' : 'none';
+  if(oceanCol) oceanCol.style.display = showOcean ? '' : 'none';
+  if(quoteTable){
+    quoteTable.classList.toggle('has-ocean', showOcean);
+    quoteTable.classList.toggle('no-ocean', !showOcean);
+  }
+}
+
 function renderQuoteTable(){
   const body = document.getElementById('quoteTableBody');
   const yards = availableYards();
+  const showOcean = hasAnyPortQuoteLine();
+  syncQuoteTableOceanColumnVisibility();
   body.innerHTML = state.quoteLines.map((line, idx) => {
     const price = formatQuotePriceDisplay(linePrice(line));
     const isPortSelected = isDefaultPortLabel(line.yardName);
@@ -2862,13 +3004,22 @@ function renderQuoteTable(){
     const yardBlank = !String(line.yardName ?? '').trim();
     const conditionBlank = !String(line.quoteCondition ?? '').trim();
     const qtyBlank = !String(line.quantity ?? '').trim();
+    const rowFreightBlank = !String(line.rowOceanFreight ?? '').trim();
+    const noteBlank = !String(line.note ?? '').trim();
+    const rowFreightCurrency = String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD';
+    const oceanFreightPlaceholder = rowFreightCurrency === 'JPY' ? '例）¥200,000' : '例）$2,000';
+    const oceanFreightDisplay = rowFreightBlank ? '' : formatMoneyDisplay(line.rowOceanFreight, rowFreightCurrency);
+    const oceanFreightCell = isPortSelected
+      ? `<td><input data-field="rowOceanFreight" class="money-input ${rowFreightBlank?'blank':''}" value="${escapeHtml(oceanFreightDisplay)}" placeholder="${escapeHtml(oceanFreightPlaceholder)}" oninput="updateQuoteLine('${line.id}','rowOceanFreight',this.value)" style="text-align:center" /></td>`
+      : `<td><input value="" readonly style="background:#f8fafc" /></td>`;
     return `<tr data-line-id="${line.id}">
       <td><select data-field="product" class="${productBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','product',this.value)">${productOptions}</select></td>
       <td><select data-field="yardName" class="${yardBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','yardName',this.value)" onfocus="showPortLabels(this)" onblur="hideSelectedPortLabel(this)">${yardOptions}</select></td>
       <td><select data-field="quoteCondition" class="${conditionBlank?'blank':''}" ${conditionDisabled} onchange="updateQuoteLine('${line.id}','quoteCondition',this.value)">${conditionOptions}</select></td>
+      ${showOcean ? oceanFreightCell : ''}
       <td><input value="${price}" readonly style="text-align:center;font-weight:700" /></td>
       <td><input data-field="quantity" class="quote-qty ${qtyBlank?'blank':''}" value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
-      <td><input value="${escapeHtml(line.note)}" class="${!line.note?'blank':''}" placeholder="例）ベトナム向け" oninput="updateQuoteLine('${line.id}','note',this.value)" /></td>
+      <td><input value="${escapeHtml(line.note)}" class="${noteBlank?'blank':''}" placeholder="例）ベトナム向け" oninput="updateQuoteLine('${line.id}','note',this.value)" /></td>
       <td>${idx===0 ? '' : `<button class="btn small delete-btn icon-only" title="削除" onclick="removeQuoteLine('${line.id}')">&times;</button>`}</td>
     </tr>`;
   }).join('');
@@ -2878,10 +3029,26 @@ function renderQuoteTable(){
 function renderSummary(){
   const box = document.getElementById('summaryArea');
   if(state.calcMode === 'overseas'){
-    const cy = currentCyBase();
-    const ship = currentShippingCosts();
+    const portLines = state.quoteLines.filter(line => isDefaultPortLabel(line.yardName));
+    const oceanSummaryCards = portLines.length
+      ? portLines.map((line, idx) => {
+          const quantity = n(line.quantity || state.quoteLines[0]?.quantity || 22) || 22;
+          const fx = n(state.basic.fxRate);
+          const ofCurrency = String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD';
+          const ofValue = n(line.rowOceanFreight);
+          const ofUsdPerTon = ofCurrency === 'JPY' ? (fx ? ofValue / fx / quantity : 0) : ofValue / quantity;
+          const yardLabel = line.yardName ? escapeHtml(line.yardName) : `港行${idx+1}`;
+          return `<div class="summary-card"><div class="summary-label">海上運賃（USD/ton）<br>${yardLabel}</div><div class="summary-value">${fmt(ofUsdPerTon,2)}</div></div>`;
+        }).join('')
+      : (() => {
+          const cy = currentCyBase();
+          const ship = currentShippingCosts();
+          return `<div class="summary-card"><div class="summary-label">海上運賃（USD/ton）</div><div class="summary-value">${fmt(ship.ofUsdPerTon,2)}</div></div>`;
+        })();
+    const summaryTarget = portLines.length ? portLines[0] : null;
+    const cy = currentCyBase(summaryTarget);
     box.innerHTML = `
-      <div class="summary-card"><div class="summary-label">海上運賃（USD/ton）</div><div class="summary-value">${fmt(ship.ofUsdPerTon,2)}</div></div>
+      ${oceanSummaryCards}
       <div class="summary-card"><div class="summary-label">FOB価格（USD/ton）</div><div class="summary-value">${cy ? fmt(cy.fobUsdTon,2) : '-'}</div></div>
       <div class="summary-card"><div class="summary-label">FOB価格（円/ton）</div><div class="summary-value">${cy ? jp(cy.fobJpyTon,0) : '-'}</div></div>
       <div class="summary-card"><div class="summary-label">CY価格ベース（円/kg）</div><div class="summary-value" style="color:#1d4ed8">${cy ? fmt(cy.cyJpyKg,2) : '-'}</div></div>
@@ -3188,9 +3355,19 @@ function updateQuoteLine(id,key,val){
     if(key === 'yardName'){
       const hasValue = String(val || '').trim();
       if(hasValue) next.quoteCondition = isDefaultPortLabel(val) ? 'CY渡し' : '店頭';
+      if(isDefaultPortLabel(val)){
+        return applyRowOceanFreightFromMaster(next, true);
+      }
+      next.rowOceanFreight = '';
+      next.rowOceanFreightManual = false;
     }
     if(key === 'quoteCondition' && val !== '店頭'){
       next.yardName = '';
+      next.rowOceanFreight = '';
+      next.rowOceanFreightManual = false;
+    }
+    if(key === 'rowOceanFreight'){
+      next.rowOceanFreightManual = true;
     }
     return next;
   });
@@ -3198,17 +3375,18 @@ function updateQuoteLine(id,key,val){
   if(key === 'note'){
     const body = document.getElementById('quoteTableBody');
     const row = body?.querySelector(`tr[data-line-id="${id}"]`);
-    const input = row?.querySelector('td:nth-child(6) input');
+    const input = row?.querySelector('td:nth-child(7) input');
     if(input) input.classList.toggle('blank', !String(val || '').trim());
     return;
   }
 
-  if(key === 'quantity'){
+  if(key === 'quantity' || key === 'rowOceanFreight'){
     const body = document.getElementById('quoteTableBody');
     const row = body?.querySelector(`tr[data-line-id="${id}"]`);
-    const input = row?.querySelector('[data-field="quantity"]');
+    const input = row?.querySelector(`[data-field="${key}"]`);
     if(input) input.classList.toggle('blank', !String(val || '').trim());
     renderSummary();
+    renderQuoteTable();
     return;
   }
 
@@ -3363,8 +3541,11 @@ function validateIssueQuote(){
       ['見積価格', line.quoteCondition, 'quoteCondition'],
       ['積載', line.quantity, 'quantity']
     ];
-    if(line.quoteCondition === '店頭'){
+    if(line.quoteCondition === '店頭' || isDefaultPortLabel(line.yardName)){
       required.splice(1, 0, ['ヤード名', line.yardName, 'yardName']);
+    }
+    if(isDefaultPortLabel(line.yardName)){
+      required.splice(3, 0, ['海上運賃', line.rowOceanFreight, 'rowOceanFreight']);
     }
     for(const [label,val,field] of required){
       const el = row?.querySelector(`[data-field="${field}"]`);
