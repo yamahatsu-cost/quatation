@@ -2389,7 +2389,7 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.33</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.39</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -2927,7 +2927,18 @@ function setCalcMode(mode){
   state.basic.sellingPrice = '';
   if(mode==='cy'){
     state.basic.salesCondition = 'CY渡し';
-    state.quoteLines = state.quoteLines.map(x => ({...x, quoteCondition:'店頭'}));
+    state.quoteLines = state.quoteLines.map(x => {
+      const next = {...x, quoteCondition:'店頭'};
+      if(isDefaultPortLabel(next.yardName)){
+        next.yardName = '';
+        next.rowOceanFreight = '';
+        next.rowOceanFreightCurrency = 'USD';
+        next.rowOceanFreightManual = false;
+        next.rowEbs = '';
+        next.rowEbsManual = false;
+      }
+      return next;
+    });
   } else {
     if(state.basic.salesCondition === 'CY渡し') state.basic.salesCondition = 'CIF';
     state.quoteLines = state.quoteLines.map(x => ({...x, quoteCondition:'CY渡し'}));
@@ -3141,7 +3152,7 @@ function renderQuoteTable(){
     const isPortSelected = isDefaultPortLabel(line.yardName);
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const supplierYardOptions = yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
-    const portOptions = DEFAULT_PORTS.map(name => {
+    const portOptions = state.calcMode === 'cy' ? '' : DEFAULT_PORTS.map(name => {
       const label = portOptionLabel(name);
       const text = line.yardName===name ? name : label;
       return `<option value="${escapeHtml(name)}" data-port="1" ${line.yardName===name?'selected':''}>${escapeHtml(text)}</option>`;
