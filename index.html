@@ -2613,7 +2613,19 @@ function persistMasters(){
 function selectedSupplier(){ return state.suppliers.find(s => s.shortName === state.basic.supplierShortName) || null; }
 const DEFAULT_PORTS = ['東京港','大阪港','博多港','名古屋港','神戸港','横浜港','門司港','那覇港'];
 function portOptionLabel(name){ return `【港】${name}`; }
-function isDefaultPortLabel(value){ return DEFAULT_PORTS.some(name => portOptionLabel(name) === String(value || '').trim()); }
+function isDefaultPortLabel(value){ return DEFAULT_PORTS.includes(String(value || '').trim()); }
+function showPortLabels(selectEl){
+  if(!selectEl) return;
+  Array.from(selectEl.options || []).forEach(opt => {
+    if(opt.dataset.port === '1') opt.textContent = portOptionLabel(opt.value);
+  });
+}
+function hideSelectedPortLabel(selectEl){
+  if(!selectEl) return;
+  Array.from(selectEl.options || []).forEach(opt => {
+    if(opt.dataset.port === '1') opt.textContent = opt.value === selectEl.value ? opt.value : portOptionLabel(opt.value);
+  });
+}
 function availableYards(){ return selectedSupplier()?.yards || []; }
 
 function switchTab(tab){
@@ -2827,30 +2839,40 @@ function renderQuoteTable(){
   const yards = availableYards();
   body.innerHTML = state.quoteLines.map((line, idx) => {
     const price = formatQuotePriceDisplay(linePrice(line));
+    const isPortSelected = isDefaultPortLabel(line.yardName);
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const supplierYardOptions = yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
     const portOptions = DEFAULT_PORTS.map(name => {
       const label = portOptionLabel(name);
-      return `<option value="${escapeHtml(label)}" ${line.yardName===label?'selected':''}>${escapeHtml(label)}</option>`;
+      const text = line.yardName===name ? name : label;
+      return `<option value="${escapeHtml(name)}" data-port="1" ${line.yardName===name?'selected':''}>${escapeHtml(text)}</option>`;
     }).join('');
     const yardOptions = `<option value="">ヤード選択</option>` + supplierYardOptions + portOptions;
-    const conditionOptions = state.calcMode === 'cy'
-      ? `<option value="">見積価格選択</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`
-      : `<option value="">見積価格選択</option><option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
+    let conditionOptions = '';
+    let conditionDisabled = '';
+    if(state.calcMode === 'cy'){
+      conditionOptions = `<option value="">見積価格選択</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
+    }else if(isPortSelected){
+      conditionOptions = `<option value="CY渡し" selected>CY渡し</option>`;
+      conditionDisabled = 'disabled';
+    }else{
+      conditionOptions = `<option value="">見積価格選択</option><option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
+    }
     const productBlank = !String(line.product ?? '').trim();
     const yardBlank = !String(line.yardName ?? '').trim();
     const conditionBlank = !String(line.quoteCondition ?? '').trim();
     const qtyBlank = !String(line.quantity ?? '').trim();
     return `<tr data-line-id="${line.id}">
       <td><select data-field="product" class="${productBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','product',this.value)">${productOptions}</select></td>
-      <td><select data-field="yardName" class="${yardBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','yardName',this.value)">${yardOptions}</select></td>
-      <td><select data-field="quoteCondition" class="${conditionBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','quoteCondition',this.value)">${conditionOptions}</select></td>
+      <td><select data-field="yardName" class="${yardBlank?'blank':''}" onchange="updateQuoteLine('${line.id}','yardName',this.value)" onfocus="showPortLabels(this)" onblur="hideSelectedPortLabel(this)">${yardOptions}</select></td>
+      <td><select data-field="quoteCondition" class="${conditionBlank?'blank':''}" ${conditionDisabled} onchange="updateQuoteLine('${line.id}','quoteCondition',this.value)">${conditionOptions}</select></td>
       <td><input value="${price}" readonly style="text-align:center;font-weight:700" /></td>
       <td><input data-field="quantity" class="quote-qty ${qtyBlank?'blank':''}" value="${line.quantity==='' ? "" : fmt(n(line.quantity),1)}" placeholder="例）22.0" oninput="updateQuoteLine('${line.id}','quantity',this.value)" /></td>
       <td><input value="${escapeHtml(line.note)}" class="${!line.note?'blank':''}" placeholder="例）ベトナム向け" oninput="updateQuoteLine('${line.id}','note',this.value)" /></td>
       <td>${idx===0 ? '' : `<button class="btn small delete-btn icon-only" title="削除" onclick="removeQuoteLine('${line.id}')">&times;</button>`}</td>
     </tr>`;
   }).join('');
+  body.querySelectorAll('select[data-field="yardName"]').forEach(hideSelectedPortLabel);
 }
 
 function renderSummary(){
