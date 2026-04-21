@@ -1961,7 +1961,7 @@ html, body{
       position:fixed;
       left:-200vw;
       top:0;
-      width:794px;
+      width:210mm;
       background:#fff;
       color:#111827;
       z-index:-1;
@@ -1969,86 +1969,188 @@ html, body{
     }
     .pdf-sheet{
       width:210mm;
-      min-height:297mm;
+      height:297mm;
       box-sizing:border-box;
-      padding:14mm 12mm 14mm 14mm;
+      padding:9.5mm 9.5mm 10mm;
       background:#fff;
+      color:#222;
     }
     .pdf-title{
-      font-size:24px;
+      font-size:23px;
       font-weight:700;
       text-align:center;
-      letter-spacing:.18em;
-      margin:8mm 0 8mm;
+      letter-spacing:.34em;
+      margin:1.5mm 0 8mm 0;
+      line-height:1.1;
+      padding-left:.34em;
     }
-    .pdf-topline{
+    .pdf-head{
       display:flex;
       justify-content:space-between;
       align-items:flex-start;
-      margin-bottom:6mm;
-      font-size:13px;
-    }
-    .pdf-recipient{line-height:1.7; min-height:20mm;}
-    .pdf-date{text-align:right; white-space:nowrap;}
-    .pdf-greeting{
-      font-size:12.5px;
-      line-height:1.85;
-      margin:2mm 0 5mm;
-    }
-    .pdf-meta{
-      display:flex;
       gap:8mm;
+      margin-bottom:5mm;
+    }
+    .pdf-left{flex:1 1 auto;min-width:0;}
+    .pdf-right{width:71mm;display:flex;flex-direction:column;align-items:flex-end;}
+    .pdf-date{
+      font-size:11.5px;
+      font-weight:700;
+      line-height:1.2;
+      margin-bottom:4mm;
+      white-space:nowrap;
+      text-align:right;
+    }
+    .pdf-recipient-company{
+      font-size:17px;
+      font-weight:700;
+      line-height:1.25;
+      margin-top:3mm;
+      margin-bottom:3mm;
+    }
+    .pdf-recipient-person{
+      font-size:11.8px;
+      line-height:1.45;
+      margin-bottom:1mm;
+      white-space:pre-wrap;
+    }
+    .pdf-recipient-phone{
+      font-size:11.4px;
+      line-height:1.2;
+      text-decoration:underline;
+      margin-bottom:6.5mm;
+    }
+    .pdf-sender{
+      position:relative;
+      width:100%;
+      padding-right:17mm;
+      text-align:right;
+      margin-bottom:7mm;
+    }
+    .pdf-sender-company{
+      font-size:12.5px;
+      font-weight:700;
+      line-height:1.25;
+      margin-bottom:1.2mm;
+    }
+    .pdf-sender-address,
+    .pdf-sender-building,
+    .pdf-sender-tel{
+      font-size:9.5px;
+      line-height:1.35;
+    }
+    .pdf-stamp{
+      position:absolute;
+      right:0;
+      top:-3mm;
+      width:15mm;
+      height:15mm;
+      border:1.8px solid #d11a2a;
+      color:#d11a2a;
+      border-radius:2px;
+      display:flex;
       align-items:center;
-      margin:0 0 4mm;
-      font-size:12.5px;
+      justify-content:center;
+      font-size:10px;
+      font-weight:700;
+      transform:rotate(-8deg);
+      background:rgba(255,255,255,.1);
+      letter-spacing:.08em;
     }
-    .pdf-meta strong{font-weight:700;}
-    .pdf-contact{
-      font-size:12.5px;
-      margin:0 0 5mm;
+    .pdf-approval{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      width:49mm;
+      border:1px solid #444;
     }
+    .pdf-approval-col{border-left:1px solid #444;}
+    .pdf-approval-col:first-child{border-left:none;}
+    .pdf-approval-label{
+      height:7mm;
+      border-bottom:1px solid #444;
+      font-size:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+    }
+    .pdf-approval-box{height:17mm;}
+    .pdf-greeting{
+      font-size:11.4px;
+      line-height:1.7;
+      margin:0 0 5.2mm;
+    }
+    .pdf-validity{
+      display:flex;
+      align-items:flex-end;
+      gap:10mm;
+      font-size:11.6px;
+      font-weight:700;
+      margin-bottom:4.5mm;
+    }
+    .pdf-validity-label{min-width:29mm;}
+    .pdf-validity-date{text-decoration:underline;}
     .pdf-table{
       width:100%;
       border-collapse:collapse;
       table-layout:fixed;
-      margin-top:3mm;
-      font-size:12px;
+      font-size:11px;
+      border:1px solid #444;
     }
-    .pdf-table th,.pdf-table td{
-      border:1px solid #1f2937;
-      padding:6px 7px;
-      vertical-align:middle;
-      word-break:break-word;
-    }
-    .pdf-table th{
-      background:#f3f4f6;
+    .pdf-table col:nth-child(1){width:23%;}
+    .pdf-table col:nth-child(2){width:16%;}
+    .pdf-table col:nth-child(3){width:13%;}
+    .pdf-table col:nth-child(4){width:12%;}
+    .pdf-table col:nth-child(5){width:14%;}
+    .pdf-table col:nth-child(6){width:22%;}
+    .pdf-table thead th{
+      height:8.5mm;
+      border:1px solid #444;
+      background:#d9d9d9;
       text-align:center;
       font-weight:700;
+      padding:1.2mm 1.4mm;
     }
-    .pdf-table td:nth-child(4),
-    .pdf-table td:nth-child(5){ text-align:right; }
-    .pdf-caution{
-      margin-top:7mm;
-      font-size:12px;
-      line-height:1.7;
+    .pdf-table tbody td{
+      height:9.2mm;
+      padding:1.1mm 1.6mm;
+      vertical-align:middle;
+      word-break:break-word;
+      border-left:1px solid #444;
+      border-right:1px solid #444;
+      border-bottom:1px dotted #666;
+    }
+    .pdf-table tbody tr:last-child td{border-bottom:1px solid #444;}
+    .pdf-table td.center{text-align:center;}
+    .pdf-table td.num{text-align:right;padding-right:2.2mm;}
+    .pdf-table td.note-cell{font-size:10px;}
+    .pdf-bottom{
+      margin-top:4mm;
+      font-size:10.3px;
+      line-height:1.55;
     }
     .pdf-note-label{
-      margin-top:4mm;
-      font-size:12px;
+      margin-top:4.5mm;
+      font-size:11px;
       font-weight:700;
     }
     .pdf-note-box{
-      min-height:28mm;
-      border:1px solid #1f2937;
-      padding:7px 8px;
-      font-size:12px;
-      line-height:1.75;
+      min-height:15mm;
+      padding-top:1mm;
+      font-size:11px;
+      line-height:1.45;
       white-space:pre-wrap;
     }
+    .pdf-code-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      margin-top:2.5mm;
+    }
+    .pdf-contact-name{font-size:11px;}
     .pdf-code{
       text-align:right;
-      margin-top:4mm;
-      font-size:11px;
+      font-size:9px;
     }
 
 </style>
@@ -3334,6 +3436,12 @@ async function buildFilledQuoteWorkbook(){
   });
 
   sheet.cell('C35').value(payload.bottomNote);
+  sheet.cell('C35').style({
+    horizontalAlignment: 'left',
+    verticalAlignment: 'top',
+    wrapText: true,
+    fontColor: '000000'
+  });
   sheet.cell('H37').value(payload.documentCode);
 
   return { workbook, payload };
@@ -3354,74 +3462,342 @@ function escapePdfText(value){
     .replace(/"/g, '&quot;');
 }
 
+function formatWarekiDate(date){
+  const y = date.getFullYear() - 2018;
+  return `令和${y}年${date.getMonth()+1}月${date.getDate()}日`;
+}
+
+function buildPdfRows(payload){
+  const rows = payload.rows.length ? payload.rows : [{product:'', yardName:'', quoteCondition:'', quantity:'', unitPrice:'', note:''}];
+  const totalRows = 12;
+  const safeRows = rows.slice(0, totalRows);
+  while(safeRows.length < totalRows){
+    safeRows.push({product:'', yardName:'', quoteCondition:'', quantity:'', unitPrice:'', note:''});
+  }
+  return safeRows;
+}
+
+function buildQuotePdfHtml(payload){
+  const company = escapePdfText(payload.formalName || payload.company || '');
+  const person = [payload.contact, '様'].filter(Boolean).join(' ');
+  const phone = escapePdfText(payload.phone || '');
+  const rowsHtml = buildPdfRows(payload).map(line => {
+    const qty = Number.isFinite(line.quantity) && line.quantity !== 0 ? jp(line.quantity, 1) : '';
+    const price = Number.isFinite(line.unitPrice) && line.unitPrice !== 0 ? `¥${jp(line.unitPrice, 2)}` : '';
+    return `
+      <tr>
+        <td class="center">${escapePdfText(line.product || '')}</td>
+        <td class="center">${escapePdfText(line.yardName || '')}</td>
+        <td class="center">${escapePdfText(line.quoteCondition || '')}</td>
+        <td class="num">${qty}</td>
+        <td class="num">${price}</td>
+        <td class="note-cell">${escapePdfText(line.note || '')}</td>
+      </tr>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>御見積書</title>
+<style>
+  @page { size: A4 portrait; margin: 10mm; }
+  html,body{margin:0;padding:0;background:#f3f4f6;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;color:#222;}
+  *{box-sizing:border-box;}
+  .preview-wrap{padding:16px;}
+  .preview-actions{width:190mm;margin:0 auto 10px;display:flex;justify-content:flex-end;gap:8px;}
+  .preview-btn{appearance:none;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;}
+  .preview-btn.primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+  .pdf-sheet{width:190mm;height:277mm;margin:0 auto;background:#fff;box-sizing:border-box;padding:0;color:#222;box-shadow:0 6px 28px rgba(15,23,42,.12);}
+
+    .pdf-export-root{
+      position:fixed;
+      left:-200vw;
+      top:0;
+      width:210mm;
+      background:#fff;
+      color:#111827;
+      z-index:-1;
+      font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    }
+    .pdf-sheet{
+      width:210mm;
+      height:297mm;
+      box-sizing:border-box;
+      padding:9.5mm 9.5mm 10mm;
+      background:#fff;
+      color:#222;
+    }
+    .pdf-title{
+      font-size:23px;
+      font-weight:700;
+      text-align:center;
+      letter-spacing:.34em;
+      margin:1.5mm 0 8mm 0;
+      line-height:1.1;
+      padding-left:.34em;
+    }
+    .pdf-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:8mm;
+      margin-bottom:5mm;
+    }
+    .pdf-left{flex:1 1 auto;min-width:0;}
+    .pdf-right{width:71mm;display:flex;flex-direction:column;align-items:flex-end;}
+    .pdf-date{
+      font-size:11.5px;
+      font-weight:700;
+      line-height:1.2;
+      margin-bottom:4mm;
+      white-space:nowrap;
+      text-align:right;
+    }
+    .pdf-recipient-company{
+      font-size:17px;
+      font-weight:700;
+      line-height:1.25;
+      margin-top:3mm;
+      margin-bottom:3mm;
+    }
+    .pdf-recipient-person{
+      font-size:11.8px;
+      line-height:1.45;
+      margin-bottom:1mm;
+      white-space:pre-wrap;
+    }
+    .pdf-recipient-phone{
+      font-size:11.4px;
+      line-height:1.2;
+      text-decoration:underline;
+      margin-bottom:6.5mm;
+    }
+    .pdf-sender{
+      position:relative;
+      width:100%;
+      padding-right:17mm;
+      text-align:right;
+      margin-bottom:7mm;
+    }
+    .pdf-sender-company{
+      font-size:12.5px;
+      font-weight:700;
+      line-height:1.25;
+      margin-bottom:1.2mm;
+    }
+    .pdf-sender-address,
+    .pdf-sender-building,
+    .pdf-sender-tel{
+      font-size:9.5px;
+      line-height:1.35;
+    }
+    .pdf-stamp{
+      position:absolute;
+      right:0;
+      top:-3mm;
+      width:15mm;
+      height:15mm;
+      border:1.8px solid #d11a2a;
+      color:#d11a2a;
+      border-radius:2px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:10px;
+      font-weight:700;
+      transform:rotate(-8deg);
+      background:rgba(255,255,255,.1);
+      letter-spacing:.08em;
+    }
+    .pdf-approval{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      width:49mm;
+      border:1px solid #444;
+    }
+    .pdf-approval-col{border-left:1px solid #444;}
+    .pdf-approval-col:first-child{border-left:none;}
+    .pdf-approval-label{
+      height:7mm;
+      border-bottom:1px solid #444;
+      font-size:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+    }
+    .pdf-approval-box{height:17mm;}
+    .pdf-greeting{
+      font-size:11.4px;
+      line-height:1.7;
+      margin:0 0 5.2mm;
+    }
+    .pdf-validity{
+      display:flex;
+      align-items:flex-end;
+      gap:10mm;
+      font-size:11.6px;
+      font-weight:700;
+      margin-bottom:4.5mm;
+    }
+    .pdf-validity-label{min-width:29mm;}
+    .pdf-validity-date{text-decoration:underline;}
+    .pdf-table{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+      font-size:11px;
+      border:1px solid #444;
+    }
+    .pdf-table col:nth-child(1){width:23%;}
+    .pdf-table col:nth-child(2){width:16%;}
+    .pdf-table col:nth-child(3){width:13%;}
+    .pdf-table col:nth-child(4){width:12%;}
+    .pdf-table col:nth-child(5){width:14%;}
+    .pdf-table col:nth-child(6){width:22%;}
+    .pdf-table thead th{
+      height:8.5mm;
+      border:1px solid #444;
+      background:#d9d9d9;
+      text-align:center;
+      font-weight:700;
+      padding:1.2mm 1.4mm;
+    }
+    .pdf-table tbody td{
+      height:9.2mm;
+      padding:1.1mm 1.6mm;
+      vertical-align:middle;
+      word-break:break-word;
+      border-left:1px solid #444;
+      border-right:1px solid #444;
+      border-bottom:1px dotted #666;
+    }
+    .pdf-table tbody tr:last-child td{border-bottom:1px solid #444;}
+    .pdf-table td.center{text-align:center;}
+    .pdf-table td.num{text-align:right;padding-right:2.2mm;}
+    .pdf-table td.note-cell{font-size:10px;}
+    .pdf-bottom{
+      margin-top:4mm;
+      font-size:10.3px;
+      line-height:1.55;
+    }
+    .pdf-note-label{
+      margin-top:4.5mm;
+      font-size:11px;
+      font-weight:700;
+    }
+    .pdf-note-box{
+      min-height:15mm;
+      padding-top:1mm;
+      font-size:11px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+    .pdf-code-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      margin-top:2.5mm;
+    }
+    .pdf-contact-name{font-size:11px;}
+    .pdf-code{
+      text-align:right;
+      font-size:9px;
+    }
+
+  .pdf-sheet{width:190mm;height:277mm;padding:0;}
+  .pdf-sheet-inner{width:100%;height:100%;padding:0;}
+  @media print{
+    html,body{background:#fff;overflow:hidden;}
+    .preview-wrap{padding:0;}
+    .preview-actions{display:none !important;}
+    .pdf-sheet{width:190mm;height:277mm;box-shadow:none;margin:0 auto;}
+  }
+</style>
+</head>
+<body>
+  <div class="preview-wrap">
+    <div class="preview-actions">
+      <button class="preview-btn" onclick="window.close()">閉じる</button>
+      <button class="preview-btn primary" onclick="window.print()">PDF保存 / 印刷</button>
+    </div>
+    <div class="pdf-sheet">
+      <div class="pdf-sheet-inner">
+        <div class="pdf-title">御見積書</div>
+        <div class="pdf-head">
+          <div class="pdf-left">
+            <div class="pdf-recipient-company">${company}</div>
+            <div class="pdf-recipient-person">${escapePdfText(person || '')}</div>
+            <div class="pdf-recipient-phone">${phone}</div>
+          </div>
+          <div class="pdf-right">
+            <div class="pdf-date">${formatWarekiDate(payload.today)}</div>
+            <div class="pdf-sender">
+              <div class="pdf-sender-company">山發日本株式会社</div>
+              <div class="pdf-sender-address">東京都中央区銀座3-4-6</div>
+              <div class="pdf-sender-building">正隆銀座ビル7F</div>
+              <div class="pdf-sender-tel">TEL:03-5250-0928　FAX:03-5250-0938</div>
+              <div class="pdf-stamp">山發印</div>
+            </div>
+            <div class="pdf-approval">
+              <div class="pdf-approval-col">
+                <div class="pdf-approval-label">確認</div>
+                <div class="pdf-approval-box"></div>
+              </div>
+              <div class="pdf-approval-col">
+                <div class="pdf-approval-label">担当印</div>
+                <div class="pdf-approval-box"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-greeting">
+          <div>拝啓　時下ますますご清栄のこととお慶び申し上げます。</div>
+          <div>下記のとおり御見積もりをさせて頂きます。</div>
+          <div>ご査収のほどよろしくお願い致します。</div>
+        </div>
+        <div class="pdf-validity">
+          <div class="pdf-validity-label">見積有限効期限:</div>
+          <div class="pdf-validity-date">${formatWarekiDate(payload.validUntil)}</div>
+        </div>
+        <table class="pdf-table">
+          <colgroup><col><col><col><col><col><col></colgroup>
+          <thead>
+            <tr>
+              <th>商 品 名</th>
+              <th>ヤード名</th>
+              <th>見積条件</th>
+              <th>数量(ton)</th>
+              <th>単 価/kg</th>
+              <th>備　考</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+        <div class="pdf-bottom">
+          <div>誠に恐れ入りますが、為替と市況の乱高下への対応の為、見積書有効期限内でご返答をお願いします。</div>
+          <div>※作業日は別途ご相談させて頂きたく存じます。</div>
+        </div>
+        <div class="pdf-note-label">備考：</div>
+        <div class="pdf-note-box">${escapePdfText(payload.bottomNote || '')}</div>
+        <div class="pdf-code-row">
+          <div class="pdf-contact-name">${escapePdfText(payload.contactName || '')}</div>
+          <div class="pdf-code">${escapePdfText(payload.documentCode || '')}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>window.focus();setTimeout(()=>window.print(),250);<\/script>
+</body>
+</html>`;
+}
+
 function renderPdfExport(payload){
   const root = document.getElementById('pdfExportRoot');
   if(!root) throw new Error('PDF出力領域が見つかりません');
-  const company = escapePdfText(payload.company);
-  const rows = payload.rows.length ? payload.rows : [{product:'', yardName:'', quoteCondition:'', quantity:'', unitPrice:'', note:''}];
-  const fillerCount = Math.max(0, 8 - rows.length);
-  const bodyRows = rows.map(line => `
-    <tr>
-      <td>${escapePdfText(line.product)}</td>
-      <td>${escapePdfText(line.yardName)}</td>
-      <td>${escapePdfText(line.quoteCondition)}</td>
-      <td>${Number.isFinite(line.quantity) && line.quantity !== 0 ? jp(line.quantity,1) : ''}</td>
-      <td>${Number.isFinite(line.unitPrice) && line.unitPrice !== 0 ? jp(line.unitPrice,2) : ''}</td>
-      <td>${escapePdfText(line.note)}</td>
-    </tr>
-  `).join('') + Array.from({length:fillerCount}, () => `
-    <tr>
-      <td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td>
-    </tr>
-  `).join('');
-
-  root.innerHTML = `
-    <div class="pdf-sheet" id="pdfSheet">
-      <div class="pdf-title">御 見 積 書</div>
-      <div class="pdf-topline">
-        <div class="pdf-recipient">
-          <div>${company ? company + '　御中' : '&nbsp;'}<\/div>
-        </div>
-        <div class="pdf-date">${formatPdfDate(payload.today)}</div>
-      </div>
-      <div class="pdf-greeting">
-        <div>拝啓　時下ますますご清栄のこととお慶び申し上げます。<\/div>
-        <div>下記のとおり御見積もりをさせて頂きます。<\/div>
-        <div>ご査収のほどよろしくお願い致します。<\/div>
-      </div>
-      <div class="pdf-meta"><strong>見積有限効期限：</strong><span>${formatPdfDate(payload.validUntil)}</span></div>
-      <div class="pdf-contact">${escapePdfText(payload.contactName)}</div>
-
-      <table class="pdf-table">
-        <colgroup>
-          <col style="width:22%">
-          <col style="width:16%">
-          <col style="width:14%">
-          <col style="width:12%">
-          <col style="width:14%">
-          <col style="width:22%">
-        </colgroup>
-        <thead>
-          <tr>
-            <th>商 品 名</th>
-            <th>ヤード名</th>
-            <th>見積条件</th>
-            <th>数量(ton)</th>
-            <th>単 価/kg</th>
-            <th>備 考</th>
-          </tr>
-        </thead>
-        <tbody>${bodyRows}</tbody>
-      </table>
-
-      <div class="pdf-caution">誠に恐れ入りますが、為替と市況の乱高下への対応の為、見積書有効期限内でご返答をお願いします。</div>
-      <div class="pdf-caution">※作業日は別途ご相談させて頂きたく存じます。</div>
-      <div class="pdf-note-label">備考：</div>
-      <div class="pdf-note-box">${escapePdfText(payload.bottomNote || '')}</div>
-      <div class="pdf-code">${escapePdfText(payload.documentCode)}</div>
-    </div>
-  `;
-  return root.querySelector('#pdfSheet');
+  root.innerHTML = buildQuotePdfHtml(payload);
+  return root;
 }
 
 async function issueQuotePdf(){
@@ -3429,20 +3805,17 @@ async function issueQuotePdf(){
   const error = validateIssueQuote();
   if(error) return toast(error);
   try {
-    toast('PDFを作成しています');
-    const { payload } = await buildFilledQuoteWorkbook();
-    const node = renderPdfExport(payload);
-    if(typeof html2pdf === 'undefined') throw new Error('PDF生成ライブラリの読み込みに失敗しました');
-    const fileName = `${payload.company || '見積'}_${exportFileDateString(payload.today)}_見積書.pdf`;
-    await html2pdf().set({
-      filename: fileName,
-      margin: [8, 8, 8, 8],
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(node).save();
-    toast('PDFを出力しました');
+    toast('PDF画面を作成しています');
+    const payload = buildQuoteExportPayload();
+    const preview = window.open('', '_blank', 'noopener');
+    if(!preview){
+      toast('ポップアップがブロックされました');
+      return;
+    }
+    preview.document.open();
+    preview.document.write(buildQuotePdfHtml(payload));
+    preview.document.close();
+    toast('PDFプレビューを表示しました');
   } catch(err) {
     console.error(err);
     toast('PDF出力に失敗しました');
