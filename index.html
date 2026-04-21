@@ -83,6 +83,17 @@
     .summary-card{background:#eef4ff;border-radius:18px;padding:16px;border:1px solid #d7e3f6}
     .summary-label{font-size:14px;color:var(--muted)}
     .summary-value{margin-top:8px;font-size:33px;font-weight:800}
+
+.summary-inline-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+.summary-chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-height:74px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #d7e3f6;font-weight:700;font-size:15px;line-height:1.25;white-space:normal;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.summary-chip-label{color:#64748b;font-weight:800;font-size:13px;letter-spacing:.02em}
+.summary-chip-value{color:#0f172a;font-size:22px;font-weight:800;line-height:1.15}
+@media (max-width:760px){
+  .summary-inline-list{grid-template-columns:1fr;gap:8px}
+  .summary-chip{min-height:auto;font-size:13px;padding:10px 12px;border-radius:14px}
+  .summary-chip-value{font-size:18px}
+}
+
     .master-block{border:1px solid #cfdbec;border-radius:20px;padding:16px;margin-bottom:16px;background:#fbfdff}
     .master-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
     .subgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
@@ -3028,30 +3039,52 @@ function renderQuoteTable(){
 
 function renderSummary(){
   const box = document.getElementById('summaryArea');
+  const buildSummaryInlineCard = (label, items, valueColor='') => {
+    const chips = items.map(item => `
+      <div class="summary-chip">
+        <div class="summary-chip-label">${escapeHtml(item.label)}</div>
+        <div class="summary-chip-value"${valueColor ? ` style="color:${valueColor}"` : ''}>${escapeHtml(item.value)}</div>
+      </div>
+    `).join('');
+    return `<div class="summary-card summary-wide"><div class="summary-label">${label}</div><div class="summary-inline-list">${chips}</div></div>`;
+  };
+
   if(state.calcMode === 'overseas'){
     const portLines = state.quoteLines.filter(line => isDefaultPortLabel(line.yardName));
-    const oceanSummaryCards = portLines.length
-      ? portLines.map((line, idx) => {
-          const quantity = n(line.quantity || state.quoteLines[0]?.quantity || 22) || 22;
-          const fx = n(state.basic.fxRate);
-          const ofCurrency = String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD';
-          const ofValue = n(line.rowOceanFreight);
-          const ofUsdPerTon = ofCurrency === 'JPY' ? (fx ? ofValue / fx / quantity : 0) : ofValue / quantity;
-          const yardLabel = line.yardName ? escapeHtml(line.yardName) : `港行${idx+1}`;
-          return `<div class="summary-card"><div class="summary-label">海上運賃（USD/ton）<br>${yardLabel}</div><div class="summary-value">${fmt(ofUsdPerTon,2)}</div></div>`;
-        }).join('')
-      : (() => {
-          const cy = currentCyBase();
-          const ship = currentShippingCosts();
-          return `<div class="summary-card"><div class="summary-label">海上運賃（USD/ton）</div><div class="summary-value">${fmt(ship.ofUsdPerTon,2)}</div></div>`;
-        })();
-    const summaryTarget = portLines.length ? portLines[0] : null;
-    const cy = currentCyBase(summaryTarget);
+    let oceanItems = [];
+    let fobItems = [];
+    let cyItems = [];
+
+    if(portLines.length){
+      oceanItems = portLines.map((line, idx) => {
+        const quantity = n(line.quantity || state.quoteLines[0]?.quantity || 22) || 22;
+        const fx = n(state.basic.fxRate);
+        const ofCurrency = String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD';
+        const ofValue = n(line.rowOceanFreight);
+        const ofUsdPerTon = ofCurrency === 'JPY' ? (fx ? ofValue / fx / quantity : 0) : ofValue / quantity;
+        const yardLabel = line.yardName ? line.yardName : `港行${idx+1}`;
+        const cy = currentCyBase(line);
+        return {
+          ocean:{label: yardLabel, value: fmt(ofUsdPerTon,2)},
+          fob:{label: yardLabel, value: cy ? fmt(cy.fobUsdTon,2) : '-'},
+          cy:{label: yardLabel, value: cy ? fmt(cy.cyJpyKg,2) : '-'}
+        };
+      });
+      fobItems = oceanItems.map(x => x.fob);
+      cyItems = oceanItems.map(x => x.cy);
+      oceanItems = oceanItems.map(x => x.ocean);
+    }else{
+      const ship = currentShippingCosts();
+      const cy = currentCyBase();
+      oceanItems = [{label:'基本情報', value: fmt(ship.ofUsdPerTon,2)}];
+      fobItems = [{label:'基本情報', value: cy ? fmt(cy.fobUsdTon,2) : '-'}];
+      cyItems = [{label:'基本情報', value: cy ? fmt(cy.cyJpyKg,2) : '-'}];
+    }
+
     box.innerHTML = `
-      ${oceanSummaryCards}
-      <div class="summary-card"><div class="summary-label">FOB価格（USD/ton）</div><div class="summary-value">${cy ? fmt(cy.fobUsdTon,2) : '-'}</div></div>
-      <div class="summary-card"><div class="summary-label">FOB価格（円/ton）</div><div class="summary-value">${cy ? jp(cy.fobJpyTon,0) : '-'}</div></div>
-      <div class="summary-card"><div class="summary-label">CY価格ベース（円/kg）</div><div class="summary-value" style="color:#1d4ed8">${cy ? fmt(cy.cyJpyKg,2) : '-'}</div></div>
+      ${buildSummaryInlineCard('海上運賃（USD/ton）', oceanItems)}
+      ${buildSummaryInlineCard('FOB価格（USD/ton）', fobItems)}
+      ${buildSummaryInlineCard('CY価格ベース（円/kg）', cyItems, '#1d4ed8')}
       ${renderDrayageSummaryCards()}
     `;
   }else{
@@ -3213,7 +3246,8 @@ function renderAll(){
   document.getElementById('bottomNote').classList.toggle('blank', !state.bottomNote);
 
   const cy = currentCyBase();
-  document.getElementById('cyBaseBadge').textContent = `見積価格　CY価格 ${cy ? fmt(cy.cyJpyKg,2) : '0.00'}円/kg ベース`;
+  const cyBasePortLabel = state.basic.loadingPort || '積港';
+  document.getElementById('cyBaseBadge').textContent = `${cyBasePortLabel}　CY価格 ${cy ? fmt(cy.cyJpyKg,2) : '0.00'}円/kg ベース`;
   const domesticDescEl = document.getElementById('domesticDesc'); if(domesticDescEl){ domesticDescEl.textContent = state.calcMode==='cy' ? 'CY価格逆算の計算条件' : '店頭条件計算時にドレー費を参照'; }
 }
 
@@ -3299,7 +3333,7 @@ function fetchFx(){
     if(fxEl) fxEl.classList.remove('input-error');
     const now = new Date();
     const timeStr = now.toLocaleString('ja-JP');
-    toast(`リアルタイムUSD/JPY仲値：${rawRate.toFixed(2)} → -0.5調整後：${adjusted.toFixed(2)}（取得日時：${timeStr}）`);
+    toast(`リアルタイムUSD/JPY仲値：${rawRate.toFixed(2)} → -0.5調整後：${adjusted.toFixed(2)}`);
   };
 
   (async () => {
@@ -4137,7 +4171,7 @@ function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parse
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
 function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
-function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; const cursorPos = el && typeof el.selectionStart === 'number' ? el.selectionStart : null; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } if(key === 'loadingPort' || key === 'dischargePort'){ state.oceanFreightSortKey = 'loadingPort'; state.oceanFreight = sortOceanFreightList(state.oceanFreight, 'loadingPort'); renderOceanFreight(); restoreOceanInputFocus(id, key, cursorPos); return; } }
+function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeOceanFreight(id){ state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
 
 
