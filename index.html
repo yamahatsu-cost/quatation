@@ -2611,6 +2611,9 @@ function persistMasters(){
 }
 
 function selectedSupplier(){ return state.suppliers.find(s => s.shortName === state.basic.supplierShortName) || null; }
+const DEFAULT_PORTS = ['東京港','大阪港','博多港','名古屋港','神戸港','横浜港','門司港','那覇港'];
+function portOptionLabel(name){ return `【港】${name}`; }
+function isDefaultPortLabel(value){ return DEFAULT_PORTS.some(name => portOptionLabel(name) === String(value || '').trim()); }
 function availableYards(){ return selectedSupplier()?.yards || []; }
 
 function switchTab(tab){
@@ -2825,7 +2828,12 @@ function renderQuoteTable(){
   body.innerHTML = state.quoteLines.map((line, idx) => {
     const price = formatQuotePriceDisplay(linePrice(line));
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
-    const yardOptions = `<option value="">ヤード選択</option>` + yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
+    const supplierYardOptions = yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
+    const portOptions = DEFAULT_PORTS.map(name => {
+      const label = portOptionLabel(name);
+      return `<option value="${escapeHtml(label)}" ${line.yardName===label?'selected':''}>${escapeHtml(label)}</option>`;
+    }).join('');
+    const yardOptions = `<option value="">ヤード選択</option>` + supplierYardOptions + portOptions;
     const conditionOptions = state.calcMode === 'cy'
       ? `<option value="">見積価格選択</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`
       : `<option value="">見積価格選択</option><option value="CY渡し" ${line.quoteCondition==='CY渡し'?'selected':''}>CY渡し</option><option value="店頭" ${line.quoteCondition==='店頭'?'selected':''}>店頭</option>`;
@@ -3156,7 +3164,8 @@ function updateQuoteLine(id,key,val){
       next.quantity = val ? fmt(n(PRODUCT_DEFAULT_LOAD[val]),1) : '';
     }
     if(key === 'yardName'){
-      if(String(val || '').trim()) next.quoteCondition = '店頭';
+      const hasValue = String(val || '').trim();
+      if(hasValue) next.quoteCondition = isDefaultPortLabel(val) ? 'CY渡し' : '店頭';
     }
     if(key === 'quoteCondition' && val !== '店頭'){
       next.yardName = '';
