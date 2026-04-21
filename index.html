@@ -2389,7 +2389,7 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.39</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.33</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -2822,6 +2822,7 @@ function persistMasters(){
 }
 
 function selectedSupplier(){ return state.suppliers.find(s => s.shortName === state.basic.supplierShortName) || null; }
+const DEFAULT_PORTS = ['東京港','大阪港','博多港','名古屋港','神戸港','横浜港','門司港','那覇港'];
 const PORT_CODE_MAP = {
   '東京港':'TOKYO',
   '大阪港':'OSAKA',
@@ -2832,43 +2833,8 @@ const PORT_CODE_MAP = {
   '門司港':'MOJI',
   '那覇港':'NAHA'
 };
-const PORT_NAME_MAP = Object.fromEntries(Object.entries(PORT_CODE_MAP).map(([name, code]) => [String(code || '').trim().toUpperCase(), name]));
-function normalizePortCode(value){ return String(value || '').trim().toUpperCase(); }
 function portOptionLabel(name){ return `【港】${name}`; }
-function loadingPortCodeToLabel(code){
-  const normalized = normalizePortCode(code);
-  return PORT_NAME_MAP[normalized] || String(code || '').trim();
-}
-function allPortNamesFromMaster(){
-  const seen = new Set();
-  return state.oceanFreight.map(row => loadingPortCodeToLabel(row.loadingPort)).filter(name => {
-    const trimmed = String(name || '').trim();
-    if(!trimmed || seen.has(trimmed)) return false;
-    seen.add(trimmed);
-    return true;
-  });
-}
-function availablePortOptionsForSelectedDischarge(){
-  const dischargePort = normalizePortCode(state.basic.dischargePort);
-  if(!dischargePort) return [];
-  const seen = new Set();
-  return state.oceanFreight
-    .filter(row => normalizePortCode(row.dischargePort) === dischargePort)
-    .map(row => ({
-      name: loadingPortCodeToLabel(row.loadingPort),
-      code: normalizePortCode(row.loadingPort)
-    }))
-    .filter(port => {
-      const name = String(port.name || '').trim();
-      if(!name || seen.has(name)) return false;
-      seen.add(name);
-      return true;
-    });
-}
-function isDefaultPortLabel(value){
-  const trimmed = String(value || '').trim();
-  return !!trimmed && allPortNamesFromMaster().includes(trimmed);
-}
+function isDefaultPortLabel(value){ return DEFAULT_PORTS.includes(String(value || '').trim()); }
 function showPortLabels(selectEl){
   if(!selectEl) return;
   Array.from(selectEl.options || []).forEach(opt => {
@@ -2883,8 +2849,7 @@ function hideSelectedPortLabel(selectEl){
 }
 function availableYards(){ return selectedSupplier()?.yards || []; }
 function yardToLoadingPortCode(yardName){
-  const trimmed = String(yardName || '').trim();
-  return PORT_CODE_MAP[trimmed] || normalizePortCode(trimmed);
+  return PORT_CODE_MAP[String(yardName || '').trim()] || '';
 }
 function findOceanFreightByPorts(loadingPort, dischargePort){
   return state.oceanFreight.find(r =>
@@ -2927,21 +2892,8 @@ function applyRowOceanFreightFromMaster(line, showToast = true){
   return next;
 }
 function syncQuoteLineOceanFreightsOnPortChange(){
-  const availablePortNames = new Set(availablePortOptionsForSelectedDischarge().map(port => String(port.name || '').trim()));
   state.quoteLines = state.quoteLines.map(line => {
     if(!isDefaultPortLabel(line.yardName)) return line;
-    const currentPortName = String(line.yardName || '').trim();
-    if(currentPortName && !availablePortNames.has(currentPortName)){
-      return {
-        ...line,
-        yardName:'',
-        rowOceanFreight:'',
-        rowOceanFreightCurrency:'USD',
-        rowOceanFreightManual:false,
-        rowEbs:'',
-        rowEbsManual:false
-      };
-    }
     if((line.rowOceanFreightManual && String(line.rowOceanFreight || '').trim() !== '') || (line.rowEbsManual && String(line.rowEbs || '').trim() !== '')) return line;
     return applyRowOceanFreightFromMaster(line, false);
   });
@@ -2975,18 +2927,7 @@ function setCalcMode(mode){
   state.basic.sellingPrice = '';
   if(mode==='cy'){
     state.basic.salesCondition = 'CY渡し';
-    state.quoteLines = state.quoteLines.map(x => {
-      const next = {...x, quoteCondition:'店頭'};
-      if(isDefaultPortLabel(next.yardName)){
-        next.yardName = '';
-        next.rowOceanFreight = '';
-        next.rowOceanFreightCurrency = 'USD';
-        next.rowOceanFreightManual = false;
-        next.rowEbs = '';
-        next.rowEbsManual = false;
-      }
-      return next;
-    });
+    state.quoteLines = state.quoteLines.map(x => ({...x, quoteCondition:'店頭'}));
   } else {
     if(state.basic.salesCondition === 'CY渡し') state.basic.salesCondition = 'CIF';
     state.quoteLines = state.quoteLines.map(x => ({...x, quoteCondition:'CY渡し'}));
@@ -3193,7 +3134,6 @@ function syncQuoteTableOceanColumnVisibility(){
 function renderQuoteTable(){
   const body = document.getElementById('quoteTableBody');
   const yards = availableYards();
-  const portCandidates = availablePortOptionsForSelectedDischarge();
   const showOcean = hasAnyPortQuoteLine();
   syncQuoteTableOceanColumnVisibility();
   body.innerHTML = state.quoteLines.map((line, idx) => {
@@ -3201,8 +3141,7 @@ function renderQuoteTable(){
     const isPortSelected = isDefaultPortLabel(line.yardName);
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const supplierYardOptions = yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
-    const portOptions = state.calcMode === 'cy' ? '' : portCandidates.map(port => {
-      const name = String(port.name || '').trim();
+    const portOptions = DEFAULT_PORTS.map(name => {
       const label = portOptionLabel(name);
       const text = line.yardName===name ? name : label;
       return `<option value="${escapeHtml(name)}" data-port="1" ${line.yardName===name?'selected':''}>${escapeHtml(text)}</option>`;
