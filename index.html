@@ -2208,6 +2208,7 @@ html, body{
     .supplier-master-grid{grid-template-columns:repeat(5,minmax(0,1fr));}
     .email-field-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;}
     .email-launch-btn{min-width:52px;height:50px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;}
+    .quote-footer-actions .email-launch-btn{padding:0;min-width:52px;width:52px;height:50px;font-size:20px;flex:0 0 52px;}
     @media (max-width:1100px){
       .supplier-master-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
     }
@@ -2389,7 +2390,7 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.33</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.34</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -2587,6 +2588,7 @@ html, body{
 <div class="quote-footer-actions">
 <button class="btn issue-quote-btn" onclick="issueQuotePdf()" type="button">PDF発行</button>
 <button class="btn issue-quote-btn excel-issue-btn" onclick="issueQuoteExcel()" type="button">Excelで発行</button>
+<button class="btn blue email-launch-btn" onclick="launchQuoteEmail()" title="メール起動" type="button" aria-label="メール起動">✉</button>
 </div>
 </div>
 </div>
@@ -2781,8 +2783,8 @@ let state = {
   activeTab:'estimate',
   calcMode:'overseas',
   suppliers: loadLocal(STORAGE_KEYS.suppliers, [
-    {id:uid(), shortName:'新井商店', formalName:'株式会社新井商店', contact:'山田 太郎 / 部長', phone:'03-0000-0000', email:'arai@example.co.jp', yards:[{id:uid(), name:'成田', drayage:45000},{id:uid(), name:'千葉', drayage:42000}]},
-    {id:uid(), shortName:'丸和', formalName:'丸和商事株式会社', contact:'佐藤 一郎 / 課長', phone:'06-0000-0000', email:'maruwa@example.co.jp', yards:[{id:uid(), name:'東京', drayage:38000}]}
+    {id:uid(), shortName:'新井商店', formalName:'株式会社新井商店', contact:'部長 山田 太郎', phone:'03-0000-0000', email:'arai@example.co.jp', yards:[{id:uid(), name:'成田', drayage:45000},{id:uid(), name:'千葉', drayage:42000}]},
+    {id:uid(), shortName:'丸和', formalName:'丸和商事株式会社', contact:'課長 佐藤 一郎', phone:'06-0000-0000', email:'maruwa@example.co.jp', yards:[{id:uid(), name:'東京', drayage:38000}]}
   ]),
   oceanFreight: loadLocal(STORAGE_KEYS.oceanFreight, [
     {id:uid(), loadingPort:'TOKYO', dischargePort:'TAICHUNG', ofValue:200, ofCurrency:'USD', ebs:100, carrier:'', note:''},
@@ -3277,7 +3279,7 @@ function renderSupplierMaster(){
           <div class="subgrid supplier-master-grid">
             <div class="field"><label>仕入先名（簡略）</label><input value="${escapeHtml(s.shortName)}" placeholder="例）〇〇商店" oninput="updateSupplier('${s.id}','shortName',this.value)" onblur="commitSupplierSort()" class="${!s.shortName?'blank':''}" /></div>
             <div class="field"><label>仕入先名（正式名称）</label><input value="${escapeHtml(s.formalName)}" placeholder="例）〇〇商店株式会社" oninput="updateSupplier('${s.id}','formalName',this.value)" onblur="commitSupplierSort()" class="${!s.formalName?'blank':''}" /></div>
-            <div class="field"><label>担当者名・役職</label><input value="${escapeHtml(s.contact)}" placeholder="例）取締役　営業本部長　山田太郎" oninput="updateSupplier('${s.id}','contact',this.value)" class="${!s.contact?'blank':''}" /></div>
+            <div class="field"><label>役職・担当者名</label><input value="${escapeHtml(s.contact)}" placeholder="例）取締役　営業本部長　山田太郎" oninput="updateSupplier('${s.id}','contact',this.value)" class="${!s.contact?'blank':''}" /></div>
             <div class="field"><label>TEL / FAX</label><input value="${escapeHtml(s.phone)}" placeholder="例）00-000-000" oninput="updateSupplier('${s.id}','phone',this.value)" class="${!s.phone?'blank':''}" /></div>
             <div class="field"><label>Email</label><div class="email-field-wrap"><input value="${escapeHtml(s.email || '')}" placeholder="oooo@ooo.co.jp" oninput="updateSupplier('${s.id}','email',this.value); this.classList.toggle('blank',!this.value.trim())" class="${!(s.email||'')?'blank':''}" /><button class="btn blue email-launch-btn" type="button" title="メーラー起動" onclick="launchSupplierEmail('${s.id}')">✉</button></div></div>
           </div>
@@ -3648,6 +3650,55 @@ function resetForm(){
 }
 
 function isBlank(value){ return String(value ?? '').trim() === ''; }
+
+function normalizeWhitespace(value){
+  return String(value ?? '')
+    .replace(/[\u3000\t\r\n]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function getRoleKeywordPattern(){
+  return /^(専務取締役|常務取締役|代表取締役会長|代表取締役社長|社長|会長|本部長|副本部長|部長|副部長|課長|係長|主任|顧問|マネージャー)$/;
+}
+function isLikelyRolePart(part){
+  const t = normalizeWhitespace(part).replace(/[：:]/g,'');
+  if(!t) return false;
+  return getRoleKeywordPattern().test(t);
+}
+function splitContactParts(contact){
+  const normalized = normalizeWhitespace(contact)
+    .replace(/[／⁄∕]/g, '/')
+    .replace(/\s*\/\s*/g, '/')
+    .replace(/\s*[|｜]\s*/g, '/')
+    .replace(/\s*[・･]\s*/g, ' ');
+  return normalized.split('/').map(v => normalizeWhitespace(v)).filter(Boolean);
+}
+function normalizeContactDisplay(contact){
+  const parts = splitContactParts(contact);
+  if(!parts.length) return '';
+  if(parts.length === 1) return parts[0];
+
+  const roleParts = [];
+  const nameParts = [];
+  parts.forEach(part => {
+    if(isLikelyRolePart(part)) roleParts.push(part);
+    else nameParts.push(part);
+  });
+
+  if(roleParts.length && nameParts.length){
+    return normalizeWhitespace(`${roleParts.join(' ')} ${nameParts.join(' ')}`);
+  }
+
+  const first = parts[0];
+  const second = parts[1];
+  if(isLikelyRolePart(first) && !isLikelyRolePart(second)){
+    return normalizeWhitespace(`${first} ${parts.slice(1).join(' ')}`);
+  }
+  if(!isLikelyRolePart(first) && isLikelyRolePart(second)){
+    return normalizeWhitespace(`${parts.slice(1).join(' ')} ${first}`);
+  }
+  return normalizeWhitespace(parts.join(' '));
+}
 function validateSupplierMasters(){
   for(const s of state.suppliers){
     if(isBlank(s.shortName) || isBlank(s.formalName) || isBlank(s.contact) || isBlank(s.phone)){
@@ -3673,6 +3724,7 @@ function saveMasters(){
   if(supplierError) return toast(supplierError);
   const oceanError = validateOceanFreightMasters();
   if(oceanError) return toast(oceanError);
+  state.suppliers = state.suppliers.map(s => ({...s, contact: normalizeContactDisplay(s.contact || '')}));
   renderAll();
   persistMasters();
   toast('マスタを保存しました');
@@ -3680,6 +3732,7 @@ function saveMasters(){
 function saveSupplierMasters(){
   const error = validateSupplierMasters();
   if(error) return toast(error);
+  state.suppliers = state.suppliers.map(s => ({...s, contact: normalizeContactDisplay(s.contact || '')}));
   state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
   renderAll();
   persistMasters();
@@ -3782,7 +3835,7 @@ function buildQuoteExportPayload(){
   const selected = selectedSupplier();
   const company = String(state.basic.supplierShortName || '').trim();
   const formalName = String(selected?.formalName || company || '').trim();
-  const contact = String(selected?.contact || '').trim();
+  const contact = normalizeContactDisplay(selected?.contact || '');
   const phone = String(selected?.phone || '').trim();
   const today = new Date();
   const validUntil = new Date(today.getTime());
@@ -4254,6 +4307,51 @@ async function issueQuoteExcel(){
   }
 }
 
+function launchQuoteEmail(){
+  const supplier = selectedSupplier();
+  if(!supplier){
+    toast('見積先を選択してください', 'warn');
+    return;
+  }
+  const email = String(supplier.email || '').trim();
+  if(!email){
+    toast('仕入先マスタにメールアドレスがありません', 'warn');
+    return;
+  }
+
+  const formalName = String(supplier.formalName || '').trim();
+  const contact = normalizeContactDisplay(supplier.contact || '');
+  const subject = '輸出お見積りの件';
+  const contactLine = contact ? `${contact} 様` : '';
+  const bodyLines = [
+    formalName,
+    contactLine,
+    '',
+    '',
+    'いつも大変お世話になっております。',
+    '',
+    '古紙輸出お見積りを貼付させて頂きました。',
+    '価格条件等何かございましたら、お気軽にご連絡頂けますと幸甚です。',
+    '',
+    'ご検討の程よろしくお願いいたします。',
+    '',
+    '',
+    '/////////////////////////////////////////////////////////////////////////////////////////////////////',
+    '■■  山發日本株式会社',
+    '■■  〒104-0061東京都中央区銀座3-4-6　正隆銀座ビル7F',
+    '■■　',
+    '■■　TEL:03-5250-0928 FAX:03-5250-0938',
+    '■■　HP: https://www.yamahatsu.co.jp',
+    '',
+    'YAMAHATSU NIHON CO.,LTD.',
+    '104-0061  4-6　GINZA 3-CHOME CHUO-KU, TOKYO JAPAN',
+    '/////////////////////////////////////////////////////////////////////////////////////////////////////',
+    'IMPORTANT NOTICE: The information in this message (and any attachments) is intended for the addressee(s) only and may contain confidential and/or privileged information; any unauthorized copying, disclosure, distribution or use is strictly forbidden. If you are not the intended recipient, or have received this e-mail in error, please notify the sender immediately and destroy this e-mail.'
+  ];
+  const body = bodyLines.join('\r\n');
+  window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 
 function normalizeSortText(value){ return String(value ?? '').trim().toUpperCase(); }
 function sortSupplierList(list, key='shortName', direction='asc'){
@@ -4320,7 +4418,8 @@ function addSupplier(){
 }
 function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc'); renderAll(); }
 function updateSupplier(id,key,val){
-  state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:val} : s);
+  const nextVal = key === 'contact' ? normalizeContactDisplay(val) : val;
+  state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:nextVal} : s);
   if(key === 'shortName'){
     const sel = document.getElementById('supplierShortName');
     const active = document.activeElement;
