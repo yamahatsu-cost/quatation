@@ -3587,7 +3587,7 @@ function updateQuoteLine(id,key,val){
   renderAll();
 }
 
-function saveQuote(){
+function saveQuote(showToast = true){
   if(!state.basic.supplierShortName) return warnMissingSupplier();
   state.bottomNote = document.getElementById('bottomNote').value;
   const d = new Date();
@@ -3602,7 +3602,7 @@ function saveQuote(){
   state.savedQuotes.sort((a,b) => new Date(b.savedAt || 0).getTime() - new Date(a.savedAt || 0).getTime());
   saveLocal(STORAGE_KEYS.quotes, state.savedQuotes);
   renderSavedList();
-  toast('入力内容を保存しました');
+  if(showToast) toast('入力内容を保存しました');
 }
 function openSavedModal(){ renderSavedList(); document.getElementById('savedModal').classList.add('show'); }
 function closeSavedModal(){ document.getElementById('savedModal').classList.remove('show'); }
@@ -4294,6 +4294,7 @@ async function issueQuoteExcel(){
   state.bottomNote = document.getElementById('bottomNote').value;
   const error = validateIssueQuote();
   if(error) return toast(error);
+  saveQuote(false);
   try {
     toast('Excelファイルを作成しています');
     const { workbook, payload } = await buildFilledQuoteWorkbook();
