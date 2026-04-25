@@ -1924,10 +1924,11 @@ html, body{
 }
 
 
-    .launch-splash{position:fixed;inset:0;background:#1d36e5;display:flex;align-items:center;justify-content:center;z-index:20000;opacity:1;visibility:visible;transition:opacity .35s ease, visibility .35s ease;}
+    /* launch splash: borderless icon only */
+    .launch-splash{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:20000;opacity:1;visibility:visible;transition:opacity .28s ease, visibility .28s ease;}
     .launch-splash.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-    .launch-splash-card{width:min(56vw,280px);aspect-ratio:1/1;border-radius:22%;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.22);background:#1d36e5;}
-    .launch-splash-card img{width:100%;height:100%;object-fit:cover;display:block;}
+    .launch-splash-card{width:min(56vw,280px);aspect-ratio:1/1;border-radius:22%;overflow:hidden;box-shadow:none;background:transparent;}
+    .launch-splash-card img{width:100%;height:100%;object-fit:cover;display:block;border:0;box-shadow:none;outline:0;}
     @media (max-width:760px){
       .launch-splash-card{width:min(68vw,260px);}
     }
@@ -2358,7 +2359,7 @@ html, body{
 
 <div class="launch-splash" id="launchSplash" aria-hidden="true">
   <div class="launch-splash-card">
-    <img src="icon.png" alt="山發 輸出見積作成 ロゴ">
+    <img src="apple-touch-icon.png" alt="山發 輸出見積作成 ロゴ">
   </div>
 </div>
 
