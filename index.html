@@ -5,14 +5,11 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>古紙輸出見積作成</title>
-<meta name="theme-color" content="#1d4ed8"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#ffffff"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="輸出見積"/>
-<meta name="mobile-web-app-capable" content="yes"/>
 <link rel="icon" type="image/png" sizes="192x192" href="icon.png"/>
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
-<link rel="manifest" href="manifest.json"/>
 <meta name="format-detection" content="telephone=no"/>
 <link href="favicon.png" rel="icon" type="image/png"/>
 <style>
@@ -1922,14 +1919,7 @@ html, body{
   }
   .scroll-x{max-width:100% !important;}
 }
-
-
-    .launch-splash{position:fixed;inset:0;background:#dfe8fb;display:flex;align-items:center;justify-content:center;z-index:20000;opacity:1;visibility:visible;transition:opacity .35s ease, visibility .35s ease;}
-    .launch-splash.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-    .launch-splash-card{width:min(56vw,280px);aspect-ratio:1/1;border-radius:22%;overflow:hidden;box-shadow:none;background:transparent;}
-    .launch-splash-card img{width:100%;height:100%;object-fit:cover;display:block;}
     @media (max-width:760px){
-      .launch-splash-card{width:min(68vw,260px);}
     }
 
 
@@ -2355,12 +2345,6 @@ html, body{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-
-<div class="launch-splash" id="launchSplash" aria-hidden="true">
-  <div class="launch-splash-card">
-    <img src="apple-touch-icon.png" alt="山發 輸出見積作成 ロゴ">
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 <div class="modal-bg" id="savedModal">
@@ -4482,16 +4466,6 @@ renderAll();
 setCalcMode('overseas');
 syncHeaderOffset();
 
-function isStandaloneLaunch(){
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.startsWith('android-app://');
-}
-function hideLaunchSplash(){
-  const splash = document.getElementById('launchSplash');
-  if(!splash) return;
-  splash.classList.add('hidden');
-  setTimeout(() => { if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 420);
-}
-
 function forceRefreshApp(){
   try{
     if('caches' in window){
@@ -4520,22 +4494,6 @@ function checkAppUpdatePrompt(){
     }
   }, 180);
 }
-(function initLaunchSplash(){
-  const splash = document.getElementById('launchSplash');
-  if(!splash) return;
-  if(!isStandaloneLaunch()){
-    splash.classList.add('hidden');
-    setTimeout(() => { if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 10);
-    return;
-  }
-  const shownAt = Date.now();
-  const finish = () => {
-    const remain = Math.max(0, 900 - (Date.now() - shownAt));
-    setTimeout(hideLaunchSplash, remain);
-  };
-  if(document.readyState === 'complete') finish();
-  else window.addEventListener('load', finish, { once:true });
-})();
 
 window.addEventListener('load', () => {
   checkAppUpdatePrompt();
