@@ -2700,7 +2700,7 @@ html, body{
 </div>
 <input id="supabaseCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="handleSupabaseCsvSelected(event)" />
 <script>
-const APP_VERSION = '4.40 Supabase Sync';
+const APP_VERSION = '4.41 Save Share Sync';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
@@ -3382,7 +3382,7 @@ function renderSupplierMaster(){
               </div>
               <div class="yard-card-body">
                 <div class="field"><label>ヤード名</label><input value="${escapeHtml(y.name)}" placeholder="例）千葉北" oninput="updateYard('${s.id}','${y.id}','name',this.value);this.classList.toggle('blank',!this.value.trim())" class="${!y.name?'blank':''}" /></div>
-                <div class="field"><label>ドレー運賃（円/車）</label><input value="${formatYenDisplay(y.drayage)}" data-money-format="yen" inputmode="decimal" placeholder="例）¥45,000" oninput="updateYard('${s.id}','${y.id}','drayage',this.value,this);this.classList.toggle('blank',!String(this.value).trim())" class="${!(y.drayage||y.drayage===0)?'blank':''} master-money" /></div>
+                <div class="field"><label>ドレー運賃（円/車）</label><input value="${escapeHtml(String(y.drayage ?? ''))}" inputmode="numeric" pattern="[0-9]*" placeholder="例）45000" oninput="updateYardDrayage('${s.id}','${y.id}',this.value,this)" class="${!(y.drayage||y.drayage===0)?'blank':''}" /></div>
               </div>
             </div>`).join('')}
           </div>
@@ -3783,9 +3783,11 @@ function validateSupplierMasters(){
     if(isBlank(s.shortName) || isBlank(s.formalName) || isBlank(s.contact) || isBlank(s.phone)){
       return '仕入先マスタは全項目入力必須です';
     }
-    if(!Array.isArray(s.yards) || !s.yards.length) return '仕入先マスタはヤードを1件以上登録してください';
-    for(const y of s.yards){
-      if(isBlank(y.name) || isBlank(y.drayage)) return '仕入先マスタはヤード名・ドレー運賃を含め全項目入力必須です';
+    // ヤード未登録でも仕入先マスタは保存可能にする
+    if(Array.isArray(s.yards) && s.yards.length){
+      for(const y of s.yards){
+        if(isBlank(y.name) || isBlank(y.drayage)) return '仕入先マスタはヤード名・ドレー運賃を含め全項目入力必須です';
+      }
     }
   }
   return '';
@@ -3808,22 +3810,38 @@ function saveMasters(){
   persistMasters();
   toast('マスタを保存しました');
 }
-function saveSupplierMasters(){
+async function saveSupplierMasters(){
   const error = validateSupplierMasters();
   if(error) return toast(error);
   state.suppliers = state.suppliers.map(s => ({...s, contact: normalizeContactDisplay(s.contact || '')}));
   state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
   renderAll();
   persistMasters();
-  toast('仕入先マスタを保存しました');
+  try{
+    const supplierCount = await shareSupplierMastersToSupabase();
+    const yardCount = await shareSupplierYardsToSupabase();
+    toast(`仕入先マスタを保存・共有しました（仕入先${supplierCount}件 / ヤード${yardCount}件）`);
+  }catch(err){
+    console.error(err);
+    toast(`ローカル保存済み。Supabase共有失敗：${err.message || err}`, 'warn');
+  }
 }
 function saveOceanFreightMasters(){
+  return saveOceanFreightMastersAsync();
+}
+async function saveOceanFreightMastersAsync(){
   const error = validateOceanFreightMasters();
   if(error) return toast(error);
   state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort');
   renderAll();
   persistMasters();
-  toast('海上運賃マスタを保存しました');
+  try{
+    const count = await shareOceanFreightMastersToSupabase();
+    toast(`海上運賃マスタを保存・共有しました（${count}件）`);
+  }catch(err){
+    console.error(err);
+    toast(`ローカル保存済み。Supabase共有失敗：${err.message || err}`, 'warn');
+  }
 }
 
 
@@ -3986,6 +4004,80 @@ function getSupabaseTargetInfo(target){
   if(target === 'yard') return { table:'supplier_yards', conflict:'supplier_short_name,yard_name', label:'ヤードマスタ' };
   throw new Error('未対応の取込先です');
 }
+function appOceanRowsForSupabase(){
+  return (state.oceanFreight || []).map(r => ({
+    loading_port: String(r.loadingPort || '').trim(),
+    discharge_port: String(r.dischargePort || '').trim(),
+    ocean_freight: csvNumber(r.ofValue),
+    currency: String(r.ofCurrency || 'USD').trim().toUpperCase() || 'USD',
+    ebs_usd: csvNumber(r.ebs),
+    carrier_name: String(r.carrier || '').trim(),
+    remarks: String(r.note || '').trim()
+  })).filter(r => r.loading_port && r.discharge_port && r.carrier_name);
+}
+
+function appSupplierRowsForSupabase(){
+  return (state.suppliers || []).map(s => ({
+    supplier_short_name: String(s.shortName || '').trim(),
+    supplier_full_name: String(s.formalName || '').trim(),
+    contact_person: String(s.contact || '').trim(),
+    phone: String(s.phone || '').trim(),
+    email: String(s.email || '').trim(),
+    remarks: String(s.remarks || '').trim()
+  })).filter(r => r.supplier_short_name);
+}
+
+function appYardRowsForSupabase(){
+  const rows = [];
+  (state.suppliers || []).forEach(s => {
+    const supplierShortName = String(s.shortName || '').trim();
+    if(!supplierShortName) return;
+    (s.yards || []).forEach(y => {
+      const yardName = String(y.name || '').trim();
+      if(!yardName) return;
+      rows.push({
+        supplier_short_name: supplierShortName,
+        yard_name: yardName,
+        drayage: csvNumber(y.drayage) || 0
+      });
+    });
+  });
+  return rows;
+}
+
+async function upsertDirectRowsToSupabase(target, rows){
+  const info = getSupabaseTargetInfo(target);
+  if(!rows.length) return 0;
+  const url = `${SUPABASE_CONFIG.url}/rest/v1/${info.table}?on_conflict=${encodeURIComponent(info.conflict)}`;
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{
+      'apikey': SUPABASE_CONFIG.key,
+      'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+      'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify(rows)
+  });
+  if(!res.ok){
+    const msg = await res.text().catch(()=> '');
+    throw new Error(`${info.label}共有失敗：${res.status} ${res.statusText} ${msg}`);
+  }
+  return rows.length;
+}
+
+async function shareOceanFreightMastersToSupabase(){
+  return await upsertDirectRowsToSupabase('ocean', appOceanRowsForSupabase());
+}
+
+async function shareSupplierMastersToSupabase(){
+  return await upsertDirectRowsToSupabase('supplier', appSupplierRowsForSupabase());
+}
+
+async function shareSupplierYardsToSupabase(){
+  return await upsertDirectRowsToSupabase('yard', appYardRowsForSupabase());
+}
+
 
 async function upsertCsvRowsToSupabase(target, rawRows, options = {}){
   const info = getSupabaseTargetInfo(target);
@@ -4922,6 +5014,19 @@ function launchSupplierEmail(id){
   window.location.href = `mailto:${email}`;
 }
 function addYard(sid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:[...s.yards,{id:uid(),name:'',drayage:''}]} : s); renderAll(); }
+function updateYardDrayage(sid,yid,val,el){
+  const nextVal = parseNumericInput(val);
+  state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,drayage:nextVal} : y)} : s);
+  if(el){
+    // 入力中は¥やカンマを付けず、素の数字だけに固定する（スマホ入力で数字が重複するのを防止）
+    if(el.value !== nextVal){
+      const pos = Math.min(nextVal.length, el.selectionStart ?? nextVal.length);
+      el.value = nextVal;
+      try{ el.setSelectionRange(pos, pos); }catch(e){}
+    }
+    el.classList.toggle('blank', !String(nextVal ?? '').trim());
+  }
+}
 function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
