@@ -2348,6 +2348,77 @@ html, body{
   box-sizing:border-box !important;
 }
 
+
+
+
+/* v40: header data fetch button layout */
+@media (max-width:760px){
+  .header-actions{
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:6px !important;
+    width:100% !important;
+  }
+  .header-actions .btn{
+    min-width:0 !important;
+    width:100% !important;
+    padding:10px 4px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+    white-space:nowrap !important;
+  }
+}
+
+/* v38: CSV共有ボタン表示修正 */
+.master-action-row{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:nowrap !important;
+}
+.master-action-row .btn{
+  min-width:96px !important;
+  max-width:160px !important;
+  padding:12px 16px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+}
+.master-action-row .csv-share-btn{min-width:96px !important;}
+@media (max-width:760px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    display:block !important;
+    padding-right:0 !important;
+  }
+  .master-supplier-section .table-actions.master-action-row,
+  .master-ocean-section .table-actions.master-action-row{
+    position:static !important;
+    width:100% !important;
+    margin-top:10px !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+  .master-action-row .btn,
+  .master-supplier-section .table-actions.master-action-row .btn,
+  .master-ocean-section .table-actions.master-action-row .btn{
+    min-width:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    height:44px !important;
+    min-height:44px !important;
+    padding:0 8px !important;
+    font-size:15px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-populate/browser/xlsx-populate.min.js"></script>
@@ -2389,12 +2460,13 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.34</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.40</span></div>
 </div>
 </div>
 <div class="header-actions">
 <button class="btn" onclick="saveQuote()" type="button">入力内容保存</button>
 <button class="btn" onclick="openSavedModal()" type="button">データ呼出</button>
+<button class="btn" onclick="loadMastersFromSupabase()" type="button">データ取得</button>
 <button class="btn" id="headerMasterBtn" onclick="toggleMasterView()" type="button">マスタ登録</button>
 </div>
 </div>
@@ -2602,7 +2674,7 @@ html, body{
 <div class="section-title-wrap">
 <div class="section-title" style="font-size:20px"><button class="sort-th-btn" type="button" onclick="sortSuppliersBy('shortName')">仕入先マスタ <span class="sort-mark" id="supplierSortMark">▼</span></button></div>
 </div>
-<div class="table-actions"><button class="btn blue master-add-btn supplier-add-btn" onclick="addSupplier()" type="button">仕入先追加</button><button class="btn blue master-save-btn" onclick="saveSupplierMasters()" type="button">保存</button></div>
+<div class="table-actions master-action-row"><button class="btn blue master-add-btn supplier-add-btn" onclick="addSupplier()" type="button">追加</button><button class="btn blue master-save-btn" onclick="saveSupplierMasters()" type="button">保存</button><button class="btn blue master-save-btn csv-share-btn" onclick="openSupabaseCsvImport('supplier_bundle')" type="button">共有</button></div>
 </div>
 <div id="supplierMaster"></div>
 </div>
@@ -2611,7 +2683,7 @@ html, body{
 <div class="section-title-wrap">
 <div class="section-title" style="font-size:20px">海上運賃マスタ</div>
 </div>
-<div class="table-actions"><button class="btn blue master-add-btn ocean-add-btn" onclick="addOceanFreight()" type="button">運賃追加</button><button class="btn blue master-save-btn" onclick="saveOceanFreightMasters()" type="button">保存</button></div>
+<div class="table-actions master-action-row"><button class="btn blue master-add-btn ocean-add-btn" onclick="addOceanFreight()" type="button">追加</button><button class="btn blue master-save-btn" onclick="saveOceanFreightMasters()" type="button">保存</button><button class="btn blue master-save-btn csv-share-btn" onclick="openSupabaseCsvImport('ocean')" type="button">共有</button></div>
 </div>
 <div class="scroll-x">
 <table style="min-width:1280px">
@@ -2626,14 +2698,22 @@ html, body{
 </div>
 </div>
 </div>
+<input id="supabaseCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="handleSupabaseCsvSelected(event)" />
 <script>
-const APP_VERSION = '4.36';
+const APP_VERSION = '4.40 Supabase Sync';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
   quotes: 'wastepaper.savedquotes.v1',
   appVersionSeen: 'wastepaper.app.version.seen'
 };
+
+// Supabase共有DB設定（Publishable key / anon keyのみ。service_roleは絶対に入れない）
+const SUPABASE_CONFIG = {
+  url: 'https://zprbhertokeggatppljs.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcmJoZXJ0b2tlZ2dhdHBwbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTYzOTQsImV4cCI6MjA5MjM3MjM5NH0.Y0iAD9NFczrjnhAbaz0W8aVybBBlAMnnVA1XuciCKHo'
+};
+
 
 const LC_FEES = {
   'L/C(90)': 1.5,
@@ -3746,6 +3826,352 @@ function saveOceanFreightMasters(){
   toast('海上運賃マスタを保存しました');
 }
 
+
+
+/* === Supabase CSV共有アップロード（重複時上書き / upsert） === */
+let pendingSupabaseCsvTarget = '';
+
+function openSupabaseCsvImport(target){
+  pendingSupabaseCsvTarget = target;
+  const input = document.getElementById('supabaseCsvInput');
+  if(!input) return toast('CSV取込部品が見つかりません', 'warn');
+  input.value = '';
+  // 仕入先側の共有は、仕入先CSVとヤードCSVを同時選択できるようにする
+  input.multiple = (target === 'supplier_bundle');
+  input.click();
+}
+
+async function handleSupabaseCsvSelected(event){
+  const files = Array.from(event.target.files || []);
+  if(!files.length) return;
+  if(!pendingSupabaseCsvTarget) return toast('取込先が不明です', 'warn');
+  try{
+    const results = [];
+    for(const file of files){
+      const text = await readCsvFileText(file);
+      const rows = parseCsvToObjects(text);
+      if(!rows.length){
+        results.push(`${file.name}: データ行なし`);
+        continue;
+      }
+      if(pendingSupabaseCsvTarget === 'supplier_bundle'){
+        const targets = detectSupabaseCsvTargets(rows);
+        if(!targets.length) throw new Error(`${file.name} の列名から仕入先/ヤードを判定できません。`);
+        for(const target of targets){
+          const count = await upsertCsvRowsToSupabase(target, rows, {silent:true});
+          results.push(`${getSupabaseTargetInfo(target).label}:${count}件`);
+        }
+      }else{
+        const count = await upsertCsvRowsToSupabase(pendingSupabaseCsvTarget, rows, {silent:true});
+        results.push(`${getSupabaseTargetInfo(pendingSupabaseCsvTarget).label}:${count}件`);
+      }
+    }
+    persistMasters();
+    renderAll();
+    toast(`Supabaseへ共有しました（${results.join(' / ')}）`);
+  }catch(err){
+    console.error(err);
+    toast(`CSV共有アップロード失敗：${err.message || err}`, 'warn');
+  }finally{
+    pendingSupabaseCsvTarget = '';
+    event.target.value = '';
+  }
+}
+
+function readCsvFileText(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(reader.error || new Error('ファイル読込に失敗しました'));
+    reader.readAsText(file, 'utf-8');
+  });
+}
+
+function parseCsvToObjects(csvText){
+  const text = String(csvText || '').replace(/^\uFEFF/, '');
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    const next = text[i+1];
+    if(ch === '"'){
+      if(inQuotes && next === '"'){ cell += '"'; i++; }
+      else inQuotes = !inQuotes;
+    }else if(ch === ',' && !inQuotes){
+      row.push(cell); cell = '';
+    }else if((ch === '\n' || ch === '\r') && !inQuotes){
+      if(ch === '\r' && next === '\n') i++;
+      row.push(cell); cell = '';
+      if(row.some(v => String(v).trim() !== '')) rows.push(row);
+      row = [];
+    }else{
+      cell += ch;
+    }
+  }
+  row.push(cell);
+  if(row.some(v => String(v).trim() !== '')) rows.push(row);
+  if(rows.length < 2) return [];
+  const headers = rows[0].map(h => String(h || '').replace(/^\uFEFF/, '').trim());
+  return rows.slice(1).map(cols => {
+    const obj = {};
+    headers.forEach((h,i) => obj[h] = String(cols[i] ?? '').trim());
+    return obj;
+  }).filter(obj => Object.values(obj).some(v => String(v).trim() !== ''));
+}
+
+function pickCsvValue(row, keys){
+  for(const key of keys){
+    if(Object.prototype.hasOwnProperty.call(row, key) && String(row[key] ?? '').trim() !== '') return String(row[key]).trim();
+  }
+  return '';
+}
+function csvNumber(v){
+  const s = parseNumericInput(String(v ?? ''));
+  return s === '' ? null : Number(s);
+}
+
+function mapCsvRowsForSupabase(target, rows){
+  if(target === 'ocean'){
+    return rows.map(row => ({
+      loading_port: pickCsvValue(row, ['loading_port','積港','積み港']),
+      discharge_port: pickCsvValue(row, ['discharge_port','揚港','揚げ港']),
+      ocean_freight: csvNumber(pickCsvValue(row, ['ocean_freight','海上運賃','運賃'])),
+      currency: pickCsvValue(row, ['currency','通貨']) || 'USD',
+      ebs_usd: csvNumber(pickCsvValue(row, ['ebs_usd','EBS（USD）','EBS','ebs'])),
+      carrier_name: pickCsvValue(row, ['carrier_name','船会社名','船会社','carrier']) || '',
+      remarks: pickCsvValue(row, ['remarks','備考','note']) || ''
+    })).filter(r => r.loading_port && r.discharge_port);
+  }
+  if(target === 'supplier'){
+    return rows.map(row => ({
+      supplier_short_name: pickCsvValue(row, ['supplier_short_name','仕入先名（簡略）','仕入先略称','略称','会社名']),
+      supplier_full_name: pickCsvValue(row, ['supplier_full_name','仕入先名（正式名称）','正式名称']),
+      contact_person: pickCsvValue(row, ['contact_person','役職・担当者名','担当者','contact']),
+      phone: pickCsvValue(row, ['phone','TEL / FAX','TEL','電話','tel']),
+      email: pickCsvValue(row, ['email','Email','メール']),
+      remarks: pickCsvValue(row, ['remarks','備考'])
+    })).filter(r => r.supplier_short_name);
+  }
+  if(target === 'yard'){
+    return rows.map(row => ({
+      supplier_short_name: pickCsvValue(row, ['supplier_short_name','仕入先名（簡略）','仕入先略称','略称','会社名']),
+      yard_name: pickCsvValue(row, ['yard_name','ヤード名','ヤード']),
+      drayage: csvNumber(pickCsvValue(row, ['drayage','ドレー運賃（円/車）','ドレー運賃','ドレー'])) || 0
+    })).filter(r => r.supplier_short_name && r.yard_name);
+  }
+  return [];
+}
+
+function hasCsvAnyKey(rows, keys){
+  if(!rows || !rows.length) return false;
+  return keys.some(k => Object.prototype.hasOwnProperty.call(rows[0], k));
+}
+function detectSupabaseCsvTargets(rows){
+  const targets = [];
+  const hasSupplier = hasCsvAnyKey(rows, ['supplier_short_name','仕入先名（簡略）','仕入先略称','略称','会社名'])
+    && hasCsvAnyKey(rows, ['supplier_full_name','仕入先名（正式名称）','正式名称','contact_person','担当者','email','Email','メール','phone','TEL','電話']);
+  const hasYard = hasCsvAnyKey(rows, ['yard_name','ヤード名','ヤード','drayage','ドレー運賃（円/車）','ドレー運賃','ドレー']);
+  if(hasSupplier) targets.push('supplier');
+  if(hasYard) targets.push('yard');
+  // 仕入先名＋ヤード名だけのCSVはヤードとして扱う
+  if(!targets.length && hasCsvAnyKey(rows, ['supplier_short_name','仕入先名（簡略）','仕入先略称','略称','会社名']) && hasYard) targets.push('yard');
+  return targets;
+}
+
+function getSupabaseTargetInfo(target){
+  if(target === 'ocean') return { table:'ocean_freight_master', conflict:'loading_port,discharge_port,carrier_name', label:'海上運賃マスタ' };
+  if(target === 'supplier') return { table:'supplier_master', conflict:'supplier_short_name', label:'仕入先マスタ' };
+  if(target === 'yard') return { table:'supplier_yards', conflict:'supplier_short_name,yard_name', label:'ヤードマスタ' };
+  throw new Error('未対応の取込先です');
+}
+
+async function upsertCsvRowsToSupabase(target, rawRows, options = {}){
+  const info = getSupabaseTargetInfo(target);
+  const rows = mapCsvRowsForSupabase(target, rawRows);
+  if(!rows.length) throw new Error(`${info.label}として取り込める行がありません。CSVの列名を確認してください。`);
+  const url = `${SUPABASE_CONFIG.url}/rest/v1/${info.table}?on_conflict=${encodeURIComponent(info.conflict)}`;
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{
+      'apikey': SUPABASE_CONFIG.key,
+      'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+      'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify(rows)
+  });
+  if(!res.ok){
+    const msg = await res.text().catch(()=> '');
+    throw new Error(`${res.status} ${res.statusText} ${msg}`);
+  }
+  mergeUploadedRowsToLocalState(target, rows);
+  if(!options.silent){
+    persistMasters();
+    renderAll();
+    toast(`${info.label}をSupabaseへ共有しました（${rows.length}件）`);
+  }
+  return rows.length;
+}
+
+function mergeUploadedRowsToLocalState(target, rows){
+  if(target === 'ocean'){
+    const keyOf = r => [r.loadingPort || '', r.dischargePort || '', r.carrier || ''].join('\u0001');
+    const map = new Map(state.oceanFreight.map(r => [keyOf(r), r]));
+    rows.forEach(r => {
+      const appRow = {
+        id: uid(),
+        loadingPort: r.loading_port || '',
+        dischargePort: r.discharge_port || '',
+        ofValue: r.ocean_freight ?? '',
+        ofCurrency: r.currency || 'USD',
+        ebs: r.ebs_usd ?? '',
+        carrier: r.carrier_name || '',
+        note: r.remarks || ''
+      };
+      const k = keyOf(appRow);
+      map.set(k, {...(map.get(k) || {}), ...appRow, id:(map.get(k)?.id || appRow.id)});
+    });
+    state.oceanFreight = sortOceanFreightList([...map.values()], state.oceanFreightSortKey || 'loadingPort');
+    return;
+  }
+  if(target === 'supplier'){
+    const map = new Map(state.suppliers.map(s => [s.shortName || '', s]));
+    rows.forEach(r => {
+      const shortName = r.supplier_short_name || '';
+      const existing = map.get(shortName) || {id:uid(), yards:[], collapsed:true};
+      map.set(shortName, {
+        ...existing,
+        shortName,
+        formalName: r.supplier_full_name || existing.formalName || '',
+        contact: r.contact_person || existing.contact || '',
+        phone: r.phone || existing.phone || '',
+        email: r.email || existing.email || '',
+        collapsed:true
+      });
+    });
+    state.suppliers = sortSupplierList([...map.values()], state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
+    return;
+  }
+  if(target === 'yard'){
+    const supplierMap = new Map(state.suppliers.map(s => [s.shortName || '', s]));
+    rows.forEach(r => {
+      const shortName = r.supplier_short_name || '';
+      const supplier = supplierMap.get(shortName) || {id:uid(), shortName, formalName:'', contact:'', phone:'', email:'', collapsed:true, yards:[]};
+      const yardMap = new Map((supplier.yards || []).map(y => [y.name || '', y]));
+      const existingYard = yardMap.get(r.yard_name || '') || {id:uid()};
+      yardMap.set(r.yard_name || '', {...existingYard, name:r.yard_name || '', drayage:r.drayage ?? ''});
+      supplier.yards = [...yardMap.values()];
+      supplierMap.set(shortName, supplier);
+    });
+    state.suppliers = sortSupplierList([...supplierMap.values()], state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
+  }
+}
+
+
+
+/* === Supabaseデータ取得・ローカルマージ（重複はSupabase側で上書き） === */
+async function fetchSupabaseTable(table){
+  const url = `${SUPABASE_CONFIG.url}/rest/v1/${table}?select=*`;
+  const res = await fetch(url, {
+    method:'GET',
+    headers:{
+      'apikey': SUPABASE_CONFIG.key,
+      'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+      'Accept':'application/json'
+    }
+  });
+  if(!res.ok){
+    const msg = await res.text().catch(()=> '');
+    throw new Error(`${table} 取得失敗：${res.status} ${res.statusText} ${msg}`);
+  }
+  return await res.json();
+}
+
+function mergeOceanFreightFromSupabase(remoteRows){
+  const keyOfApp = r => [String(r.loadingPort || '').trim(), String(r.dischargePort || '').trim(), String(r.carrier || '').trim()].join('\u0001');
+  const keyOfDb = r => [String(r.loading_port || '').trim(), String(r.discharge_port || '').trim(), String(r.carrier_name || '').trim()].join('\u0001');
+  const map = new Map((state.oceanFreight || []).map(r => [keyOfApp(r), r]));
+  (remoteRows || []).forEach(r => {
+    const appRow = {
+      id: map.get(keyOfDb(r))?.id || uid(),
+      loadingPort: String(r.loading_port || '').trim(),
+      dischargePort: String(r.discharge_port || '').trim(),
+      ofValue: r.ocean_freight ?? '',
+      ofCurrency: String(r.currency || 'USD').trim() || 'USD',
+      ebs: r.ebs_usd ?? '',
+      carrier: String(r.carrier_name || '').trim(),
+      note: r.remarks || ''
+    };
+    if(appRow.loadingPort && appRow.dischargePort){
+      map.set(keyOfApp(appRow), {...(map.get(keyOfApp(appRow)) || {}), ...appRow});
+    }
+  });
+  state.oceanFreight = sortOceanFreightList([...map.values()], state.oceanFreightSortKey || 'loadingPort');
+}
+
+function mergeSuppliersFromSupabase(remoteSuppliers, remoteYards){
+  const supplierMap = new Map((state.suppliers || []).map(s => [String(s.shortName || '').trim(), {...s, yards:[...(s.yards || [])]}]));
+
+  (remoteSuppliers || []).forEach(r => {
+    const shortName = String(r.supplier_short_name || '').trim();
+    if(!shortName) return;
+    const existing = supplierMap.get(shortName) || {id:uid(), shortName, yards:[], collapsed:true};
+    supplierMap.set(shortName, {
+      ...existing,
+      shortName,
+      formalName: r.supplier_full_name ?? existing.formalName ?? '',
+      contact: r.contact_person ?? existing.contact ?? '',
+      phone: r.phone ?? existing.phone ?? '',
+      email: r.email ?? existing.email ?? '',
+      collapsed:true,
+      yards:[...(existing.yards || [])]
+    });
+  });
+
+  (remoteYards || []).forEach(r => {
+    const shortName = String(r.supplier_short_name || '').trim();
+    const yardName = String(r.yard_name || '').trim();
+    if(!shortName || !yardName) return;
+    const supplier = supplierMap.get(shortName) || {id:uid(), shortName, formalName:'', contact:'', phone:'', email:'', collapsed:true, yards:[]};
+    const yardMap = new Map((supplier.yards || []).map(y => [String(y.name || '').trim(), y]));
+    const existingYard = yardMap.get(yardName) || {id:uid()};
+    yardMap.set(yardName, {
+      ...existingYard,
+      name: yardName,
+      drayage: r.drayage ?? existingYard.drayage ?? ''
+    });
+    supplier.yards = [...yardMap.values()];
+    supplierMap.set(shortName, supplier);
+  });
+
+  state.suppliers = sortSupplierList([...supplierMap.values()], state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
+}
+
+async function loadMastersFromSupabase(options = {}){
+  const silent = !!options.silent;
+  try{
+    if(!silent) toast('Supabaseからマスタ取得中...');
+    const [oceanRows, supplierRows, yardRows] = await Promise.all([
+      fetchSupabaseTable('ocean_freight_master'),
+      fetchSupabaseTable('supplier_master'),
+      fetchSupabaseTable('supplier_yards')
+    ]);
+
+    mergeOceanFreightFromSupabase(oceanRows);
+    mergeSuppliersFromSupabase(supplierRows, yardRows);
+    persistMasters();
+    renderAll();
+    if(!silent){
+      toast(`データ取得完了（運賃${oceanRows.length}件 / 仕入先${supplierRows.length}件 / ヤード${yardRows.length}件）`);
+    }
+  }catch(err){
+    console.error(err);
+    if(!silent) toast(`データ取得失敗：${err.message || err}`, 'warn');
+  }
+}
+
 function isVisibleForValidation(el){
   if(!el) return false;
   if(el.closest('.hidden')) return false;
@@ -4181,6 +4607,58 @@ function buildQuotePdfHtml(payload){
   width:14% !important;
 }
 
+
+
+/* v38: CSV共有ボタン表示修正 */
+.master-action-row{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:nowrap !important;
+}
+.master-action-row .btn{
+  min-width:96px !important;
+  max-width:160px !important;
+  padding:12px 16px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+}
+.master-action-row .csv-share-btn{min-width:96px !important;}
+@media (max-width:760px){
+  .master-supplier-section .section-header,
+  .master-ocean-section .section-header{
+    display:block !important;
+    padding-right:0 !important;
+  }
+  .master-supplier-section .table-actions.master-action-row,
+  .master-ocean-section .table-actions.master-action-row{
+    position:static !important;
+    width:100% !important;
+    margin-top:10px !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+  .master-action-row .btn,
+  .master-supplier-section .table-actions.master-action-row .btn,
+  .master-ocean-section .table-actions.master-action-row .btn{
+    min-width:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    height:44px !important;
+    min-height:44px !important;
+    padding:0 8px !important;
+    font-size:15px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4480,6 +4958,11 @@ syncHeaderOffset();
 renderAll();
 setCalcMode('overseas');
 syncHeaderOffset();
+
+// アプリ起動時はSupabaseから取得のみ実行。アップロードは共有ボタンを押した時だけ。
+window.addEventListener('load', () => {
+  setTimeout(() => loadMastersFromSupabase({silent:true, auto:true}), 600);
+});
 
 function isStandaloneLaunch(){
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.startsWith('android-app://');
