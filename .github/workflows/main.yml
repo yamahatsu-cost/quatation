@@ -12,5 +12,5 @@ jobs:
       - name: Call Supabase
         run: |
           curl -X GET "https://zprbhertokeggatppljs.supabase.co/rest/v1/ocean_freight_master?select=id" \
-          -H "apikey: sb_publishable_dKh3Rcnc2ODjFFl2Y771gQ_aeiSsjh8" \
-          -H "Authorization: Bearer sb_publishable_dKh3Rcnc2ODjFFl2Y771gQ_aeiSsjh8"
+          -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcmJoZXJ0b2tlZ2dhdHBwbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTYzOTQsImV4cCI6MjA5MjM3MjM5NH0.Y0iAD9NFczrjnhAbaz0W8aVybBBlAMnnVA1XuciCKHo" \
+          -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcmJoZXJ0b2tlZ2dhdHBwbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTYzOTQsImV4cCI6MjA5MjM3MjM5NH0.Y0iAD9NFczrjnhAbaz0W8aVybBBlAMnnVA1XuciCKHo"
