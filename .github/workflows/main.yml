@@ -1,0 +1,16 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase
+        run: |
+          curl -X GET "https://zprbhertokeggatppljs.supabase.co/rest/v1/ocean_freight_master?select=id" \
+          -H "apikey: sb_publishable_dKh3Rcnc2ODjFFl2Y771gQ_aeiSsjh8" \
+          -H "Authorization: Bearer sb_publishable_dKh3Rcnc2ODjFFl2Y771gQ_aeiSsjh8"
