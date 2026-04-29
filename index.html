@@ -2914,6 +2914,25 @@ const PORT_CODE_MAP = {
   '門司港':'MOJI',
   '那覇港':'NAHA'
 };
+const PORT_NAME_BY_CODE = Object.fromEntries(Object.entries(PORT_CODE_MAP).map(([name, code]) => [code, name]));
+function quotePortOptionsForCurrentLoadingPort(){
+  if(state.calcMode === 'cy') return [];
+  const loadingPortCode = String(state.basic.loadingPort || '').trim().toUpperCase();
+  if(!loadingPortCode) return DEFAULT_PORTS;
+  const matchedPortName = PORT_NAME_BY_CODE[loadingPortCode];
+  return matchedPortName ? [matchedPortName] : DEFAULT_PORTS;
+}
+function alignQuotePortYardsToLoadingPort(){
+  if(state.calcMode === 'cy') return;
+  const allowedPorts = quotePortOptionsForCurrentLoadingPort();
+  if(!allowedPorts.length) return;
+  const preferredPort = allowedPorts[0];
+  state.quoteLines = state.quoteLines.map(line => {
+    if(!isDefaultPortLabel(line.yardName)) return line;
+    if(allowedPorts.includes(line.yardName)) return line;
+    return applyRowOceanFreightFromMaster({...line, yardName: preferredPort, quoteCondition: 'CY渡し'}, false);
+  });
+}
 function portOptionLabel(name){ return `【港】${name}`; }
 function isDefaultPortLabel(value){ return DEFAULT_PORTS.includes(String(value || '').trim()); }
 function showPortLabels(selectEl){
@@ -3127,9 +3146,10 @@ function onPaymentTermChange(){
 function onPortChange(){
   state.basic.loadingPort = document.getElementById('loadingPort').value;
   state.basic.dischargePort = document.getElementById('dischargePort').value;
+  alignQuotePortYardsToLoadingPort();
   syncMatchedOceanFreight();
   syncQuoteLineOceanFreightsOnPortChange();
-  renderBasics();
+  renderAll();
   recalcAll();
 }
 
@@ -3233,7 +3253,8 @@ function renderQuoteTable(){
     const isPortSelected = isDefaultPortLabel(line.yardName);
     const productOptions = `<option value="">商品選択</option>` + PRODUCTS.map(p => `<option value="${p}" ${line.product===p?'selected':''}>${p}</option>`).join('');
     const supplierYardOptions = yards.map(y => `<option value="${escapeHtml(y.name)}" ${line.yardName===y.name?'selected':''}>${escapeHtml(y.name)}</option>`).join('');
-    const portOptions = state.calcMode === 'cy' ? '' : DEFAULT_PORTS.map(name => {
+    const quotePortOptions = quotePortOptionsForCurrentLoadingPort();
+    const portOptions = quotePortOptions.map(name => {
       const label = portOptionLabel(name);
       const text = line.yardName===name ? name : label;
       return `<option value="${escapeHtml(name)}" data-port="1" ${line.yardName===name?'selected':''}>${escapeHtml(text)}</option>`;
