@@ -2625,7 +2625,7 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.48</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.49</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -2880,7 +2880,7 @@ html, body{
 </div>
 <input id="supabaseCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="handleSupabaseCsvSelected(event)" />
 <script>
-const APP_VERSION = '4.47 Ocean Master Height';
+const APP_VERSION = '4.49 Date Calendar Fix';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
@@ -2996,9 +2996,24 @@ function todayYmd(){
 function normalizeDateYmd(v){
   const s = String(v || '').trim();
   if(!s) return '';
-  const m = s.match(/^(\d{4})[\/\.-](\d{1,2})[\/\.-](\d{1,2})$/);
+  // type=date は本来 yyyy-mm-dd だが、ブラウザや手入力の影響で
+  // 0026/05/31・26/05/31・126/05/31 のような年になることがあるため補正する。
+  const m = s.match(/^(\d{1,4})[\/\.-](\d{1,2})[\/\.-](\d{1,2})$/);
   if(!m) return s;
-  return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;
+  let y = Number(m[1]);
+  if(y >= 0 && y <= 49) y += 2000;      // 26 → 2026
+  else if(y >= 100 && y <= 199) y += 1900; // 126 → 2026
+  const mm = Number(m[2]);
+  const dd = Number(m[3]);
+  if(!y || mm < 1 || mm > 12 || dd < 1 || dd > 31) return '';
+  return `${String(y).padStart(4,'0')}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+}
+function normalizeDateInputElement(el){
+  if(!el) return '';
+  const fixed = normalizeDateYmd(el.value);
+  if(fixed && el.value !== fixed) el.value = fixed;
+  el.classList.toggle('blank', !fixed);
+  return fixed;
 }
 function isOceanFreightExpired(row){
   const limit = normalizeDateYmd(row?.validUntil || row?.valid_until || row?.expiryDate || '');
@@ -3742,7 +3757,7 @@ function renderOceanFreight(){
           ${carriers.map(c=>`<option value="${c}" ${r.carrier===c?'selected':''}>${c}</option>`).join('')}
         </select>
       </td>
-      <td><input type="date" data-row-id="${r.id}" data-field-key="validUntil" value="${escapeHtml(normalizeDateYmd(r.validUntil || ''))}" onchange="updateOceanFreight('${r.id}','validUntil',this.value,this);renderAll();recalcAll()" class="${!(r.validUntil||'')?'blank':''}" />${expired ? '<span class="ocean-expired-badge">期限切れ</span>' : ''}</td>
+      <td><input type="date" min="2020-01-01" max="2099-12-31" data-row-id="${r.id}" data-field-key="validUntil" value="${escapeHtml(normalizeDateYmd(r.validUntil || ''))}" onchange="this.value=normalizeDateYmd(this.value);updateOceanFreight('${r.id}','validUntil',this.value,this);renderAll();recalcAll()" onblur="this.value=normalizeDateYmd(this.value);updateOceanFreight('${r.id}','validUntil',this.value,this)" class="${!(r.validUntil||'')?'blank':''}" />${expired ? '<span class="ocean-expired-badge">期限切れ</span>' : ''}</td>
       <td><input data-row-id="${r.id}" data-field-key="note" value="${escapeHtml(r.note || '')}" placeholder="例）直行便優先" oninput="updateOceanFreight('${r.id}','note',this.value,this)" class="${!(r.note||'')?'blank':''}" /></td>
       <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreight('${r.id}')">&times;</button></td>
     </tr>
@@ -5418,7 +5433,7 @@ function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', d
 function updateOceanFreight(id,key,val,el){
   const numericKeys = ['ofValue','ebs'];
   const isNumeric = numericKeys.includes(key);
-  const nextVal = isNumeric ? parseNumericInput(val) : val;
+  const nextVal = isNumeric ? parseNumericInput(val) : (key === 'validUntil' ? normalizeDateYmd(val) : val);
   state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r);
   if(String(state.basic.oceanFreightId || '') === String(id) || ['loadingPort','dischargePort','validUntil','carrier'].includes(key)){
     ensureBasicOceanFreightChoice();
