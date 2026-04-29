@@ -2624,7 +2624,20 @@ html, body{
     font-size:20px !important;
   }
 }
-</style></head>
+</style><style id="delete-choice-toast-style">
+/* ===== server/local delete choice toast ===== */
+.delete-choice-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.32);z-index:10020;display:none;align-items:center;justify-content:center;padding:18px}
+.delete-choice-backdrop.show{display:flex}
+.delete-choice-toast{width:min(520px,calc(100vw - 28px));background:#000;color:#fff;border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.38);padding:18px 18px 16px;display:grid;gap:14px}
+.delete-choice-message{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:800;line-height:1.45}
+.delete-choice-message::before{content:"";width:20px;height:20px;flex:0 0 20px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23facc15' d='M1 21h22L12 2 1 21z'/><path fill='%23000000' d='M13 16h-2v2h2zm0-6h-2v4h2z'/></svg>");background-size:contain;background-repeat:no-repeat}
+.delete-choice-sub{color:#d1d5db;font-size:14px;line-height:1.5;padding-left:30px}
+.delete-choice-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.delete-choice-actions button{border:none;border-radius:13px;padding:11px 14px;font-weight:800;font-size:15px;cursor:pointer}
+.delete-choice-cancel{background:#374151;color:#fff}.delete-choice-local{background:#e5e7eb;color:#111827}.delete-choice-server{background:#dc2626;color:#fff}
+@media (max-width:760px){.delete-choice-toast{padding:16px 14px 14px;border-radius:16px}.delete-choice-message{font-size:18px;align-items:flex-start}.delete-choice-message::before{width:18px;height:18px;flex-basis:18px;margin-top:3px}.delete-choice-sub{padding-left:28px;font-size:13px}.delete-choice-actions{display:grid;grid-template-columns:1fr;gap:8px}.delete-choice-actions button{width:100%;font-size:15px;padding:12px}}
+</style>
+</head>
 <body>
 <div aria-hidden="true" class="launch-splash" id="launchSplash">
 <div class="launch-splash-card">
@@ -2632,6 +2645,18 @@ html, body{
 </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="delete-choice-backdrop" id="deleteChoiceBackdrop" onclick="if(event.target===this) closeDeleteChoiceToast('cancel')">
+  <div class="delete-choice-toast" role="dialog" aria-modal="true">
+    <div class="delete-choice-message" id="deleteChoiceMessage">サーバーデータも削除しますか？</div>
+    <div class="delete-choice-sub" id="deleteChoiceSub">完全削除：Supabaseと端末の両方から削除します。端末削除：この端末のローカルデータだけ削除します。</div>
+    <div class="delete-choice-actions">
+      <button class="delete-choice-cancel" type="button" onclick="closeDeleteChoiceToast('cancel')">キャンセル</button>
+      <button class="delete-choice-local" type="button" onclick="closeDeleteChoiceToast('local')">端末削除</button>
+      <button class="delete-choice-server" type="button" onclick="closeDeleteChoiceToast('server')">完全削除</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="savedModal">
 <div class="modal saved-modal">
 <button class="modal-close-x" onclick="closeSavedModal()" type="button">×</button>
@@ -3093,6 +3118,46 @@ function syncMatchedOceanFreight(){
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function loadLocal(k,fallback){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 function toast(msg, type='default'){ const el=document.getElementById('toast'); if(!el) return; el.textContent=msg; el.classList.remove('warn'); if(type==='warn') el.classList.add('warn'); el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>{ el.classList.remove('show','warn'); },1500); }
+
+let __deleteChoiceResolver = null;
+function openDeleteChoiceToast(label){
+  const bg = document.getElementById('deleteChoiceBackdrop');
+  const msg = document.getElementById('deleteChoiceMessage');
+  if(!bg) return Promise.resolve(window.confirm('サーバーデータも削除しますか？\nOK：完全削除 / キャンセル：端末削除') ? 'server' : 'local');
+  if(msg) msg.textContent = `${label || 'この登録内容'}のサーバーデータも削除しますか？`;
+  bg.classList.add('show');
+  return new Promise(resolve => { __deleteChoiceResolver = resolve; });
+}
+function closeDeleteChoiceToast(choice){
+  const bg = document.getElementById('deleteChoiceBackdrop');
+  if(bg) bg.classList.remove('show');
+  const resolver = __deleteChoiceResolver;
+  __deleteChoiceResolver = null;
+  if(resolver) resolver(choice || 'cancel');
+}
+function supabaseEqParam(column, value){ return `${encodeURIComponent(column)}=eq.${encodeURIComponent(String(value ?? '').trim())}`; }
+async function deleteSupabaseRows(table, filters){
+  const clean = Object.entries(filters || {}).filter(([,v]) => String(v ?? '').trim() !== '');
+  if(!clean.length) return 0;
+  const query = clean.map(([k,v]) => supabaseEqParam(k,v)).join('&');
+  const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${table}?${query}`, {
+    method:'DELETE',
+    headers:{'apikey':SUPABASE_CONFIG.key,'Authorization':`Bearer ${SUPABASE_CONFIG.key}`,'Prefer':'return=minimal'}
+  });
+  if(!res.ok){ const msg = await res.text().catch(()=> ''); throw new Error(`${table} 削除失敗：${res.status} ${res.statusText} ${msg}`); }
+  return 1;
+}
+function persistMasterAndRender(){ persistMasters(); renderAll(); }
+function removeSupplierLocalOnly(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc'); persistMasterAndRender(); }
+async function deleteSupplierFromSupabaseById(id){ const s=(state.suppliers||[]).find(x=>x.id===id); const shortName=String(s?.shortName||'').trim(); if(!shortName) return; await deleteSupabaseRows('supplier_yards',{supplier_short_name:shortName}); await deleteSupabaseRows('supplier_master',{supplier_short_name:shortName}); }
+async function removeSupplierWithChoice(id){ const s=(state.suppliers||[]).find(x=>x.id===id); const label=s?.shortName ? `仕入先「${s.shortName}」` : '仕入先'; const choice=await openDeleteChoiceToast(label); if(choice==='cancel') return; if(choice==='server'){ try{ await deleteSupplierFromSupabaseById(id); removeSupplierLocalOnly(id); toast('Supabaseと端末から削除しました'); }catch(err){ console.error(err); toast(`Supabase削除失敗：${err.message||err}`,'warn'); } return; } removeSupplierLocalOnly(id); toast('端末のローカルデータだけ削除しました'); }
+function removeYardLocalOnly(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:(s.yards||[]).filter(y=>y.id!==yid)} : s); persistMasterAndRender(); }
+async function deleteYardFromSupabaseById(sid,yid){ const s=(state.suppliers||[]).find(x=>x.id===sid); const y=(s?.yards||[]).find(x=>x.id===yid); const shortName=String(s?.shortName||'').trim(); const yardName=String(y?.name||'').trim(); if(!shortName || !yardName) return; await deleteSupabaseRows('supplier_yards',{supplier_short_name:shortName,yard_name:yardName}); }
+async function removeYardWithChoice(sid,yid){ const s=(state.suppliers||[]).find(x=>x.id===sid); const y=(s?.yards||[]).find(x=>x.id===yid); const label=y?.name ? `ヤード「${y.name}」` : 'ヤード'; const choice=await openDeleteChoiceToast(label); if(choice==='cancel') return; if(choice==='server'){ try{ await deleteYardFromSupabaseById(sid,yid); removeYardLocalOnly(sid,yid); toast('Supabaseと端末から削除しました'); }catch(err){ console.error(err); toast(`Supabase削除失敗：${err.message||err}`,'warn'); } return; } removeYardLocalOnly(sid,yid); toast('端末のローカルデータだけ削除しました'); }
+function removeOceanFreightLocalOnly(id){ if(String(state.basic.oceanFreightId||'')===String(id)) state.basic.oceanFreightId=''; state.oceanFreight=state.oceanFreight.filter(x=>x.id!==id); state.oceanFreight=sortOceanFreightList(state.oceanFreight,state.oceanFreightSortKey||'loadingPort'); syncMatchedOceanFreight(); syncQuoteLineOceanFreightsOnPortChange(); persistMasterAndRender(); }
+async function deleteOceanFreightFromSupabaseById(id){ const r=(state.oceanFreight||[]).find(x=>x.id===id); const loading=String(r?.loadingPort||'').trim(); const discharge=String(r?.dischargePort||'').trim(); const carrier=String(r?.carrier||'').trim(); if(!loading || !discharge || !carrier) return; await deleteSupabaseRows('ocean_freight_master',{loading_port:loading,discharge_port:discharge,carrier_name:carrier}); }
+async function removeOceanFreightWithChoice(id){ const r=(state.oceanFreight||[]).find(x=>x.id===id); const label=r ? `海上運賃「${r.loadingPort||''}→${r.dischargePort||''}${r.carrier ? ' / '+r.carrier : ''}」` : '海上運賃'; const choice=await openDeleteChoiceToast(label); if(choice==='cancel') return; if(choice==='server'){ try{ await deleteOceanFreightFromSupabaseById(id); removeOceanFreightLocalOnly(id); toast('Supabaseと端末から削除しました'); }catch(err){ console.error(err); toast(`Supabase削除失敗：${err.message||err}`,'warn'); } return; } removeOceanFreightLocalOnly(id); toast('端末のローカルデータだけ削除しました'); }
+
 function warnMissingSupplier(){
   const el = document.getElementById('supplierShortName');
   markAndScrollInvalid(el);
@@ -3701,7 +3766,7 @@ function renderSupplierMaster(){
           <button class="btn supplier-master-toggle" type="button" onclick="event.stopPropagation();toggleSupplierMaster('${s.id}')">${s.collapsed ? '▸' : '▾'}</button>
           <div class="supplier-master-title"><span class="supplier-master-shortname">${escapeHtml(shortName)}</span></div>
         </div>
-        <button class="btn small delete-btn icon-only" title="削除" onclick="removeSupplier('${s.id}')">&times;</button>
+        <button class="btn small delete-btn icon-only" title="削除" onclick="removeSupplierWithChoice('${s.id}')">&times;</button>
       </div>
       <div class="supplier-master-body">
         <div class="master-head">
@@ -3729,7 +3794,7 @@ function renderSupplierMaster(){
                   <span class="yard-card-title-text">${escapeHtml(y.name || '（ヤード名未入力）')}</span>
                 </div>
                 <div class="yard-card-actions">
-                  <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYard('${s.id}','${y.id}')">&times;</button>
+                  <button class="btn small delete-btn icon-only" title="削除" onclick="event.stopPropagation();removeYardWithChoice('${s.id}','${y.id}')">&times;</button>
                   <button class="btn yard-toggle" type="button" onclick="toggleYardCard(this)">${(isMobileView() || yidx!==0)?'▸':'▾'}</button>
                 </div>
               </div>
@@ -3792,7 +3857,7 @@ function renderOceanFreight(){
       </td>
       <td><input type="date" min="2020-01-01" max="2099-12-31" data-row-id="${r.id}" data-field-key="validUntil" value="${escapeHtml(normalizeDateYmd(r.validUntil || ''))}" onchange="this.value=normalizeDateYmd(this.value);updateOceanFreight('${r.id}','validUntil',this.value,this);renderAll();recalcAll()" onblur="this.value=normalizeDateYmd(this.value);updateOceanFreight('${r.id}','validUntil',this.value,this)" class="${!(r.validUntil||'')?'blank':''}" />${expired ? '<span class="ocean-expired-badge">期限切れ</span>' : ''}</td>
       <td><input data-row-id="${r.id}" data-field-key="note" value="${escapeHtml(r.note || '')}" placeholder="例）直行便優先" oninput="updateOceanFreight('${r.id}','note',this.value,this)" class="${!(r.note||'')?'blank':''}" /></td>
-      <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreight('${r.id}')">&times;</button></td>
+      <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreightWithChoice('${r.id}')">&times;</button></td>
     </tr>
   `}).join('');
 }
@@ -5443,7 +5508,7 @@ function addSupplier(){
   state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc');
   renderAll();
 }
-function removeSupplier(id){ state.suppliers = state.suppliers.filter(x => x.id !== id); state.suppliers = sortSupplierList(state.suppliers, state.supplierSortKey || 'shortName', state.supplierSortDirection || 'asc'); renderAll(); }
+function removeSupplier(id){ return removeSupplierWithChoice(id); }
 function updateSupplier(id,key,val){
   const nextVal = key === 'contact' ? normalizeContactDisplay(val) : val;
   state.suppliers = state.suppliers.map(s => s.id===id ? {...s,[key]:nextVal} : s);
@@ -5485,7 +5550,7 @@ function updateYardDrayage(sid,yid,val,el){
   }
 }
 function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
-function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
+function removeYard(sid,yid){ return removeYardWithChoice(sid,yid); }
 
 function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', validUntil:'', note:''}); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
 function updateOceanFreight(id,key,val,el){
@@ -5509,7 +5574,7 @@ function updateOceanFreight(id,key,val,el){
     el.classList.toggle('blank', !String(nextVal ?? '').trim());
   }
 }
-function removeOceanFreight(id){ if(String(state.basic.oceanFreightId || '') === String(id)) state.basic.oceanFreightId = ''; state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); syncMatchedOceanFreight(); syncQuoteLineOceanFreightsOnPortChange(); renderAll(); }
+function removeOceanFreight(id){ return removeOceanFreightWithChoice(id); }
 
 
 function syncHeaderOffset(){
