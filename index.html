@@ -5,14 +5,14 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>古紙輸出見積作成</title>
-<meta name="theme-color" content="#1d4ed8"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="輸出見積"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<link rel="icon" type="image/png" sizes="192x192" href="icon.png"/>
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
-<meta name="format-detection" content="telephone=no"/>
+<meta content="#1d4ed8" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="輸出見積" name="apple-mobile-web-app-title"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<link href="icon.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<meta content="telephone=no" name="format-detection"/>
 <link href="favicon.png" rel="icon" type="image/png"/>
 <style>
     :root{
@@ -2585,18 +2585,52 @@ html, body{
   .ocean-master-table .ocean-col-note{width:22% !important;}
 }
 </style>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx-populate/browser/xlsx-populate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-</head>
+<style id="toast-fix">
+.toast.warn{
+  background:#000 !important;
+  color:#fff !important;
+  border:none !important;
+  box-shadow:0 18px 40px rgba(0,0,0,.35) !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-direction:row !important;
+  padding:12px 16px !important;
+}
+.toast.warn::before{
+  content:"";
+  width:18px;
+  height:18px;
+  display:inline-block;
+  flex-shrink:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23facc15' d='M1 21h22L12 2 1 21z'/><path fill='%23000000' d='M13 16h-2v2h2zm0-6h-2v4h2z'/></svg>");
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+</style>
+<style>
+/* toast font size adjustment */
+.toast{
+  font-size:19px !important;
+  font-weight:700;
+}
+.toast.warn{
+  font-size:19px !important;
+}
+@media (max-width:760px){
+  .toast{
+    font-size:20px !important;
+  }
+}
+</style></head>
 <body>
-
-<div class="launch-splash" id="launchSplash" aria-hidden="true">
-  <div class="launch-splash-card">
-    <img src="icon.png" alt="山發 輸出見積作成 ロゴ">
-  </div>
+<div aria-hidden="true" class="launch-splash" id="launchSplash">
+<div class="launch-splash-card">
+<img alt="山發 輸出見積作成 ロゴ" src="icon.png"/>
 </div>
-
+</div>
 <div class="toast" id="toast"></div>
 <div class="modal-bg" id="savedModal">
 <div class="modal saved-modal">
@@ -2636,7 +2670,6 @@ html, body{
 </div>
 </div>
 </div>
-
 <div id="estimateTab">
 <div class="section basic-section">
 <div class="section-header">
@@ -2828,7 +2861,7 @@ html, body{
 <div class="quote-footer-actions">
 <button class="btn issue-quote-btn" onclick="issueQuotePdf()" type="button">PDF発行</button>
 <button class="btn issue-quote-btn excel-issue-btn" onclick="issueQuoteExcel()" type="button">Excelで発行</button>
-<button class="btn blue email-launch-btn" onclick="launchQuoteEmail()" title="メール起動" type="button" aria-label="メール起動">✉</button>
+<button aria-label="メール起動" class="btn blue email-launch-btn" onclick="launchQuoteEmail()" title="メール起動" type="button">✉</button>
 </div>
 </div>
 </div>
@@ -2841,7 +2874,7 @@ html, body{
 <div class="section master-supplier-section">
 <div class="section-header">
 <div class="section-title-wrap">
-<div class="section-title" style="font-size:20px"><button class="sort-th-btn" type="button" onclick="sortSuppliersBy('shortName')">仕入先マスタ <span class="sort-mark" id="supplierSortMark">▼</span></button></div>
+<div class="section-title" style="font-size:20px"><button class="sort-th-btn" onclick="sortSuppliersBy('shortName')" type="button">仕入先マスタ <span class="sort-mark" id="supplierSortMark">▼</span></button></div>
 </div>
 <div class="table-actions master-action-row"><button class="btn blue master-add-btn supplier-add-btn" onclick="addSupplier()" type="button">追加</button><button class="btn blue master-save-btn" onclick="saveSupplierMasters()" type="button">保存</button><button class="btn blue master-save-btn csv-share-btn" onclick="openSupabaseCsvImport('supplier_bundle')" type="button">共有</button></div>
 </div>
@@ -2857,19 +2890,19 @@ html, body{
 <div class="scroll-x">
 <table class="ocean-master-table">
 <colgroup>
-  <col class="ocean-col-load"/>
-  <col class="ocean-col-discharge"/>
-  <col class="ocean-col-of"/>
-  <col class="ocean-col-currency"/>
-  <col class="ocean-col-ebs"/>
-  <col class="ocean-col-carrier"/>
-  <col class="ocean-col-valid"/>
-  <col class="ocean-col-note"/>
-  <col class="ocean-col-delete"/>
+<col class="ocean-col-load"/>
+<col class="ocean-col-discharge"/>
+<col class="ocean-col-of"/>
+<col class="ocean-col-currency"/>
+<col class="ocean-col-ebs"/>
+<col class="ocean-col-carrier"/>
+<col class="ocean-col-valid"/>
+<col class="ocean-col-note"/>
+<col class="ocean-col-delete"/>
 </colgroup>
 <thead>
 <tr>
-<th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('loadingPort')">積港 <span class="sort-mark" id="oceanSortLoading">▼</span></button></th><th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('dischargePort')">揚港 <span class="sort-mark" id="oceanSortDischarge">▼</span></button></th><th>海上運賃</th><th>通貨</th><th>EBS（USD）</th><th>船会社名</th><th>有効期限</th><th>備考</th><th></th>
+<th><button class="sort-th-btn" onclick="sortOceanFreightBy('loadingPort')" type="button">積港 <span class="sort-mark" id="oceanSortLoading">▼</span></button></th><th><button class="sort-th-btn" onclick="sortOceanFreightBy('dischargePort')" type="button">揚港 <span class="sort-mark" id="oceanSortDischarge">▼</span></button></th><th>海上運賃</th><th>通貨</th><th>EBS（USD）</th><th>船会社名</th><th>有効期限</th><th>備考</th><th></th>
 </tr>
 </thead>
 <tbody id="oceanFreightBody"></tbody>
@@ -2878,7 +2911,7 @@ html, body{
 </div>
 </div>
 </div>
-<input id="supabaseCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="handleSupabaseCsvSelected(event)" />
+<input accept=".csv,text/csv" id="supabaseCsvInput" onchange="handleSupabaseCsvSelected(event)" style="display:none" type="file"/>
 <script>
 const APP_VERSION = '4.49 Date Calendar Fix';
 const STORAGE_KEYS = {
@@ -5151,6 +5184,31 @@ function buildQuotePdfHtml(payload){
 }
 
 </style>
+
+<style id="toast-fix">
+.toast.warn{
+  background:#000 !important;
+  color:#fff !important;
+  border:none !important;
+  box-shadow:0 18px 40px rgba(0,0,0,.35) !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-direction:row !important;
+  padding:12px 16px !important;
+}
+.toast.warn::before{
+  content:"";
+  width:18px;
+  height:18px;
+  display:inline-block;
+  flex-shrink:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23facc15' d='M1 21h22L12 2 1 21z'/><path fill='%23000000' d='M13 16h-2v2h2zm0-6h-2v4h2z'/></svg>");
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+</style>
+
 </head>
 <body>
   <div class="preview-wrap">
@@ -5548,7 +5606,6 @@ window.addEventListener('load', () => {
 }, { once:true });
 
 </script>
-
 <script>
 (function initPwaOptimized(){
   if (!('serviceWorker' in navigator)) return;
@@ -5581,8 +5638,6 @@ window.addEventListener('load', () => {
   }, { once:true });
 })();
 </script>
-
-
-<div class="pdf-export-root" id="pdfExportRoot" aria-hidden="true"></div>
+<div aria-hidden="true" class="pdf-export-root" id="pdfExportRoot"></div>
 </body>
 </html>
