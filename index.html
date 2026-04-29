@@ -2460,7 +2460,7 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.40</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.43</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -2507,6 +2507,10 @@ html, body{
 <div class="field overseas-only basic-inline-field">
 <label>揚港</label>
 <select id="dischargePort" onchange="onPortChange()"></select>
+</div>
+<div class="field overseas-only basic-inline-field" id="oceanFreightChoiceField">
+<label>船会社</label>
+<select id="oceanFreightChoice" onchange="onOceanFreightChoiceChange()"></select>
 </div>
 <div class="field basic-stack-field">
 <label>販売単価　<span class="selling-unit-inline" id="sellingUnit">㌦/ton</span></label>
@@ -2700,7 +2704,7 @@ html, body{
 </div>
 <input id="supabaseCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="handleSupabaseCsvSelected(event)" />
 <script>
-const APP_VERSION = '4.41 Save Share Sync';
+const APP_VERSION = '4.42 Save Share Sync';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
@@ -2806,7 +2810,41 @@ function formatDollarDisplay(v){ const raw = String(v ?? '').trim(); if(raw===''
 function formatUsdTonDisplay(v,d=1){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `$${n(raw).toFixed(d)} /ton`; }
 function isMobileView(){ return window.innerWidth <= 760; }
 function formatOceanFreightDisplay(v,currency){ return currency==='JPY' ? formatYenDisplay(v) : formatDollarDisplay(v); }
-function syncMatchedOceanFreight(){ const matched = state.oceanFreight.find(x => x.loadingPort===state.basic.loadingPort && x.dischargePort===state.basic.dischargePort); if(matched){ state.exportCosts.ofValue = matched.ofValue; state.exportCosts.ofCurrency = matched.ofCurrency; state.exportCosts.ebs = matched.ebs; }}
+function oceanFreightMatchesForBasic(){
+  const lp = String(state.basic.loadingPort || '').trim().toUpperCase();
+  const dp = String(state.basic.dischargePort || '').trim().toUpperCase();
+  if(!lp || !dp) return [];
+  return state.oceanFreight.filter(x =>
+    String(x.loadingPort || '').trim().toUpperCase() === lp &&
+    String(x.dischargePort || '').trim().toUpperCase() === dp
+  );
+}
+function selectedOceanFreightForBasic(){
+  const matches = oceanFreightMatchesForBasic();
+  if(!matches.length) return null;
+  const selectedId = String(state.basic.oceanFreightId || '').trim();
+  return matches.find(x => String(x.id) === selectedId) || matches[0];
+}
+function ensureBasicOceanFreightChoice(){
+  const matches = oceanFreightMatchesForBasic();
+  if(!matches.length){ state.basic.oceanFreightId = ''; return null; }
+  if(!matches.some(x => String(x.id) === String(state.basic.oceanFreightId || ''))){
+    state.basic.oceanFreightId = matches[0].id;
+  }
+  return selectedOceanFreightForBasic();
+}
+function syncMatchedOceanFreight(){
+  const matched = ensureBasicOceanFreightChoice();
+  if(matched){
+    state.exportCosts.ofValue = matched.ofValue;
+    state.exportCosts.ofCurrency = matched.ofCurrency;
+    state.exportCosts.ebs = matched.ebs;
+  }else{
+    state.exportCosts.ofValue = '';
+    state.exportCosts.ofCurrency = 'USD';
+    state.exportCosts.ebs = '';
+  }
+}
 function saveLocal(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 function loadLocal(k,fallback){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 function toast(msg, type='default'){ const el=document.getElementById('toast'); if(!el) return; el.textContent=msg; el.classList.remove('warn'); if(type==='warn') el.classList.add('warn'); el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>{ el.classList.remove('show','warn'); },1500); }
@@ -2876,7 +2914,7 @@ let state = {
   supplierSortDirection:'desc',
   basic: {
     supplierShortName:'', salesCondition:'CIF', sellingPrice:'', shipmentLot:200,
-    paymentTerm:'T/T', loadingPort:'', dischargePort:'', fxRate:''
+    paymentTerm:'T/T', loadingPort:'', dischargePort:'', oceanFreightId:'', fxRate:''
   },
   overseasCosts:{ lcFee:0.25, overseasCom:0.5, margin:4 },
   exportCosts:{ insurance:0, ofValue:'', ofCurrency:'USD', ebs:'', doFee:7980, customsFee:5900, handlingFee:15000 },
@@ -2884,6 +2922,7 @@ let state = {
   quoteLines:createDefaultQuoteLines('CY渡し'),
   bottomNote:''
 };
+state.basic = {...state.basic, oceanFreightId:(state.basic.oceanFreightId || '')};
 state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r.shippingLine || ''), note:(r.note || '')}));
 state.quoteLines = state.quoteLines.map(line => ({
   ...line,
@@ -2951,11 +2990,17 @@ function availableYards(){ return selectedSupplier()?.yards || []; }
 function yardToLoadingPortCode(yardName){
   return PORT_CODE_MAP[String(yardName || '').trim()] || '';
 }
-function findOceanFreightByPorts(loadingPort, dischargePort){
-  return state.oceanFreight.find(r =>
+function findOceanFreightsByPorts(loadingPort, dischargePort){
+  return state.oceanFreight.filter(r =>
     String(r.loadingPort || '').trim().toUpperCase() === String(loadingPort || '').trim().toUpperCase() &&
     String(r.dischargePort || '').trim().toUpperCase() === String(dischargePort || '').trim().toUpperCase()
-  ) || null;
+  );
+}
+function findOceanFreightByPorts(loadingPort, dischargePort){
+  const matches = findOceanFreightsByPorts(loadingPort, dischargePort);
+  if(!matches.length) return null;
+  const selectedId = String(state.basic.oceanFreightId || '').trim();
+  return matches.find(r => String(r.id) === selectedId) || matches[0];
 }
 function applyRowOceanFreightFromMaster(line, showToast = true){
   if(!line) return line;
@@ -3083,6 +3128,35 @@ function renderBasics(){
   if(state.basic.dischargePort && !dps.includes(state.basic.dischargePort)) state.basic.dischargePort = '';
   renderSelectOptions(document.getElementById('loadingPort'), lps, '積港を選択', state.basic.loadingPort);
   renderSelectOptions(document.getElementById('dischargePort'), dps, state.basic.loadingPort ? '揚港を選択' : '先に積港を選択', state.basic.dischargePort);
+
+  const freightMatches = oceanFreightMatchesForBasic();
+  const selectedFreight = ensureBasicOceanFreightChoice();
+  const freightChoice = document.getElementById('oceanFreightChoice');
+  const freightChoiceField = document.getElementById('oceanFreightChoiceField');
+  if(freightChoice){
+    if(!state.basic.loadingPort || !state.basic.dischargePort){
+      freightChoice.innerHTML = '<option value="">積港・揚港を先に選択</option>';
+      freightChoice.disabled = true;
+    }else if(!freightMatches.length){
+      freightChoice.innerHTML = '<option value="">該当運賃なし</option>';
+      freightChoice.disabled = true;
+    }else{
+      freightChoice.innerHTML = freightMatches.map(r => {
+        const carrier = String(r.carrier || '船会社未設定').trim();
+        const freight = formatMoneyDisplay(r.ofValue, r.ofCurrency || 'USD');
+        const ebs = formatMoneyDisplay(r.ebs, 'USD');
+        const label = `${carrier}  O/F ${freight || '-'}   EBS: ${ebs || '-'}`;
+        return `<option value="${escapeHtml(r.id)}" ${String(selectedFreight?.id || '')===String(r.id)?'selected':''}>${escapeHtml(label)}</option>`;
+      }).join('');
+      freightChoice.disabled = freightMatches.length <= 1;
+    }
+    freightChoice.classList.toggle('blank', !freightChoice.value);
+  }
+  if(freightChoiceField){
+    freightChoiceField.classList.toggle('hidden', state.calcMode !== 'overseas');
+    freightChoiceField.style.display = state.calcMode !== 'overseas' ? 'none' : '';
+  }
+
   document.getElementById('fxRate').value = state.basic.fxRate;
   document.getElementById('fxRate').style.textAlign = 'center';
 
@@ -3121,7 +3195,7 @@ function renderBasics(){
     if(!el) return;
     el.classList.toggle('blank', !el.value && el.value !== 0);
   });
-  ['supplierShortName','salesCondition','paymentTerm','loadingPort','dischargePort'].forEach(id=>{
+  ['supplierShortName','salesCondition','paymentTerm','loadingPort','dischargePort','oceanFreightChoice'].forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
     el.classList.toggle('blank', !el.value);
@@ -3133,6 +3207,8 @@ function onBasicChange(){
   state.basic.salesCondition = document.getElementById('salesCondition').value;
   state.basic.sellingPrice = document.getElementById('sellingPrice').value;
   state.basic.shipmentLot = document.getElementById('shipmentLot').value;
+  const freightChoiceEl = document.getElementById('oceanFreightChoice');
+  if(freightChoiceEl && !freightChoiceEl.disabled) state.basic.oceanFreightId = freightChoiceEl.value;
   syncMatchedOceanFreight();
   renderAll();
   recalcAll();
@@ -3146,7 +3222,16 @@ function onPaymentTermChange(){
 function onPortChange(){
   state.basic.loadingPort = document.getElementById('loadingPort').value;
   state.basic.dischargePort = document.getElementById('dischargePort').value;
+  ensureBasicOceanFreightChoice();
   alignQuotePortYardsToLoadingPort();
+  syncMatchedOceanFreight();
+  syncQuoteLineOceanFreightsOnPortChange();
+  renderAll();
+  recalcAll();
+}
+function onOceanFreightChoiceChange(){
+  const el = document.getElementById('oceanFreightChoice');
+  state.basic.oceanFreightId = el ? el.value : '';
   syncMatchedOceanFreight();
   syncQuoteLineOceanFreightsOnPortChange();
   renderAll();
@@ -3738,7 +3823,7 @@ function loadQuote(id){
   toast('保存データを読み込みました');
 }
 function resetForm(){
-  state.basic = { supplierShortName:'', salesCondition:state.calcMode==='overseas'?'CIF':'CY渡し', sellingPrice:'', shipmentLot:200, paymentTerm:'T/T', loadingPort:'', dischargePort:'', fxRate:'' };
+  state.basic = { supplierShortName:'', salesCondition:state.calcMode==='overseas'?'CIF':'CY渡し', sellingPrice:'', shipmentLot:200, paymentTerm:'T/T', loadingPort:'', dischargePort:'', oceanFreightId:'', fxRate:'' };
   state.overseasCosts = { lcFee:0.25, overseasCom:0.5, margin:4 };
   state.exportCosts = { insurance:0, ofValue:'', ofCurrency:'USD', ebs:'', doFee:7980, customsFee:5900, handlingFee:15000 };
   state.domesticCosts = { marginJpyKg:0.5 };
@@ -5052,8 +5137,27 @@ function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parse
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
 function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
-function updateOceanFreight(id,key,val,el){ const numericKeys = ['ofValue','ebs']; const nextVal = numericKeys.includes(key) ? parseNumericInput(val) : val; state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
-function removeOceanFreight(id){ state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
+function updateOceanFreight(id,key,val,el){
+  const numericKeys = ['ofValue','ebs'];
+  const isNumeric = numericKeys.includes(key);
+  const nextVal = isNumeric ? parseNumericInput(val) : val;
+  state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r);
+  if(String(state.basic.oceanFreightId || '') === String(id)){
+    syncMatchedOceanFreight();
+    syncQuoteLineOceanFreightsOnPortChange();
+  }
+  if(el){
+    // 海上運賃・EBSは入力中に$・¥・カンマを戻さず、素の数字だけに固定する。
+    // スマホ/IMEで「45」が「455」になる重複入力を防止。
+    if(isNumeric && el.value !== nextVal){
+      const pos = Math.min(nextVal.length, el.selectionStart ?? nextVal.length);
+      el.value = nextVal;
+      try{ el.setSelectionRange(pos, pos); }catch(e){}
+    }
+    el.classList.toggle('blank', !String(nextVal ?? '').trim());
+  }
+}
+function removeOceanFreight(id){ if(String(state.basic.oceanFreightId || '') === String(id)) state.basic.oceanFreightId = ''; state.oceanFreight = state.oceanFreight.filter(x => x.id !== id); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); syncMatchedOceanFreight(); syncQuoteLineOceanFreightsOnPortChange(); renderAll(); }
 
 
 function syncHeaderOffset(){
