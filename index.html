@@ -2419,6 +2419,171 @@ html, body{
   }
 }
 
+
+/* v46: 海上運賃マスタをPCでスクロールなしに収める */
+.ocean-master-table{
+  width:100% !important;
+  min-width:0 !important;
+  table-layout:fixed !important;
+}
+.ocean-master-table .ocean-col-load{width:12%;}
+.ocean-master-table .ocean-col-discharge{width:14%;}
+.ocean-master-table .ocean-col-of{width:11%;}
+.ocean-master-table .ocean-col-currency{width:7%;}
+.ocean-master-table .ocean-col-ebs{width:8%;}
+.ocean-master-table .ocean-col-carrier{width:9%;}
+.ocean-master-table .ocean-col-valid{width:11%;}
+.ocean-master-table .ocean-col-note{width:22%;}
+.ocean-master-table .ocean-col-delete{width:6%;}
+.ocean-master-table th,
+.ocean-master-table td{
+  padding:8px 6px !important;
+}
+.ocean-master-table input,
+.ocean-master-table select{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  font-size:15px !important;
+  padding:10px 8px !important;
+}
+.ocean-master-table select{
+  padding-right:26px !important;
+  background-position:
+    calc(100% - 15px) calc(50% - 4px),
+    calc(100% - 9px) calc(50% - 4px) !important;
+  background-size:7px 7px,7px 7px !important;
+}
+.ocean-master-table .currency-master-select,
+.ocean-master-table .carrier-master-select{
+  width:100% !important;
+  min-width:0 !important;
+  text-align:center !important;
+  text-align-last:center !important;
+}
+.ocean-master-table td:nth-child(4),
+.ocean-master-table td:nth-child(6){
+  text-align:center !important;
+}
+.ocean-master-table td:nth-child(5) input,
+.ocean-master-table td:nth-child(7) input{
+  padding-left:6px !important;
+  padding-right:6px !important;
+}
+.ocean-master-table td:last-child{
+  text-align:center !important;
+}
+.ocean-master-table .delete-btn.icon-only{
+  width:38px !important;
+  min-width:38px !important;
+  height:38px !important;
+  margin:0 auto !important;
+}
+.ocean-master-table .ocean-expired-badge{
+  display:block !important;
+  width:max-content;
+  max-width:100%;
+  margin:4px auto 0 !important;
+  white-space:nowrap;
+}
+@media (max-width:760px){
+  .ocean-master-table{
+    min-width:1120px !important;
+    table-layout:fixed !important;
+  }
+  .ocean-master-table input,
+  .ocean-master-table select{
+    font-size:16px !important;
+    padding:12px 10px !important;
+  }
+}
+
+/* v45: ocean freight expiry */
+.ocean-expired input,.ocean-expired select{background:#e5e7eb !important;color:#6b7280 !important;border-color:#cbd5e1 !important;}
+.ocean-expired input::placeholder{color:#9ca3af !important;}
+.ocean-expired td{background:#f3f4f6 !important;}
+.ocean-expired-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:#e5e7eb;color:#6b7280;font-size:12px;font-weight:800;}
+
+
+/* v47: 海上運賃マスタのみ input/select 高さ統一・有効期限プレースホルダー色 */
+.ocean-master-table input,
+.ocean-master-table select{
+  height:44px !important;
+  min-height:44px !important;
+  line-height:1.2 !important;
+  padding-top:8px !important;
+  padding-bottom:8px !important;
+  vertical-align:middle !important;
+}
+.ocean-master-table input[type="date"]{
+  line-height:normal !important;
+}
+.ocean-master-table input[type="date"].blank{
+  color:#9ca3af !important;
+}
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-fields-wrapper,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-text,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-month-field,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-day-field,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-year-field{
+  color:#9ca3af !important;
+}
+.ocean-master-table input[type="date"]:not(.blank){
+  color:#0f172a !important;
+}
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-fields-wrapper,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-text,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-month-field,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-day-field,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-year-field{
+  color:#0f172a !important;
+}
+.ocean-expired input[type="date"],
+.ocean-expired input[type="date"]::-webkit-datetime-edit,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-text,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-month-field,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-day-field,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-year-field{
+  color:#6b7280 !important;
+}
+@media (max-width:760px){
+  .ocean-master-table input,
+  .ocean-master-table select{
+    height:46px !important;
+    min-height:46px !important;
+  }
+}
+
+
+/* v48: 海上運賃マスタのみ 書式中央揃え・有効期限幅微調整 */
+.ocean-master-table .ocean-col-valid{width:12% !important;}
+.ocean-master-table .ocean-col-note{width:21% !important;}
+.ocean-master-table th:not(:nth-child(8)),
+.ocean-master-table td:not(:nth-child(8)){
+  text-align:center !important;
+}
+.ocean-master-table td:nth-child(8),
+.ocean-master-table td:nth-child(8) input{
+  text-align:left !important;
+}
+.ocean-master-table td:nth-child(-n+7) input,
+.ocean-master-table td:nth-child(-n+7) select{
+  text-align:center !important;
+  text-align-last:center !important;
+}
+.ocean-master-table td:nth-child(7) input[type="date"]{
+  padding-left:7px !important;
+  padding-right:5px !important;
+  font-size:15px !important;
+}
+@media (max-width:760px){
+  .ocean-master-table .ocean-col-valid{width:11% !important;}
+  .ocean-master-table .ocean-col-note{width:22% !important;}
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-populate/browser/xlsx-populate.min.js"></script>
@@ -2460,7 +2625,7 @@ html, body{
 <div class="title-area">
 <div>
 <div class="title">古紙輸出見積作成</div>
-<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.43</span></div>
+<div class="subtitle">山發日本株式会社　社内アプリ <span class="app-version">Ver:4.48</span></div>
 </div>
 </div>
 <div class="header-actions">
@@ -2690,10 +2855,21 @@ html, body{
 <div class="table-actions master-action-row"><button class="btn blue master-add-btn ocean-add-btn" onclick="addOceanFreight()" type="button">追加</button><button class="btn blue master-save-btn" onclick="saveOceanFreightMasters()" type="button">保存</button><button class="btn blue master-save-btn csv-share-btn" onclick="openSupabaseCsvImport('ocean')" type="button">共有</button></div>
 </div>
 <div class="scroll-x">
-<table style="min-width:1280px">
+<table class="ocean-master-table">
+<colgroup>
+  <col class="ocean-col-load"/>
+  <col class="ocean-col-discharge"/>
+  <col class="ocean-col-of"/>
+  <col class="ocean-col-currency"/>
+  <col class="ocean-col-ebs"/>
+  <col class="ocean-col-carrier"/>
+  <col class="ocean-col-valid"/>
+  <col class="ocean-col-note"/>
+  <col class="ocean-col-delete"/>
+</colgroup>
 <thead>
 <tr>
-<th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('loadingPort')">積港 <span class="sort-mark" id="oceanSortLoading">▼</span></button></th><th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('dischargePort')">揚港 <span class="sort-mark" id="oceanSortDischarge">▼</span></button></th><th>海上運賃</th><th>通貨</th><th>EBS（USD）</th><th>船会社名</th><th>備考</th><th></th>
+<th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('loadingPort')">積港 <span class="sort-mark" id="oceanSortLoading">▼</span></button></th><th><button class="sort-th-btn" type="button" onclick="sortOceanFreightBy('dischargePort')">揚港 <span class="sort-mark" id="oceanSortDischarge">▼</span></button></th><th>海上運賃</th><th>通貨</th><th>EBS（USD）</th><th>船会社名</th><th>有効期限</th><th>備考</th><th></th>
 </tr>
 </thead>
 <tbody id="oceanFreightBody"></tbody>
@@ -2704,7 +2880,7 @@ html, body{
 </div>
 <input id="supabaseCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="handleSupabaseCsvSelected(event)" />
 <script>
-const APP_VERSION = '4.42 Save Share Sync';
+const APP_VERSION = '4.47 Ocean Master Height';
 const STORAGE_KEYS = {
   suppliers: 'wastepaper.suppliers.v1',
   oceanFreight: 'wastepaper.oceanfreight.v1',
@@ -2810,11 +2986,32 @@ function formatDollarDisplay(v){ const raw = String(v ?? '').trim(); if(raw===''
 function formatUsdTonDisplay(v,d=1){ const raw = String(v ?? '').trim(); if(raw==='') return ''; return `$${n(raw).toFixed(d)} /ton`; }
 function isMobileView(){ return window.innerWidth <= 760; }
 function formatOceanFreightDisplay(v,currency){ return currency==='JPY' ? formatYenDisplay(v) : formatDollarDisplay(v); }
+function todayYmd(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function normalizeDateYmd(v){
+  const s = String(v || '').trim();
+  if(!s) return '';
+  const m = s.match(/^(\d{4})[\/\.-](\d{1,2})[\/\.-](\d{1,2})$/);
+  if(!m) return s;
+  return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;
+}
+function isOceanFreightExpired(row){
+  const limit = normalizeDateYmd(row?.validUntil || row?.valid_until || row?.expiryDate || '');
+  return !!limit && limit < todayYmd();
+}
+function activeOceanFreights(){
+  return (state.oceanFreight || []).filter(r => !isOceanFreightExpired(r));
+}
 function oceanFreightMatchesForBasic(){
   const lp = String(state.basic.loadingPort || '').trim().toUpperCase();
   const dp = String(state.basic.dischargePort || '').trim().toUpperCase();
   if(!lp || !dp) return [];
-  return state.oceanFreight.filter(x =>
+  return activeOceanFreights().filter(x =>
     String(x.loadingPort || '').trim().toUpperCase() === lp &&
     String(x.dischargePort || '').trim().toUpperCase() === dp
   );
@@ -2904,9 +3101,9 @@ let state = {
     {id:uid(), shortName:'丸和', formalName:'丸和商事株式会社', contact:'課長 佐藤 一郎', phone:'06-0000-0000', email:'maruwa@example.co.jp', yards:[{id:uid(), name:'東京', drayage:38000}]}
   ]),
   oceanFreight: loadLocal(STORAGE_KEYS.oceanFreight, [
-    {id:uid(), loadingPort:'TOKYO', dischargePort:'TAICHUNG', ofValue:200, ofCurrency:'USD', ebs:100, carrier:'', note:''},
-    {id:uid(), loadingPort:'TOKYO', dischargePort:'HAIPHONG', ofValue:400, ofCurrency:'USD', ebs:120, carrier:'', note:''},
-    {id:uid(), loadingPort:'YOKOHAMA', dischargePort:'KAOHSIUNG', ofValue:48000, ofCurrency:'JPY', ebs:90, carrier:'', note:''}
+    {id:uid(), loadingPort:'TOKYO', dischargePort:'TAICHUNG', ofValue:200, ofCurrency:'USD', ebs:100, carrier:'', validUntil:'', note:''},
+    {id:uid(), loadingPort:'TOKYO', dischargePort:'HAIPHONG', ofValue:400, ofCurrency:'USD', ebs:120, carrier:'', validUntil:'', note:''},
+    {id:uid(), loadingPort:'YOKOHAMA', dischargePort:'KAOHSIUNG', ofValue:48000, ofCurrency:'JPY', ebs:90, carrier:'', validUntil:'', note:''}
   ]),
   savedQuotes: loadLocal(STORAGE_KEYS.quotes, []),
   oceanFreightSortKey:'loadingPort',
@@ -2923,7 +3120,7 @@ let state = {
   bottomNote:''
 };
 state.basic = {...state.basic, oceanFreightId:(state.basic.oceanFreightId || '')};
-state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r.shippingLine || ''), note:(r.note || '')}));
+state.oceanFreight = state.oceanFreight.map(r => ({...r, carrier:(r.carrier || r.shippingLine || ''), validUntil:normalizeDateYmd(r.validUntil || r.valid_until || r.expiryDate || ''), note:(r.note || '')}));
 state.quoteLines = state.quoteLines.map(line => ({
   ...line,
   rowOceanFreightCurrency: String(line.rowOceanFreightCurrency || 'USD').trim().toUpperCase() || 'USD',
@@ -2991,7 +3188,7 @@ function yardToLoadingPortCode(yardName){
   return PORT_CODE_MAP[String(yardName || '').trim()] || '';
 }
 function findOceanFreightsByPorts(loadingPort, dischargePort){
-  return state.oceanFreight.filter(r =>
+  return activeOceanFreights().filter(r =>
     String(r.loadingPort || '').trim().toUpperCase() === String(loadingPort || '').trim().toUpperCase() &&
     String(r.dischargePort || '').trim().toUpperCase() === String(dischargePort || '').trim().toUpperCase()
   );
@@ -3120,10 +3317,12 @@ function renderBasics(){
   const payment = document.getElementById('paymentTerm');
   payment.innerHTML = Object.keys(LC_FEES).map(k=>`<option value="${k}" ${state.basic.paymentTerm===k?'selected':''}>${k}</option>`).join('');
 
-  const lps = [...new Set(state.oceanFreight.map(x=>x.loadingPort).filter(Boolean))];
+  const validOceanFreights = activeOceanFreights();
+  const lps = [...new Set(validOceanFreights.map(x=>x.loadingPort).filter(Boolean))];
+  if(state.basic.loadingPort && !lps.includes(state.basic.loadingPort)) state.basic.loadingPort = '';
   const linkedFreights = state.calcMode==='overseas' && state.basic.loadingPort
-    ? state.oceanFreight.filter(x => x.loadingPort === state.basic.loadingPort)
-    : state.oceanFreight;
+    ? validOceanFreights.filter(x => x.loadingPort === state.basic.loadingPort)
+    : validOceanFreights;
   const dps = [...new Set(linkedFreights.map(x=>x.dischargePort).filter(Boolean))];
   if(state.basic.dischargePort && !dps.includes(state.basic.dischargePort)) state.basic.dischargePort = '';
   renderSelectOptions(document.getElementById('loadingPort'), lps, '積港を選択', state.basic.loadingPort);
@@ -3523,10 +3722,12 @@ function renderOceanFreight(){
   const dischargeMark = document.getElementById('oceanSortDischarge');
   if(loadingMark) loadingMark.textContent = state.oceanFreightSortKey === 'loadingPort' ? '▼' : '▽';
   if(dischargeMark) dischargeMark.textContent = state.oceanFreightSortKey === 'dischargePort' ? '▼' : '▽';
-  body.innerHTML = state.oceanFreight.map(r => `
-    <tr>
+  body.innerHTML = state.oceanFreight.map(r => {
+    const expired = isOceanFreightExpired(r);
+    return `
+    <tr class="${expired ? 'ocean-expired' : ''}">
       <td><input data-row-id="${r.id}" data-field-key="loadingPort" value="${escapeHtml(r.loadingPort)}" placeholder="例）TOKYO" oninput="updateOceanFreight('${r.id}','loadingPort',this.value,this)" class="${!r.loadingPort?'blank':''}" /></td>
-      <td><input data-row-id="${r.id}" data-field-key="dischargePort" value="${escapeHtml(r.dischargePort)}" placeholder="例）TAICHUNG, TAIWAN" oninput="updateOceanFreight('${r.id}','dischargePort',this.value,this)" class="${!r.dischargePort?'blank':''}" /></td>
+      <td><input data-row-id="${r.id}" data-field-key="dischargePort" value="${escapeHtml(r.dischargePort)}" placeholder="例）TAICHUNG" oninput="updateOceanFreight('${r.id}','dischargePort',this.value,this)" class="${!r.dischargePort?'blank':''}" /></td>
       <td><input data-row-id="${r.id}" data-field-key="ofValue" value="${formatOceanFreightDisplay(r.ofValue, r.ofCurrency)}" data-money-format="ocean" data-currency="${escapeHtml(r.ofCurrency || 'USD')}" inputmode="decimal" placeholder="例）$200 / ¥48,000" oninput="updateOceanFreight('${r.id}','ofValue',this.value,this)" class="${!r.ofValue?'blank':''} money-input master-money" /></td>
       <td class="currency-master-cell">
         <select data-row-id="${r.id}" data-field-key="ofCurrency" onchange="updateOceanFreight('${r.id}','ofCurrency',this.value,this);renderOceanFreight()" class="currency-master-select ${!r.ofCurrency?'blank':''}">
@@ -3541,10 +3742,11 @@ function renderOceanFreight(){
           ${carriers.map(c=>`<option value="${c}" ${r.carrier===c?'selected':''}>${c}</option>`).join('')}
         </select>
       </td>
+      <td><input type="date" data-row-id="${r.id}" data-field-key="validUntil" value="${escapeHtml(normalizeDateYmd(r.validUntil || ''))}" onchange="updateOceanFreight('${r.id}','validUntil',this.value,this);renderAll();recalcAll()" class="${!(r.validUntil||'')?'blank':''}" />${expired ? '<span class="ocean-expired-badge">期限切れ</span>' : ''}</td>
       <td><input data-row-id="${r.id}" data-field-key="note" value="${escapeHtml(r.note || '')}" placeholder="例）直行便優先" oninput="updateOceanFreight('${r.id}','note',this.value,this)" class="${!(r.note||'')?'blank':''}" /></td>
       <td><button class="btn small delete-btn icon-only" title="削除" onclick="removeOceanFreight('${r.id}')">&times;</button></td>
     </tr>
-  `).join('');
+  `}).join('');
 }
 
 function renderSavedList(){
@@ -4065,6 +4267,7 @@ function mapCsvRowsForSupabase(target, rows){
       currency: pickCsvValue(row, ['currency','通貨']) || 'USD',
       ebs_usd: csvNumber(pickCsvValue(row, ['ebs_usd','EBS（USD）','EBS','ebs'])),
       carrier_name: pickCsvValue(row, ['carrier_name','船会社名','船会社','carrier']) || '',
+      valid_until: normalizeDateYmd(pickCsvValue(row, ['valid_until','有効期限','期限','expiry','expiry_date']) || ''),
       remarks: pickCsvValue(row, ['remarks','備考','note']) || ''
     })).filter(r => r.loading_port && r.discharge_port);
   }
@@ -4118,6 +4321,7 @@ function appOceanRowsForSupabase(){
     currency: String(r.ofCurrency || 'USD').trim().toUpperCase() || 'USD',
     ebs_usd: csvNumber(r.ebs),
     carrier_name: String(r.carrier || '').trim(),
+    valid_until: normalizeDateYmd(r.validUntil || ''),
     remarks: String(r.note || '').trim()
   })).filter(r => r.loading_port && r.discharge_port && r.carrier_name);
 }
@@ -4167,6 +4371,20 @@ async function upsertDirectRowsToSupabase(target, rows){
   });
   if(!res.ok){
     const msg = await res.text().catch(()=> '');
+    if(target === 'ocean' && /valid_until|column|schema|PGRST/i.test(msg)){
+      const fallbackRows = rows.map(({valid_until, ...rest}) => rest);
+      const retry = await fetch(url, {
+        method:'POST',
+        headers:{
+          'apikey': SUPABASE_CONFIG.key,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+          'Content-Type':'application/json',
+          'Prefer':'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify(fallbackRows)
+      });
+      if(retry.ok) return rows.length;
+    }
     throw new Error(`${info.label}共有失敗：${res.status} ${res.statusText} ${msg}`);
   }
   return rows.length;
@@ -4300,6 +4518,7 @@ function mergeOceanFreightFromSupabase(remoteRows){
       ofCurrency: String(r.currency || 'USD').trim() || 'USD',
       ebs: r.ebs_usd ?? '',
       carrier: String(r.carrier_name || '').trim(),
+      validUntil: normalizeDateYmd(r.valid_until || r.validUntil || ''),
       note: r.remarks || ''
     };
     if(appRow.loadingPort && appRow.dischargePort){
@@ -4857,6 +5076,65 @@ function buildQuotePdfHtml(payload){
   }
 }
 
+/* v45: ocean freight expiry */
+.ocean-expired input,.ocean-expired select{background:#e5e7eb !important;color:#6b7280 !important;border-color:#cbd5e1 !important;}
+.ocean-expired input::placeholder{color:#9ca3af !important;}
+.ocean-expired td{background:#f3f4f6 !important;}
+.ocean-expired-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:#e5e7eb;color:#6b7280;font-size:12px;font-weight:800;}
+
+
+/* v47: 海上運賃マスタのみ input/select 高さ統一・有効期限プレースホルダー色 */
+.ocean-master-table input,
+.ocean-master-table select{
+  height:44px !important;
+  min-height:44px !important;
+  line-height:1.2 !important;
+  padding-top:8px !important;
+  padding-bottom:8px !important;
+  vertical-align:middle !important;
+}
+.ocean-master-table input[type="date"]{
+  line-height:normal !important;
+}
+.ocean-master-table input[type="date"].blank{
+  color:#9ca3af !important;
+}
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-fields-wrapper,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-text,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-month-field,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-day-field,
+.ocean-master-table input[type="date"].blank::-webkit-datetime-edit-year-field{
+  color:#9ca3af !important;
+}
+.ocean-master-table input[type="date"]:not(.blank){
+  color:#0f172a !important;
+}
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-fields-wrapper,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-text,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-month-field,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-day-field,
+.ocean-master-table input[type="date"]:not(.blank)::-webkit-datetime-edit-year-field{
+  color:#0f172a !important;
+}
+.ocean-expired input[type="date"],
+.ocean-expired input[type="date"]::-webkit-datetime-edit,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-text,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-month-field,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-day-field,
+.ocean-expired input[type="date"]::-webkit-datetime-edit-year-field{
+  color:#6b7280 !important;
+}
+@media (max-width:760px){
+  .ocean-master-table input,
+  .ocean-master-table select{
+    height:46px !important;
+    min-height:46px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -5136,13 +5414,14 @@ function updateYardDrayage(sid,yid,val,el){
 function updateYard(sid,yid,key,val,el){ const nextVal = key==='drayage' ? parseNumericInput(val) : val; state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.map(y => y.id===yid ? {...y,[key]:nextVal} : y)} : s); if(el){ el.classList.toggle('blank', !String(nextVal ?? '').trim()); } }
 function removeYard(sid,yid){ state.suppliers = state.suppliers.map(s => s.id===sid ? {...s,yards:s.yards.filter(y => y.id!==yid)} : s); renderAll(); }
 
-function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', note:''}); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
+function addOceanFreight(){ state.oceanFreight.push({id:uid(), loadingPort:'', dischargePort:'', ofValue:'', ofCurrency:'', ebs:'', carrier:'', validUntil:'', note:''}); state.oceanFreight = sortOceanFreightList(state.oceanFreight, state.oceanFreightSortKey || 'loadingPort'); renderAll(); }
 function updateOceanFreight(id,key,val,el){
   const numericKeys = ['ofValue','ebs'];
   const isNumeric = numericKeys.includes(key);
   const nextVal = isNumeric ? parseNumericInput(val) : val;
   state.oceanFreight = state.oceanFreight.map(r => r.id===id ? {...r,[key]:nextVal} : r);
-  if(String(state.basic.oceanFreightId || '') === String(id)){
+  if(String(state.basic.oceanFreightId || '') === String(id) || ['loadingPort','dischargePort','validUntil','carrier'].includes(key)){
+    ensureBasicOceanFreightChoice();
     syncMatchedOceanFreight();
     syncQuoteLineOceanFreightsOnPortChange();
   }
